@@ -182,5 +182,9 @@ public class SuiteResultDetailHistoryView implements Serializable {
         if (v != null) {
             this.suiteName = v;
         }
+        v = map.get("job");
+        if (v != null) {
+            this.jobName = v;
+        }
     }
 }

@@ -47,7 +47,7 @@
                                   style="font-family: monospace; white-space: pre-line;">
                         <f:convertDateTime type="date" pattern="yyyy-MM-dd&#10;HH:mm:ss&#10;" timeZone="US/Pacific" />
                     </h:outputText>
-                    <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank" style="font: smaller monospace">Build ##{bn}</h:outputLink>
+                    <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank" style="font: smaller monospace; color: blue">Build ##{bn}</h:outputLink>
                 </f:facet>
 
                 <h:outputLink value="#{row.get(srid).get('_url')}" target="_blank">
