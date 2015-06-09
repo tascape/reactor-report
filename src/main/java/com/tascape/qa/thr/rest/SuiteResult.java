@@ -30,10 +30,9 @@ public class SuiteResult {
     }
 
     /**
-     * Retrieves representation of an instance of
-     * com.tascape.qa.thr.rest.SuiteResult
+     * Retrieves representation of an instance of com.tascape.qa.thr.rest.SuiteResult.
      *
-     * @param srid
+     * @param srid suite result id
      *
      * @return an instance of String
      */
