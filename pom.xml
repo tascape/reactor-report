@@ -10,7 +10,7 @@
     <packaging>war</packaging>
 
     <name>testharness-report</name>
-    <description>Testharness Report - Testharness Report</description>
+    <description>Testharness Report - Test Automation Framework Report</description>
     <url>https://github.com/tascape/testharness-report</url>
     <licenses>
         <license>
