@@ -57,7 +57,7 @@ public class SuiteResultDetailHistoryView implements Serializable {
 
         try {
             this.suitesResult = this.db.getSuitesResult(this.startTime, this.stopTime, this.numberOfEntries,
-                    this.suiteName, this.jobName, this.invisibleIncluded);
+                this.suiteName, this.jobName, this.invisibleIncluded);
 
             for (Map<String, Object> suiteResult : this.suitesResult) {
                 String srid = suiteResult.get(SuiteResult.SUITE_RESULT_ID).toString();
@@ -75,7 +75,6 @@ public class SuiteResultDetailHistoryView implements Serializable {
                         TestCase testCase = new TestCase(testResult);
                         TestCase tc = new TestCase(testHistory.get("TEST_CASE"));
                         if (testCase.equals(tc)) {
-                            MySqlBaseBean.setLogUrl(testResult);
                             testHistory.put(srid, testResult);
                             toAddOneRow = false;
                             break;
@@ -85,16 +84,14 @@ public class SuiteResultDetailHistoryView implements Serializable {
                     if (toAddOneRow) {
                         Map<String, Map<String, Object>> testHistory = new HashMap<>();
                         testResult.put("_TEST_CLASS",
-                                StringUtils.substringAfterLast(testResult.get("TEST_CLASS").toString(), "."));
+                            StringUtils.substringAfterLast(testResult.get("TEST_CLASS").toString(), "."));
                         testHistory.put("TEST_CASE", testResult);
-                        MySqlBaseBean.setLogUrl(testResult);
                         testHistory.put(srid, testResult);
                         this.suiteHistoryDetail.add(testHistory); // add one row
                     }
                 }
             }
-        }
-        catch (NamingException | SQLException ex) {
+        } catch (NamingException | SQLException ex) {
             throw new RuntimeException(ex);
         }
     }

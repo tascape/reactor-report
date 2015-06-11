@@ -58,11 +58,8 @@ public class SuiteResultView implements Serializable {
             });
             this.testsResult.stream().filter(row -> {
                 return !(row.get("LOG_DIR") + "").isEmpty();
-            }).forEach(row -> {
-                MySqlBaseBean.setLogUrl(row);
             });
-        }
-        catch (NamingException | SQLException | IOException ex) {
+        } catch (NamingException | SQLException | IOException ex) {
             throw new RuntimeException(ex);
         }
     }
