@@ -1,3 +1,18 @@
+/*
+ * Copyright 2015.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.tascape.qa.thr;
 
 import com.tascape.qa.th.db.DbHandler.Test_Result;
@@ -25,6 +40,8 @@ import javax.inject.Named;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -175,6 +192,95 @@ public class MySqlBaseBean implements Serializable {
         }
         LOG.trace("{} rows loaded", rsml.size());
         return rsml;
+    }
+
+    public void importJson(JSONObject json) throws NamingException, SQLException {
+        JSONObject sr = json.getJSONObject("suite_result");
+        String srid = sr.getString(SuiteResult.SUITE_RESULT_ID);
+        LOG.debug("srid {}", srid);
+        try (Connection conn = this.getConnection()) {
+            String sql = "SELECT * FROM " + SuiteResult.TABLE_NAME + " WHERE " + SuiteResult.SUITE_RESULT_ID + " = ?;";
+            PreparedStatement stmt = conn.prepareStatement(sql,
+                ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            stmt.setString(1, srid);
+            ResultSet rs = stmt.executeQuery();
+            ResultSetMetaData rsmd = rs.getMetaData();
+            if (rs.first()) {
+                LOG.debug("already imported {}", srid);
+                return;
+            }
+            rs.moveToInsertRow();
+            for (int col = 1; col <= rsmd.getColumnCount(); col++) {
+                String cn = rsmd.getColumnLabel(col);
+                rs.updateObject(cn, sr.get(cn));
+            }
+            rs.insertRow();
+            rs.last();
+            rs.updateRow();
+        }
+        LOG.debug("sr imported");
+
+        JSONArray trs = sr.getJSONArray("test_results");
+        int len = trs.length();
+
+        try (Connection conn = this.getConnection()) {
+            String sql = String.format("SELECT * FROM %s WHERE %s=? AND %s=? AND %s=? AND %s=? AND %s=?;",
+                TestCase.TABLE_NAME,
+                TestCase.SUITE_CLASS,
+                TestCase.TEST_CLASS,
+                TestCase.TEST_METHOD,
+                TestCase.TEST_DATA_INFO,
+                TestCase.TEST_DATA
+            );
+            PreparedStatement stmt
+                = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            stmt.setMaxRows(1);
+            for (int i = 0; i < len; i++) {
+                JSONObject tr = trs.getJSONObject(i);
+                stmt.setString(1, tr.getString(TestCase.SUITE_CLASS));
+                stmt.setString(2, tr.getString(TestCase.TEST_CLASS));
+                stmt.setString(3, tr.getString(TestCase.TEST_METHOD));
+                stmt.setString(4, tr.getString(TestCase.TEST_DATA_INFO));
+                stmt.setString(5, tr.getString(TestCase.TEST_DATA));
+                ResultSet rs = stmt.executeQuery();
+                if (!rs.first()) {
+                    rs.moveToInsertRow();
+                    rs.updateString(TestCase.SUITE_CLASS, tr.getString(TestCase.SUITE_CLASS));
+                    rs.updateString(TestCase.TEST_CLASS, tr.getString(TestCase.TEST_CLASS));
+                    rs.updateString(TestCase.TEST_METHOD, tr.getString(TestCase.TEST_METHOD));
+                    rs.updateString(TestCase.TEST_DATA_INFO, tr.getString(TestCase.TEST_DATA_INFO));
+                    rs.updateString(TestCase.TEST_DATA, tr.getString(TestCase.TEST_DATA));
+                    rs.insertRow();
+                    rs.last();
+                    rs.updateRow();
+                    rs = stmt.executeQuery();
+                    rs.first();
+                }
+                tr.put(TestCase.TEST_CASE_ID, rs.getLong(TestCase.TEST_CASE_ID));
+            }
+        }
+        LOG.debug("tcid updated");
+
+        try (Connection conn = this.getConnection()) {
+            String sql = "SELECT * FROM " + TestResult.TABLE_NAME + " WHERE " + TestResult.SUITE_RESULT + " = ?;";
+            PreparedStatement stmt = conn.prepareStatement(sql,
+                ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            stmt.setString(1, srid);
+            ResultSet rs = stmt.executeQuery();
+            ResultSetMetaData rsmd = rs.getMetaData();
+            for (int i = 0; i < len; i++) {
+                rs.moveToInsertRow();
+                JSONObject tr = trs.getJSONObject(i);
+                for (int col = 1; col <= rsmd.getColumnCount(); col++) {
+                    String cn = rsmd.getColumnLabel(col);
+                    rs.updateObject(cn, tr.get(cn));
+                }
+                rs.insertRow();
+                rs.last();
+                rs.updateRow();
+            }
+        }
+        LOG.debug("trs imported");
     }
 
     public Date convertToDate(long time) {
