@@ -4,7 +4,8 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <h:head>
         <h:outputStylesheet library="css" name="thr.css" />
         <h:outputStylesheet library="css" name="primefaces-ex.css" />
@@ -18,6 +19,10 @@
         <ui:param name="name" value="#{suiteResultView.suiteResult.get('SUITE_NAME')}" />
         <ui:param name="result" value="#{suiteResultView.suiteResult.get('EXECUTION_RESULT')}" />
         <ui:param name="start" value="#{suiteResultView.suiteResult.get('START_TIME')}" />
+        <ui:param name="bn" value="#{suiteResultView.suiteResult.get('JOB_BUILD_NUMBER')}" />
+        <ui:param name="bn" value="#{suiteResultView.suiteResult.get('JOB_BUILD_NUMBER')}" />
+        <ui:param name="url" value="#{suiteResultView.suiteResult.get('JOB_BUILD_URL')}" />
+        <ui:param name="jn" value="#{suiteResultView.suiteResult.get('JOB_NAME')}" />
 
         <h:panelGrid columns="2" style="margin-bottom: 10px">
             <h:outputLink value=".">
@@ -26,10 +31,11 @@
             <h:outputText value="#{name}" style="font-size: x-large; font-variant: small-caps; font-weight: bold;" />
         </h:panelGrid>
 
-        <h:panelGrid columns="3">
+        <h:panelGrid columns="4" >
+            <h:outputText rendered="#{bn gt 0}" value="#{jn}" style="font-size: large;" />
+            <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank">Build ##{bn}</h:outputLink>
             <h:outputText value="#{result}" class="result-pass" rendered="#{result == 'PASS'}" style="font-size: large;"/>
             <h:outputText value="#{result}" class="result-fail" rendered="#{result != 'PASS'}" style="font-size: large;"/>
-            <h:outputText value="@" />
             <h:outputText value="#{start}" style="font-family: monospace">
                 <f:convertDateTime type="date" pattern="EEE yyyy-MM-dd HH:mm:ss" timeZone="US/Pacific" />
             </h:outputText>
@@ -78,6 +84,15 @@
                 </nobr>
             </p:column>
         </p:dataTable>
+
+        <p:spacer height="28px" width="10px" />
+        <p:panelGrid columns="2" style="border-style: hidden;">
+            <c:forEach items="#{suiteResultView.suiteProperties}" var="row"  >
+                <h:outputText value="#{row.get('PROPERTY_NAME')}" />
+                <h:outputText value="#{row.get('PROPERTY_VALUE')}" />
+            </c:forEach>
+        </p:panelGrid>
+        <p:spacer height="28px" width="10px" />
 
         <h:link value="Mark Invisible" outcome="suite_result.xhtml" rendered="#{not invisible}">
             <f:param name="srid" value="#{srid}" />
