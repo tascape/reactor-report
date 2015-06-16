@@ -55,6 +55,8 @@ public class SuiteResultView implements Serializable {
 
     private List<Map<String, Object>> testsResult;
 
+    private List<Map<String, Object>> suiteProperties;
+
     @PostConstruct
     public void init() {
         this.getParameters();
@@ -74,6 +76,7 @@ public class SuiteResultView implements Serializable {
             this.testsResult.stream().filter(row -> {
                 return !(row.get("LOG_DIR") + "").isEmpty();
             });
+            this.suiteProperties = this.db.getSuiteProperties(this.srid);
         } catch (NamingException | SQLException | IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -85,6 +88,10 @@ public class SuiteResultView implements Serializable {
 
     public List<Map<String, Object>> getTestsResult() {
         return testsResult;
+    }
+
+    public List<Map<String, Object>> getSuiteProperties() {
+        return suiteProperties;
     }
 
     public String getSrid() {

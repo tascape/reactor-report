@@ -15,7 +15,7 @@
  */
 package com.tascape.qa.thr;
 
-import com.tascape.qa.th.db.DbHandler.Test_Result;
+import com.tascape.qa.th.db.SuiteProperty;
 import com.tascape.qa.th.db.SuiteResult;
 import com.tascape.qa.th.db.TestCase;
 import com.tascape.qa.th.db.TestResult;
@@ -109,8 +109,8 @@ public class MySqlBaseBean implements Serializable {
         String sql = "SELECT * FROM " + TestResult.TABLE_NAME + " TR "
             + "INNER JOIN " + TestCase.TABLE_NAME + " TC "
             + "ON TR.TEST_CASE_ID = TC.TEST_CASE_ID "
-            + "WHERE " + Test_Result.SUITE_RESULT.name() + " = ? "
-            + "ORDER BY " + Test_Result.START_TIME.name() + " DESC;";
+            + "WHERE " + TestResult.SUITE_RESULT + " = ? "
+            + "ORDER BY " + TestResult.START_TIME + " DESC;";
         try (Connection conn = this.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, srid);
@@ -124,7 +124,7 @@ public class MySqlBaseBean implements Serializable {
         String sql = "SELECT * FROM " + TestResult.TABLE_NAME + " TR "
             + "INNER JOIN " + TestCase.TABLE_NAME + " TC "
             + "ON TR.TEST_CASE_ID = TC.TEST_CASE_ID "
-            + "WHERE " + Test_Result.SUITE_RESULT.name() + " IN (" + StringUtils.join(srids, ",") + ") "
+            + "WHERE " + TestResult.SUITE_RESULT + " IN (" + StringUtils.join(srids, ",") + ") "
             + "ORDER BY " + TestCase.SUITE_CLASS + "," + TestCase.TEST_CLASS + ","
             + TestCase.TEST_METHOD + "," + TestCase.TEST_DATA_INFO + " DESC;";
         try (Connection conn = this.getConnection()) {
@@ -162,7 +162,7 @@ public class MySqlBaseBean implements Serializable {
         sr += " ORDER BY " + SuiteResult.START_TIME + " DESC;";
 
         String tr = "SELECT * FROM " + TestResult.TABLE_NAME
-            + " WHERE " + Test_Result.EXECUTION_RESULT.name()
+            + " WHERE " + TestResult.EXECUTION_RESULT
             + " IN (" + sr + ")"
             + " ORDER BY " + SuiteResult.START_TIME + " DESC;";
         try (Connection conn = this.getConnection()) {
@@ -308,6 +308,19 @@ public class MySqlBaseBean implements Serializable {
             return false;
         }
         return true;
+    }
+
+    List<Map<String, Object>> getSuiteProperties(String srid) throws NamingException, SQLException {
+        String sql = "SELECT * FROM " + SuiteProperty.TABLE_NAME
+            + " WHERE " + SuiteProperty.SUITE_RESULT_ID + " = ?"
+            + " ORDER BY " + SuiteProperty.PROPERTY_NAME + ";";
+        try (Connection conn = this.getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, srid);
+            LOG.trace("{}", stmt);
+            ResultSet rs = stmt.executeQuery();
+            return this.dumpResultSetToList(rs);
+        }
     }
 
     private Connection getConnection() throws NamingException, SQLException {
