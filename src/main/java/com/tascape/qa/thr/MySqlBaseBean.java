@@ -198,6 +198,7 @@ public class MySqlBaseBean implements Serializable {
         JSONObject sr = json.getJSONObject("suite_result");
         String srid = sr.getString(SuiteResult.SUITE_RESULT_ID);
         LOG.debug("srid {}", srid);
+
         try (Connection conn = this.getConnection()) {
             String sql = "SELECT * FROM " + SuiteResult.TABLE_NAME + " WHERE " + SuiteResult.SUITE_RESULT_ID + " = ?;";
             PreparedStatement stmt = conn.prepareStatement(sql,
@@ -217,8 +218,36 @@ public class MySqlBaseBean implements Serializable {
             rs.insertRow();
             rs.last();
             rs.updateRow();
+            LOG.debug("sr imported");
         }
-        LOG.debug("sr imported");
+
+        try (Connection conn = this.getConnection()) {
+            String sql = "SELECT * FROM " + SuiteProperty.TABLE_NAME
+                + " WHERE " + SuiteProperty.SUITE_RESULT_ID + " = ?;";
+            PreparedStatement stmt = conn.prepareStatement(sql,
+                ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            stmt.setString(1, srid);
+            ResultSet rs = stmt.executeQuery();
+            ResultSetMetaData rsmd = rs.getMetaData();
+
+            JSONArray sps = sr.getJSONArray("suite_properties");
+            int len = sps.length();
+            for (int i = 0; i < len; i++) {
+                rs.moveToInsertRow();
+                JSONObject tr = sps.getJSONObject(i);
+                for (int col = 1; col <= rsmd.getColumnCount(); col++) {
+                    String cn = rsmd.getColumnLabel(col);
+                    if (SuiteProperty.SUITE_PROPTERTY_ID.equals(cn)) {
+                        continue;
+                    }
+                    rs.updateObject(cn, tr.get(cn));
+                }
+                rs.insertRow();
+                rs.last();
+                rs.updateRow();
+            }
+            LOG.debug("sps imported");
+        }
 
         JSONArray trs = sr.getJSONArray("test_results");
         int len = trs.length();
@@ -258,8 +287,8 @@ public class MySqlBaseBean implements Serializable {
                 }
                 tr.put(TestCase.TEST_CASE_ID, rs.getLong(TestCase.TEST_CASE_ID));
             }
+            LOG.debug("tcid updated");
         }
-        LOG.debug("tcid updated");
 
         try (Connection conn = this.getConnection()) {
             String sql = "SELECT * FROM " + TestResult.TABLE_NAME + " WHERE " + TestResult.SUITE_RESULT + " = ?;";
@@ -279,8 +308,8 @@ public class MySqlBaseBean implements Serializable {
                 rs.last();
                 rs.updateRow();
             }
+            LOG.debug("trs imported");
         }
-        LOG.debug("trs imported");
     }
 
     public Date convertToDate(long time) {
