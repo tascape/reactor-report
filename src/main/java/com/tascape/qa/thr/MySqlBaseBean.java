@@ -237,7 +237,7 @@ public class MySqlBaseBean implements Serializable {
                 JSONObject tr = sps.getJSONObject(i);
                 for (int col = 1; col <= rsmd.getColumnCount(); col++) {
                     String cn = rsmd.getColumnLabel(col);
-                    if (SuiteProperty.SUITE_PROPTERTY_ID.equals(cn)) {
+                    if (SuiteProperty.SUITE_PROPERTY_ID.equals(cn)) {
                         continue;
                     }
                     rs.updateObject(cn, tr.get(cn));
