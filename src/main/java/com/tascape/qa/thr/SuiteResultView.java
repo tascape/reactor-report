@@ -69,10 +69,6 @@ public class SuiteResultView implements Serializable {
                 return;
             }
             this.testsResult = this.db.getTestsResult(this.srid);
-            this.testsResult.stream().forEach(row -> {
-                row.put("_suite", StringUtils.substringAfterLast(row.get("SUITE_CLASS") + "", "."));
-                row.put("_class", StringUtils.substringAfterLast(row.get("TEST_CLASS") + "", "."));
-            });
             this.testsResult.stream().filter(row -> {
                 return !(row.get("LOG_DIR") + "").isEmpty();
             });

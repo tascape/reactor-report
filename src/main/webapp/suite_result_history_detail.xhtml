@@ -9,25 +9,30 @@
         <h:outputStylesheet library="css" name="thr.css" />
         <h:outputStylesheet library="css" name="primefaces-ex.css" />
         <h:outputScript library="js" name="thr.js" />
+        <link rel="icon" type="image/png" href="#{request.contextPath}/resources/img/favicon.png" />
         <title>Test Suites Result</title>
     </h:head>
     <h:body>
         <ui:param name="suite" value="#{suiteResultDetailHistoryView.suiteName}" />
+        <ui:param name="job" value="#{suiteResultDetailHistoryView.jobName}" />
 
-        <h:panelGrid columns="3" style="margin-bottom: 10px">
-            <h:outputLink value=".">
-                <h:graphicImage library="img" name="home.png" alt="Home" />
-            </h:outputLink>
-            <h:outputText value="Suite Result Detail History" style="font-size: x-large; font-variant: small-caps; font-weight: bold;" />
-            <h:outputText value="#{suite}" style="font-size: large" />
+        <h:panelGrid columns="2" style="margin-bottom: 10px">
+                <h:outputLink value=".">
+                    <h:graphicImage library="img" name="home.png" alt="Home" />
+                </h:outputLink>
+                <h:outputText value="Suite Result Detail History" style="font-size: x-large; font-variant: small-caps; font-weight: bold;" />
         </h:panelGrid>
 
-        <p:dataTable value="#{suiteResultDetailHistoryView.suiteHistoryDetail}" var="row" rowIndexVar="rowIndex" resizableColumns="true">
+        <h:panelGrid columns="1">
+            <h:outputText value="#{suite}#{job}" style="font-size: large" />
+        </h:panelGrid>
+
+        <p:dataTable value="#{suiteResultDetailHistoryView.suiteHistoryDetail}" var="row" rowIndexVar="rowIndex" tableStyle="width: auto">
             <p:column headerText="Index" width="36">
                 <h:outputText value="#{rowIndex + 1}" />
             </p:column>
 
-            <p:column headerText="Test Case" width="268">
+            <p:column headerText="Test Case" style="white-space: pre;">
                 <ui:param name="tc" value="#{row.get('TEST_CASE')}" />
                 <h:outputLabel value="#{tc.get('_TEST_CLASS')}" title="#{tc.get('TEST_CLASS')}" />
                 <h:outputText value=" / " />
@@ -37,20 +42,20 @@
                 <h:outputText value=")" />
             </p:column>
 
-            <p:columns value="#{suiteResultDetailHistoryView.suitesResult}" var="suiteResult" width="108">
+            <p:columns value="#{suiteResultDetailHistoryView.suitesResult}" var="suiteResult">
                 <ui:param name="srid" value="#{suiteResult.get('SUITE_RESULT_ID')}" />
                 <ui:param name="result" value="#{row.get(srid).get('EXECUTION_RESULT')}" />
                 <ui:param name="bn" value="#{suiteResult.get('JOB_BUILD_NUMBER')}" />
                 <ui:param name="url" value="#{suiteResult.get('JOB_BUILD_URL')}" />
                 <f:facet name="header">
                     <h:outputText value="#{mySqlBaseBean.convertToDate(suiteResult.get('START_TIME'))}"
-                                  style="font-family: monospace; white-space: pre-line;">
+                                  style="font-family: monospace; white-space: pre;">
                         <f:convertDateTime type="date" pattern="yyyy-MM-dd&#10;HH:mm:ss&#10;" timeZone="US/Pacific" />
                     </h:outputText>
                     <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank" style="font: smaller monospace; color: blue">Build ##{bn}</h:outputLink>
                 </f:facet>
-
-                <h:outputLink value="#{row.get(srid).get('_url')}" target="_blank">
+                
+                <h:outputLink value="/logs/#{row.get(srid).get('LOG_DIR')}/log.html" target="_blank">
                     <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{result =='PASS'}" />
                     <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{result =='FAIL'}" />
                     <h:graphicImage library="img" name="skip.png" alt="#{result}" rendered="#{!(result == 'FAIL' || result == 'PASS' || result == null)}" />

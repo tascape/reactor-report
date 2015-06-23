@@ -6,7 +6,7 @@
 
     <groupId>com.tascape.qa</groupId>
     <artifactId>thr</artifactId>
-    <version>1.0.8</version>
+    <version>1.0.9</version>
     <packaging>war</packaging>
 
     <name>testharness-report</name>
@@ -52,6 +52,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.tascape.qa</groupId>
+            <artifactId>testharness</artifactId>
+            <version>1.0.8</version>
+        </dependency>
+        <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
             <version>5.0</version>
@@ -61,11 +66,6 @@
             <artifactId>javaee-web-api</artifactId>
             <version>7.0</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.tascape.qa</groupId>
-            <artifactId>testharness</artifactId>
-            <version>1.0.8</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>

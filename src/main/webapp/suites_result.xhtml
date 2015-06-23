@@ -9,6 +9,7 @@
         <h:outputStylesheet library="css" name="thr.css" />
         <h:outputStylesheet library="css" name="primefaces-ex.css" />
         <h:outputScript library="js" name="thr.js" />
+        <link rel="icon" type="image/png" href="#{request.contextPath}/resources/img/favicon.png" />
         <title>Test Suites Result</title>
     </h:head>
     <h:body>
@@ -48,9 +49,9 @@
             <p:commandButton onclick="thr.querySuiteResultDetail('#{suite}', '#{job}')" value="Detail History" style="font-size: xx-small" />
         </h:panelGrid>
 
-        <p:dataTable value="#{suitesResultView.results}" var="row" rowIndexVar="rowIndex" resizableColumns="true"
+        <p:dataTable value="#{suitesResultView.results}" var="row" rowIndexVar="rowIndex"
                      rowKey="#{row.get('SUITE_RESULT_ID')}" selection="#{suitesResultView.resultsSelected}"
-                     tableStyle="width: auto" stickyHeader="true">
+                     tableStyle="width: auto">
             <p:column headerText="Index" width="36">
                 <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') == 0}" />
                 <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') != 0}" style="color: lightgray" />
@@ -63,7 +64,7 @@
                 <h:outputText rendered="#{grouped}" value="#{s}" />
             </p:column>
 
-            <p:column headerText="Job Name" width="168">
+            <p:column headerText="Job Name" style="white-space: pre;">
                 <ui:param name="s" value="#{row.get('JOB_NAME')}" />
                 <h:outputLink onclick="thr.querySuiteResults(null, '#{s}');
                         return false;" rendered="#{not grouped}">#{s}</h:outputLink>
@@ -74,13 +75,13 @@
             <ui:param name="url" value="#{row.get('JOB_BUILD_URL')}" />
             <p:column width="40">
                 <f:facet name="header">
-                    <h:outputText value="Build&#10;#" escape="false" style="white-space: pre-line;" />
+                    <h:outputText value="Build&#10;#" escape="false" />
                 </f:facet>
                 <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank">#{bn}</h:outputLink>
             </p:column>
 
             <ui:param name="result" value="#{row.get('EXECUTION_RESULT')}" />
-            <p:column headerText="Result" width="78">
+            <p:column headerText="Result" style="white-space: nowrap;">
                 <h:outputLink value="suite_result.xhtml?srid=#{row.get('SUITE_RESULT_ID')}" target="_blank">
                     <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{result =='PASS'}" />
                     <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{result =='FAIL'}" />
@@ -91,20 +92,20 @@
 
             <p:column width="50">
                 <f:facet name="header">
-                    <h:outputText value="# of&#10;Tests" escape="false" style="white-space: pre-line;" />
+                    <h:outputText value="# of&#10;Tests" escape="false" />
                 </f:facet>
                 <h:outputText value="#{row.get('NUMBER_OF_TESTS')}" style="float: right" />
             </p:column>
 
             <p:column width="50">
                 <f:facet name="header">
-                    <h:outputText value="# of&#10;Failed" escape="false" style="white-space: pre-line;" />
+                    <h:outputText value="# of&#10;Failed" escape="false" />
                 </f:facet>
                 <h:outputText value="#{row.get('NUMBER_OF_FAILURE')}" style="float: right" />
             </p:column>
 
             <p:column width="68" headerText="Time">
-                <h:outputText value="#{(row.get('STOP_TIME') - row.get('START_TIME'))/1000.0}" style="font-family: monospace; float: right" >
+                <h:outputText value="#{(row.get('STOP_TIME') - row.get('START_TIME'))/1000.0}" style="font-family: monospace; float: right; white-space: pre;" >
                     <f:convertNumber pattern="#0.000 S" />
                 </h:outputText>
             </p:column>
