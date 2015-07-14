@@ -15,6 +15,7 @@
  */
 package com.tascape.qa.thr;
 
+import com.tascape.qa.th.db.SuiteResult;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
@@ -25,6 +26,10 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.naming.NamingException;
+import org.primefaces.model.chart.Axis;
+import org.primefaces.model.chart.AxisType;
+import org.primefaces.model.chart.BarChartModel;
+import org.primefaces.model.chart.ChartSeries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,16 +64,21 @@ public class SuitesResultView implements Serializable {
 
     private List<Map<String, Object>> resultsSelected;
 
+    private BarChartModel barModel;
+
     @PostConstruct
     public void init() {
         this.getParameters();
 
         try {
             this.results = this.db.getSuitesResult(this.startTime, this.stopTime, this.numberOfEntries,
-                    this.suiteName, this.jobName, this.invisibleIncluded);
-        }
-        catch (NamingException | SQLException ex) {
+                this.suiteName, this.jobName, this.invisibleIncluded);
+        } catch (NamingException | SQLException ex) {
             throw new RuntimeException(ex);
+        }
+
+        if (!this.suiteName.isEmpty() || !this.jobName.isEmpty()) {
+            this.barModel = this.initBarModel();
         }
     }
 
@@ -130,6 +140,40 @@ public class SuitesResultView implements Serializable {
 
     public void setInvisibleIncluded(boolean invisibleIncluded) {
         this.invisibleIncluded = invisibleIncluded;
+    }
+
+    public BarChartModel getBarModel() {
+        return barModel;
+    }
+
+    private BarChartModel initBarModel() {
+        BarChartModel model = new BarChartModel();
+        model.setLegendPosition("ne");
+        model.setLegendCols(2);
+        model.setSeriesColors("00ff00, ff0000");
+        model.setStacked(true);
+
+        Axis xAxis = model.getAxis(AxisType.X);
+        xAxis.setTickAngle(-90);
+
+        ChartSeries fail = new ChartSeries();
+        fail.setLabel("FAIL");
+        ChartSeries pass = new ChartSeries();
+        pass.setLabel("PASS");
+        int index = 0;
+        int total = 0;
+        for (Map<String, Object> result : this.results) {
+            int f = (int) result.get(SuiteResult.NUMBER_OF_FAILURE);
+            int t = (int) result.get(SuiteResult.NUMBER_OF_TESTS);
+            int b = (int) result.get(SuiteResult.JOB_BUILD_NUMBER);
+            String x = (++index) + (b > 0 ? " - b" + b : "");
+            fail.set(x, f);
+            pass.set(x, t - f);
+            total = Math.max(total, t);
+        }
+        model.addSeries(pass);
+        model.addSeries(fail);
+        return model;
     }
 
     private void getParameters() {

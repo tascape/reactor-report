@@ -15,15 +15,12 @@
  */
 package com.tascape.qa.thr;
 
-import com.tascape.qa.th.db.SuiteResult;
-import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,8 +34,8 @@ import org.slf4j.LoggerFactory;
  */
 @Named
 @RequestScoped
-public class SuiteResultView implements Serializable {
-    private static final Logger LOG = LoggerFactory.getLogger(SuiteResultView.class);
+public class SuiteResultShareView implements Serializable {
+    private static final Logger LOG = LoggerFactory.getLogger(SuiteResultShareView.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -46,8 +43,6 @@ public class SuiteResultView implements Serializable {
     private MySqlBaseBean db;
 
     private String srid;
-
-    private boolean toggleInvisible = false;
 
     private Map<String, Object> suiteResult;
 
@@ -61,19 +56,15 @@ public class SuiteResultView implements Serializable {
 
         try {
             this.suiteResult = this.db.getSuiteResult(this.srid);
-            boolean invisible = this.suiteResult.get(SuiteResult.INVISIBLE_ENTRY).equals(1);
-            if (this.toggleInvisible) {
-                this.setInvisible(!invisible);
-                return;
-            }
             this.testsResult = this.db.getTestsResult(this.srid);
-            this.testsResult.stream().filter(row -> {
-                return !(row.get("LOG_DIR") + "").isEmpty();
-            });
             this.suiteProperties = this.db.getSuiteProperties(this.srid);
-        } catch (NamingException | SQLException | IOException ex) {
+        } catch (NamingException | SQLException ex) {
             throw new RuntimeException(ex);
         }
+    }
+    
+    public void shareToTestRail() {
+        LOG.debug("coming soon...");
     }
 
     public Map<String, Object> getSuiteResult() {
@@ -92,23 +83,12 @@ public class SuiteResultView implements Serializable {
         return srid;
     }
 
-    private void setInvisible(boolean invisible) throws NamingException, SQLException, IOException {
-        this.db.setSuiteResultInvisible(this.srid, invisible);
-        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-        context.redirect(context.getRequestContextPath() + context.getRequestServletPath() + "?srid=" + srid);
-    }
-
     private void getParameters() {
         Map<String, String> map = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         String v = map.get("srid");
         LOG.debug("srid = {}", v);
         if (v != null) {
             this.srid = v;
-        }
-        v = map.get("ti");
-        LOG.debug("toggle invisible = {}", v);
-        if (v != null) {
-            this.toggleInvisible = Boolean.parseBoolean(v);
         }
     }
 }

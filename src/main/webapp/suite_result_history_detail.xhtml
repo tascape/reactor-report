@@ -10,17 +10,17 @@
         <h:outputStylesheet library="css" name="primefaces-ex.css" />
         <h:outputScript library="js" name="thr.js" />
         <link rel="icon" type="image/png" href="#{request.contextPath}/resources/img/favicon.png" />
-        <title>Test Suites Result</title>
+        <title>Suite Result History Detail</title>
     </h:head>
     <h:body>
         <ui:param name="suite" value="#{suiteResultDetailHistoryView.suiteName}" />
         <ui:param name="job" value="#{suiteResultDetailHistoryView.jobName}" />
 
         <h:panelGrid columns="2" style="margin-bottom: 10px">
-                <h:outputLink value=".">
-                    <h:graphicImage library="img" name="home.png" alt="Home" />
-                </h:outputLink>
-                <h:outputText value="Suite Result Detail History" style="font-size: x-large; font-variant: small-caps; font-weight: bold;" />
+            <h:outputLink value=".">
+                <h:graphicImage library="img" name="home.png" alt="Home" />
+            </h:outputLink>
+            <h:outputText value="Suite Result Detail History" style="font-size: x-large; font-variant: small-caps; font-weight: bold;" />
         </h:panelGrid>
 
         <h:panelGrid columns="1">
@@ -42,7 +42,7 @@
                 <h:outputText value=")" />
             </p:column>
 
-            <p:columns value="#{suiteResultDetailHistoryView.suitesResult}" var="suiteResult">
+            <p:columns value="#{suiteResultDetailHistoryView.suitesResult}" var="suiteResult"  style="white-space: nowrap;">
                 <ui:param name="srid" value="#{suiteResult.get('SUITE_RESULT_ID')}" />
                 <ui:param name="result" value="#{row.get(srid).get('EXECUTION_RESULT')}" />
                 <ui:param name="bn" value="#{suiteResult.get('JOB_BUILD_NUMBER')}" />
@@ -54,7 +54,7 @@
                     </h:outputText>
                     <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank" style="font: smaller monospace; color: blue">Build ##{bn}</h:outputLink>
                 </f:facet>
-                
+
                 <h:outputLink value="/logs/#{row.get(srid).get('LOG_DIR')}/log.html" target="_blank">
                     <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{result =='PASS'}" />
                     <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{result =='FAIL'}" />

@@ -32,7 +32,7 @@
             <h:outputText value="#{name}" style="font-size: x-large; font-variant: small-caps; font-weight: bold;" />
         </h:panelGrid>
 
-        <h:panelGrid columns="4" >
+        <h:panelGrid columns="5" >
             <h:outputText rendered="#{bn gt 0}" value="#{jn}" style="font-size: large;" />
             <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank">Build ##{bn}</h:outputLink>
             <h:outputText value="#{result}" class="result-pass" rendered="#{result == 'PASS'}" style="font-size: large;"/>
@@ -40,7 +40,16 @@
             <h:outputText value="#{start}" style="font-family: monospace">
                 <f:convertDateTime type="date" pattern="EEE yyyy-MM-dd HH:mm:ss" timeZone="US/Pacific" />
             </h:outputText>
+            <h:outputLink value="#" id="share">
+                <h:graphicImage library="img" name="share.png" alt="share" width="20" onclick="PF('share_suite_result').show();"/>
+            </h:outputLink>
         </h:panelGrid>
+
+        <p:tooltip id="toolTipGrow" for="share" value="share this suite execution result" showEffect="clip"
+                   hideEffect="explode" />
+        <p:dialog header="Share" widgetVar="share_suite_result" fitViewport="true">
+            <ui:include src="suite_result_share.xhtml?srid=#{srid}" />
+        </p:dialog>
 
         <p:dataTable value="#{suiteResultView.testsResult}" var="row" rowIndexVar="rowIndex"
                      rowKey="#{row.get('TEST_RESULT_ID')}" tableStyle="width: auto">

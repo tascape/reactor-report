@@ -49,9 +49,11 @@
             <p:commandButton onclick="thr.querySuiteResultDetail('#{suite}', '#{job}')" value="Detail History" style="font-size: xx-small" />
         </h:panelGrid>
 
+        <p:chart type="bar" model="#{suitesResultView.barModel}" style="height:300px" rendered="#{grouped}" responsive="true" />
+        <p:spacer height="10" />
+
         <p:dataTable value="#{suitesResultView.results}" var="row" rowIndexVar="rowIndex"
-                     rowKey="#{row.get('SUITE_RESULT_ID')}" selection="#{suitesResultView.resultsSelected}"
-                     tableStyle="width: auto">
+                     rowKey="#{row.get('SUITE_RESULT_ID')}" selection="#{suitesResultView.resultsSelected}">
             <p:column headerText="Index" width="36">
                 <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') == 0}" />
                 <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') != 0}" style="color: lightgray" />
@@ -81,7 +83,7 @@
             </p:column>
 
             <ui:param name="result" value="#{row.get('EXECUTION_RESULT')}" />
-            <p:column headerText="Result" style="white-space: nowrap;">
+            <p:column headerText="Result" style="white-space: nowrap;"  width="68">
                 <h:outputLink value="suite_result.xhtml?srid=#{row.get('SUITE_RESULT_ID')}" target="_blank">
                     <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{result =='PASS'}" />
                     <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{result =='FAIL'}" />
