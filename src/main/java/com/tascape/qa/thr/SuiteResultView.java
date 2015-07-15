@@ -28,6 +28,12 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.naming.NamingException;
+import org.primefaces.model.chart.Axis;
+import org.primefaces.model.chart.AxisType;
+import org.primefaces.model.chart.ChartSeries;
+import org.primefaces.model.chart.HorizontalBarChartModel;
+import org.primefaces.model.chart.LegendPlacement;
+import org.primefaces.model.chart.LinearAxis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +61,8 @@ public class SuiteResultView implements Serializable {
 
     private List<Map<String, Object>> suiteProperties;
 
+    private HorizontalBarChartModel barModel;
+
     @PostConstruct
     public void init() {
         this.getParameters();
@@ -74,6 +82,8 @@ public class SuiteResultView implements Serializable {
         } catch (NamingException | SQLException | IOException ex) {
             throw new RuntimeException(ex);
         }
+
+        this.barModel = this.initBarModel();
     }
 
     public Map<String, Object> getSuiteResult() {
@@ -90,6 +100,41 @@ public class SuiteResultView implements Serializable {
 
     public String getSrid() {
         return srid;
+    }
+
+    public HorizontalBarChartModel getBarModel() {
+        return barModel;
+    }
+
+    private HorizontalBarChartModel initBarModel() {
+        HorizontalBarChartModel model = new HorizontalBarChartModel();
+        model.setLegendPosition("n");
+        model.setLegendPlacement(LegendPlacement.OUTSIDEGRID);
+        model.setLegendCols(2);
+        model.setSeriesColors("ff0000, 00ff00");
+        model.setStacked(true);
+        model.setBarMargin(0);
+        model.setBarPadding(0);
+        model.setAnimate(true);
+
+        ChartSeries fail = new ChartSeries();
+        fail.setLabel("FAIL");
+        ChartSeries pass = new ChartSeries();
+        pass.setLabel("PASS");
+        int f = (int) suiteResult.get(SuiteResult.NUMBER_OF_FAILURE);
+        int t = (int) suiteResult.get(SuiteResult.NUMBER_OF_TESTS);
+        fail.set(" ", f);
+        pass.set(" ", t - f);
+        model.addSeries(fail);
+        model.addSeries(pass);
+
+        Axis xAxis = new LinearAxis("Number of Tests");
+        xAxis.setTickAngle(-90);
+        xAxis.setMax(t);
+        xAxis.setTickCount(t + 1);
+        xAxis.setTickFormat("%03d");
+        model.getAxes().put(AxisType.X, xAxis);
+        return model;
     }
 
     private void setInvisible(boolean invisible) throws NamingException, SQLException, IOException {

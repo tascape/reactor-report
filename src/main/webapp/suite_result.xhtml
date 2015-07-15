@@ -51,8 +51,11 @@
             <ui:include src="suite_result_share.xhtml?srid=#{srid}" />
         </p:dialog>
 
+        <p:chart type="bar" model="#{suiteResultView.barModel}" style="height:106px" responsive="true" />
+        <p:spacer height="10" />
+
         <p:dataTable value="#{suiteResultView.testsResult}" var="row" rowIndexVar="rowIndex"
-                     rowKey="#{row.get('TEST_RESULT_ID')}" tableStyle="width: auto">
+                     rowKey="#{row.get('TEST_RESULT_ID')}">
             <ui:param name="result" value="#{row.get('EXECUTION_RESULT')}" />
 
             <p:column headerText="Index" width="36">

@@ -29,7 +29,11 @@ import javax.naming.NamingException;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.BarChartModel;
+import org.primefaces.model.chart.BarChartSeries;
 import org.primefaces.model.chart.ChartSeries;
+import org.primefaces.model.chart.LegendPlacement;
+import org.primefaces.model.chart.LineChartSeries;
+import org.primefaces.model.chart.LinearAxis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -148,31 +152,44 @@ public class SuitesResultView implements Serializable {
 
     private BarChartModel initBarModel() {
         BarChartModel model = new BarChartModel();
-        model.setLegendPosition("ne");
-        model.setLegendCols(2);
-        model.setSeriesColors("00ff00, ff0000");
+        model.setLegendPosition("n");
+        model.setLegendPlacement(LegendPlacement.OUTSIDEGRID);
+        model.setLegendCols(3);
+        model.setSeriesColors("00ff00, ff0000, 000000");
         model.setStacked(true);
+        model.setAnimate(true);
+
+        ChartSeries fail = new BarChartSeries();
+        fail.setLabel("FAIL");
+        ChartSeries pass = new BarChartSeries();
+        pass.setLabel("PASS");
+        ChartSeries time = new LineChartSeries();
+        time.setLabel("EXECUTION TIME");
+        model.addSeries(pass);
+        model.addSeries(fail);
+        model.addSeries(time);
 
         Axis xAxis = model.getAxis(AxisType.X);
         xAxis.setTickAngle(-90);
+        Axis yAxis = model.getAxis(AxisType.Y);
+        yAxis.setLabel("Number of Tests");
 
-        ChartSeries fail = new ChartSeries();
-        fail.setLabel("FAIL");
-        ChartSeries pass = new ChartSeries();
-        pass.setLabel("PASS");
+        Axis y2Axis = new LinearAxis("Execution Time (second)");
+        y2Axis.setMin(0);
+        model.getAxes().put(AxisType.Y2, y2Axis);
+        time.setXaxis(AxisType.X);
+        time.setYaxis(AxisType.Y2);
+
         int index = 0;
-        int total = 0;
         for (Map<String, Object> result : this.results) {
             int f = (int) result.get(SuiteResult.NUMBER_OF_FAILURE);
             int t = (int) result.get(SuiteResult.NUMBER_OF_TESTS);
-            int b = (int) result.get(SuiteResult.JOB_BUILD_NUMBER);
-            String x = (++index) + (b > 0 ? " - b" + b : "");
+            float s = ((long) result.get(SuiteResult.STOP_TIME) - (long) result.get(SuiteResult.START_TIME)) / 1000.0f;
+            String x = (++index) + "";
             fail.set(x, f);
             pass.set(x, t - f);
-            total = Math.max(total, t);
+            time.set(x, s);
         }
-        model.addSeries(pass);
-        model.addSeries(fail);
         return model;
     }
 

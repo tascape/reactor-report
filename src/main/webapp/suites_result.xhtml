@@ -17,11 +17,14 @@
         <ui:param name="job" value="#{suitesResultView.jobName}" />
         <ui:param name="grouped" value="#{(not empty suite) or (not empty job)}" />
 
-        <h:panelGrid columns="2" style="margin-bottom: 10px">
+        <h:panelGrid columns="4" style="margin-bottom: 10px">
             <h:outputLink value=".">
                 <h:graphicImage library="img" name="home.png" alt="Home" />
             </h:outputLink>
             <h:outputText value="Test Suites Result" style="font-size: x-large; font-variant: small-caps; font-weight: bold;" />
+            <p:spacer width="20" />
+            <h:outputLabel style="font-size: large" value="(Test Suite Name: #{suite})" rendered="#{not empty suite}" />
+            <h:outputLabel style="font-size: large" value="(Job Name: #{job})" rendered="#{not empty job}" />
         </h:panelGrid>
 
         <h:panelGrid columns="8">
@@ -59,14 +62,14 @@
                 <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') != 0}" style="color: lightgray" />
             </p:column>
 
-            <p:column headerText="Test Suite Name">
+            <p:column headerText="Test Suite Name" rendered="#{empty suite}">
                 <ui:param name="s" value="#{row.get('SUITE_NAME')}" />
                 <h:outputLink onclick="thr.querySuiteResults('#{s}', null);
                         return false;" rendered="#{not grouped}">#{s}</h:outputLink>
                 <h:outputText rendered="#{grouped}" value="#{s}" />
             </p:column>
 
-            <p:column headerText="Job Name" style="white-space: pre;">
+            <p:column headerText="Job Name" style="white-space: pre;" rendered="#{empty job}">
                 <ui:param name="s" value="#{row.get('JOB_NAME')}" />
                 <h:outputLink onclick="thr.querySuiteResults(null, '#{s}');
                         return false;" rendered="#{not grouped}">#{s}</h:outputLink>
