@@ -52,7 +52,6 @@ import org.slf4j.LoggerFactory;
 @Named
 @ApplicationScoped
 public class MySqlBaseBean implements Serializable {
-
     private static final Logger LOG = LoggerFactory.getLogger(MySqlBaseBean.class);
 
     @Resource(name = "jdbc/thr")

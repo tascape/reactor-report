@@ -11,13 +11,13 @@
         <h:outputStylesheet library="css" name="primefaces-ex.css" />
         <h:outputScript library="js" name="thr.js" />
         <link rel="icon" type="image/png" href="#{request.contextPath}/resources/img/favicon.png" />
-        <title>Test Suites Result</title>
+        <title>Test Suite Result</title>
     </h:head>
 
     <h:body>
         <ui:param name="srid" value="#{suiteResultView.srid}" />
         <ui:param name="invisible" value="#{suiteResultView.suiteResult.get('INVISIBLE_ENTRY') == 1}" />
-        <ui:param name="name" value="#{suiteResultView.suiteResult.get('SUITE_NAME')}" />
+        <ui:param name="suite" value="#{suiteResultView.suiteResult.get('SUITE_NAME')}" />
         <ui:param name="result" value="#{suiteResultView.suiteResult.get('EXECUTION_RESULT')}" />
         <ui:param name="start" value="#{suiteResultView.suiteResult.get('START_TIME')}" />
         <ui:param name="bn" value="#{suiteResultView.suiteResult.get('JOB_BUILD_NUMBER')}" />
@@ -29,11 +29,11 @@
             <h:outputLink value=".">
                 <h:graphicImage library="img" name="home.png" alt="Home" />
             </h:outputLink>
-            <h:outputText value="#{name}" style="font-size: x-large; font-variant: small-caps; font-weight: bold;" />
+            <h:outputLink value="suites_result.xhtml?suite=#{suite}" style="font-size: x-large; font-variant: small-caps; font-weight: bold;" >#{suite}</h:outputLink>
         </h:panelGrid>
 
         <h:panelGrid columns="5" >
-            <h:outputText rendered="#{bn gt 0}" value="#{jn}" style="font-size: large;" />
+            <h:outputLink value="suites_result.xhtml?job=#{jn}" rendered="#{bn gt 0}"  style="font-size: large;" >#{jn}</h:outputLink>
             <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank">Build ##{bn}</h:outputLink>
             <h:outputText value="#{result}" class="result-pass" rendered="#{result == 'PASS'}" style="font-size: large;"/>
             <h:outputText value="#{result}" class="result-fail" rendered="#{result != 'PASS'}" style="font-size: large;"/>

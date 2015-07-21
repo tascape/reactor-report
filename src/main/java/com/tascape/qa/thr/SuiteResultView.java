@@ -37,12 +37,12 @@ import org.primefaces.model.chart.LinearAxis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- * @author linsong wang
- */
-@Named
-@RequestScoped
+    /**
+     *
+     * @author linsong wang
+     */
+    @Named
+    @RequestScoped
 public class SuiteResultView implements Serializable {
     private static final Logger LOG = LoggerFactory.getLogger(SuiteResultView.class);
 
@@ -75,9 +75,6 @@ public class SuiteResultView implements Serializable {
                 return;
             }
             this.testsResult = this.db.getTestsResult(this.srid);
-            this.testsResult.stream().filter(row -> {
-                return !(row.get("LOG_DIR") + "").isEmpty();
-            });
             this.suiteProperties = this.db.getSuiteProperties(this.srid);
         } catch (NamingException | SQLException | IOException ex) {
             throw new RuntimeException(ex);
@@ -111,7 +108,7 @@ public class SuiteResultView implements Serializable {
         model.setLegendPosition("n");
         model.setLegendPlacement(LegendPlacement.OUTSIDEGRID);
         model.setLegendCols(2);
-        model.setSeriesColors("ff0000, 00ff00");
+        model.setSeriesColors("00ff00, ff0000");
         model.setStacked(true);
         model.setBarMargin(0);
         model.setBarPadding(0);
@@ -125,8 +122,8 @@ public class SuiteResultView implements Serializable {
         int t = (int) suiteResult.get(SuiteResult.NUMBER_OF_TESTS);
         fail.set(" ", f);
         pass.set(" ", t - f);
-        model.addSeries(fail);
         model.addSeries(pass);
+        model.addSeries(fail);
 
         Axis xAxis = new LinearAxis("Number of Tests");
         xAxis.setTickAngle(-90);
@@ -140,7 +137,9 @@ public class SuiteResultView implements Serializable {
     private void setInvisible(boolean invisible) throws NamingException, SQLException, IOException {
         this.db.setSuiteResultInvisible(this.srid, invisible);
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-        context.redirect(context.getRequestContextPath() + context.getRequestServletPath() + "?srid=" + srid);
+        String url = context.getRequestContextPath() + context.getRequestServletPath() + "?srid=" + srid;
+        LOG.debug("redirect to {}", url);
+        context.redirect(url);
     }
 
     private void getParameters() {
