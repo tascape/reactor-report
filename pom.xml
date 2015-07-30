@@ -6,8 +6,32 @@
 
     <groupId>com.tascape.qa</groupId>
     <artifactId>thr</artifactId>
-    <version>1.0.12</version>
+    <version>1.0.13</version>
     <packaging>war</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.tascape.qa</groupId>
+            <artifactId>testharness</artifactId>
+            <version>1.0.16</version>
+        </dependency>
+        <dependency>
+            <groupId>org.primefaces</groupId>
+            <artifactId>primefaces</artifactId>
+            <version>5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-web-api</artifactId>
+            <version>7.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.7</version>
+        </dependency>
+    </dependencies>
 
     <name>testharness-report</name>
     <description>Testharness Report - Test Automation Framework Report</description>
@@ -31,12 +55,14 @@
         <developerConnection>scm:git:git@github.com:tascape/testharness-report.git</developerConnection>
         <url>git@github.com:tascape/testharness-report.git</url>
     </scm>
-    
+
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
+        <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
     </properties>
 
     <distributionManagement>
@@ -149,28 +175,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.tascape.qa</groupId>
-            <artifactId>testharness</artifactId>
-            <version>1.0.11</version>
-        </dependency>
-        <dependency>
-            <groupId>org.primefaces</groupId>
-            <artifactId>primefaces</artifactId>
-            <version>5.2</version>
-        </dependency>
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-web-api</artifactId>
-            <version>7.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>2.7</version>
-        </dependency>
-    </dependencies>
 </project>

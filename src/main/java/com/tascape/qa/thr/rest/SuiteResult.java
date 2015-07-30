@@ -69,12 +69,13 @@ public class SuiteResult {
     }
 
     /**
-     * PUT method for updating or creating an instance of SuiteResult
+     * PUT method for updating or creating an instance of SuiteResult.
+     * curl -v -H "Content-Type: application/json" -X PUT --data "@result.json" http://127.0.0.1:5080/thr/rest/sr
      *
      * @param content representation for the resource
      *
-     * @throws javax.naming.NamingException
-     * @throws java.sql.SQLException
+     * @throws javax.naming.NamingException exception
+     * @throws java.sql.SQLException exception
      */
     @PUT
     @Consumes("application/json")

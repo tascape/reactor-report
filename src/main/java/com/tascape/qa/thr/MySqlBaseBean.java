@@ -19,6 +19,7 @@ import com.tascape.qa.th.db.SuiteProperty;
 import com.tascape.qa.th.db.SuiteResult;
 import com.tascape.qa.th.db.TestCase;
 import com.tascape.qa.th.db.TestResult;
+import com.tascape.qa.th.db.TestResultMetric;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -308,6 +309,37 @@ public class MySqlBaseBean implements Serializable {
                 rs.updateRow();
             }
             LOG.debug("trs imported");
+        }
+
+        try (Connection conn = this.getConnection()) {
+            String sql = "SELECT * FROM " + TestResultMetric.TABLE_NAME + ";";
+            PreparedStatement stmt = conn.prepareStatement(sql,
+                ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            stmt.setMaxRows(1);
+            ResultSet rs = stmt.executeQuery();
+            ResultSetMetaData rsmd = rs.getMetaData();
+            for (int i = 0; i < len; i++) {
+                JSONArray jarr = trs.getJSONObject(i).optJSONArray("test_result_metrics");
+                if (jarr == null) {
+                    continue;
+                }
+                int l = jarr.length();
+                for (int j = 0; j < l; j++) {
+                    JSONObject trm = jarr.getJSONObject(j);
+                    rs.moveToInsertRow();
+                    for (int col = 1; col <= rsmd.getColumnCount(); col++) {
+                        String cn = rsmd.getColumnLabel(col);
+                        if (cn.equals(TestResultMetric.TEST_RESULT_METRIC_ID)) {
+                            continue;
+                        }
+                        rs.updateObject(cn, trm.get(cn));
+                    }
+                    rs.insertRow();
+                    rs.last();
+                    rs.updateRow();
+                }
+            }
+            LOG.debug("trms imported");
         }
     }
 
