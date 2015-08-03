@@ -58,6 +58,19 @@ public class MySqlBaseBean implements Serializable {
     @Resource(name = "jdbc/thr")
     private DataSource ds;
 
+    public List<Map<String, Object>> getLatestSuitesResult() throws NamingException, SQLException {
+        String sql = "SELECT * FROM (SELECT * FROM "
+            + SuiteResult.TABLE_NAME + " WHERE NOT INVISIBLE_ENTRY ORDER BY " + SuiteResult.START_TIME + " DESC) AS T"
+            + " GROUP BY " + SuiteResult.SUITE_NAME
+            + " ORDER BY " + SuiteResult.SUITE_NAME + ";";
+        try (Connection conn = this.getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            LOG.trace("{}", stmt);
+            ResultSet rs = stmt.executeQuery();
+            return this.dumpResultSetToList(rs);
+        }
+    }
+
     public List<Map<String, Object>> getSuitesResult(long startTime, long stopTime, int numberOfEntries,
         String suiteName, String jobName, boolean invisibleIncluded)
         throws NamingException, SQLException {

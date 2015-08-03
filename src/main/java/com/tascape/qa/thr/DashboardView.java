@@ -16,15 +16,12 @@
 package com.tascape.qa.thr;
 
 import com.tascape.qa.th.db.SuiteResult;
-import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.naming.NamingException;
@@ -37,66 +34,47 @@ import org.primefaces.model.chart.LinearAxis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-    /**
-     *
-     * @author linsong wang
-     */
-    @Named
-    @RequestScoped
-public class SuiteResultView implements Serializable {
-    private static final Logger LOG = LoggerFactory.getLogger(SuiteResultView.class);
+/**
+ *
+ * @author linsong wang
+ */
+@Named
+@RequestScoped
+public class DashboardView implements Serializable {
+    private static final Logger LOG = LoggerFactory.getLogger(DashboardView.class);
 
     private static final long serialVersionUID = 1L;
 
     @Inject
     private MySqlBaseBean db;
 
-    private String srid;
+    private List<Map<String, Object>> results;
 
-    private boolean toggleInvisible = false;
-
-    private Map<String, Object> suiteResult;
-
-    private List<Map<String, Object>> testsResult;
-
-    private List<Map<String, Object>> suiteProperties;
+    private List<Map<String, Object>> resultsSelected;
 
     private HorizontalBarChartModel barModel;
 
     @PostConstruct
     public void init() {
-        this.getParameters();
-
         try {
-            this.suiteResult = this.db.getSuiteResult(this.srid);
-            boolean invisible = this.suiteResult.get(SuiteResult.INVISIBLE_ENTRY).equals(1);
-            if (this.toggleInvisible) {
-                this.setInvisible(!invisible);
-                return;
-            }
-            this.testsResult = this.db.getTestsResult(this.srid);
-            this.suiteProperties = this.db.getSuiteProperties(this.srid);
-        } catch (NamingException | SQLException | IOException ex) {
+            this.results = this.db.getLatestSuitesResult();
+        } catch (NamingException | SQLException ex) {
             throw new RuntimeException(ex);
         }
 
         this.barModel = this.initBarModel();
     }
 
-    public Map<String, Object> getSuiteResult() {
-        return suiteResult;
+    public List<Map<String, Object>> getResults() {
+        return results;
     }
 
-    public List<Map<String, Object>> getTestsResult() {
-        return testsResult;
+    public List<Map<String, Object>> getResultsSelected() {
+        return resultsSelected;
     }
 
-    public List<Map<String, Object>> getSuiteProperties() {
-        return suiteProperties;
-    }
-
-    public String getSrid() {
-        return srid;
+    public void setResultsSelected(List<Map<String, Object>> resultsSelected) {
+        this.resultsSelected = resultsSelected;
     }
 
     public HorizontalBarChartModel getBarModel() {
@@ -118,8 +96,13 @@ public class SuiteResultView implements Serializable {
         fail.setLabel("FAIL");
         ChartSeries pass = new ChartSeries();
         pass.setLabel("PASS");
-        int f = (int) suiteResult.get(SuiteResult.NUMBER_OF_FAILURE);
-        int t = (int) suiteResult.get(SuiteResult.NUMBER_OF_TESTS);
+        int f = 0;
+        int t = 0;
+        for (Map<String, Object> result : this.results) {
+            f += Integer.parseInt(result.get(SuiteResult.NUMBER_OF_FAILURE) + "");
+            t += Integer.parseInt(result.get(SuiteResult.NUMBER_OF_TESTS) + "");
+        }
+        LOG.debug("fail {}, total {}", f, t);
         fail.set(" ", f);
         pass.set(" ", t - f);
         model.addSeries(pass);
@@ -133,27 +116,5 @@ public class SuiteResultView implements Serializable {
         xAxis.setTickFormat("%03d");
         model.getAxes().put(AxisType.X, xAxis);
         return model;
-    }
-
-    private void setInvisible(boolean invisible) throws NamingException, SQLException, IOException {
-        this.db.setSuiteResultInvisible(this.srid, invisible);
-        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-        String url = context.getRequestContextPath() + context.getRequestServletPath() + "?srid=" + srid;
-        LOG.debug("redirect to {}", url);
-        context.redirect(url);
-    }
-
-    private void getParameters() {
-        Map<String, String> map = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-        String v = map.get("srid");
-        LOG.debug("srid = {}", v);
-        if (v != null) {
-            this.srid = v;
-        }
-        v = map.get("ti");
-        LOG.debug("toggle invisible = {}", v);
-        if (v != null) {
-            this.toggleInvisible = Boolean.parseBoolean(v);
-        }
     }
 }

@@ -37,7 +37,7 @@
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>suites_result.xhtml</welcome-file>
+        <welcome-file>dashboard.xhtml</welcome-file>
     </welcome-file-list>
     <error-page>
         <exception-type>javax.faces.application.ViewExpiredException</exception-type>
