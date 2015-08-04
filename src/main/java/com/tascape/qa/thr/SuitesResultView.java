@@ -30,8 +30,10 @@ import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.BarChartModel;
 import org.primefaces.model.chart.BarChartSeries;
+import org.primefaces.model.chart.CategoryAxis;
 import org.primefaces.model.chart.ChartSeries;
 import org.primefaces.model.chart.LegendPlacement;
+import org.primefaces.model.chart.LineChartModel;
 import org.primefaces.model.chart.LineChartSeries;
 import org.primefaces.model.chart.LinearAxis;
 import org.slf4j.Logger;
@@ -70,6 +72,8 @@ public class SuitesResultView implements Serializable {
 
     private BarChartModel barModel;
 
+    private LineChartModel lineModel;
+
     @PostConstruct
     public void init() {
         this.getParameters();
@@ -83,6 +87,7 @@ public class SuitesResultView implements Serializable {
 
         if (!this.suiteName.isEmpty() || !this.jobName.isEmpty()) {
             this.barModel = this.initBarModel();
+            this.lineModel = this.initLineModel();
         }
     }
 
@@ -150,35 +155,31 @@ public class SuitesResultView implements Serializable {
         return barModel;
     }
 
+    public LineChartModel getLineModel() {
+        return lineModel;
+    }
+
     private BarChartModel initBarModel() {
         BarChartModel model = new BarChartModel();
         model.setLegendPosition("n");
         model.setLegendPlacement(LegendPlacement.OUTSIDEGRID);
         model.setLegendCols(3);
-        model.setSeriesColors("00ff00, ff0000, 000000");
+        model.setSeriesColors("00ff00, ff0000");
         model.setStacked(true);
         model.setAnimate(true);
+        model.setShowPointLabels(true);
+        model.setZoom(true);
 
-        ChartSeries fail = new BarChartSeries();
-        fail.setLabel("FAIL");
-        ChartSeries pass = new BarChartSeries();
-        pass.setLabel("PASS");
-        ChartSeries time = new LineChartSeries();
-        time.setLabel("EXECUTION TIME");
-        model.addSeries(pass);
-        model.addSeries(fail);
-        model.addSeries(time);
-
-        Axis xAxis = model.getAxis(AxisType.X);
-        xAxis.setTickAngle(-90);
         Axis yAxis = model.getAxis(AxisType.Y);
         yAxis.setLabel("Number of Tests");
+        model.getAxis(AxisType.X).setTickAngle(-90);
 
-        Axis y2Axis = new LinearAxis("Execution Time (second)");
-        y2Axis.setMin(0);
-        model.getAxes().put(AxisType.Y2, y2Axis);
-        time.setXaxis(AxisType.X);
-        time.setYaxis(AxisType.Y2);
+        ChartSeries pass = new BarChartSeries();
+        pass.setLabel("PASS");
+        model.addSeries(pass);
+        ChartSeries fail = new BarChartSeries();
+        fail.setLabel("FAIL");
+        model.addSeries(fail);
 
         int index = 0;
         for (Map<String, Object> result : this.results) {
@@ -188,7 +189,52 @@ public class SuitesResultView implements Serializable {
             String x = (++index) + "";
             fail.set(x, f);
             pass.set(x, t - f);
+        }
+        return model;
+    }
+
+    private LineChartModel initLineModel() {
+        LineChartModel model = new LineChartModel();
+        model.setLegendPosition("n");
+        model.setLegendPlacement(LegendPlacement.OUTSIDEGRID);
+        model.setLegendCols(3);
+        model.setSeriesColors("000000, ff0000, 00ff00");
+        model.setAnimate(true);
+        model.setShowPointLabels(true);
+        model.setZoom(true);
+        model.setBreakOnNull(true);
+
+        Axis xAxis = new CategoryAxis();
+        xAxis.setTickAngle(-90);
+        model.getAxes().put(AxisType.X, xAxis);
+        model.getAxis(AxisType.Y).setLabel("Number of Tests");
+
+        Axis y2Axis = new LinearAxis("Execution Time (second)");
+        y2Axis.setMin(0);
+        model.getAxes().put(AxisType.Y2, y2Axis);
+
+        ChartSeries time = new LineChartSeries();
+        time.setLabel("EXECUTION TIME");
+        time.setXaxis(AxisType.X);
+        time.setYaxis(AxisType.Y2);
+        model.addSeries(time);
+
+        ChartSeries fail = new LineChartSeries();
+        fail.setLabel("FAIL");
+        model.addSeries(fail);
+        ChartSeries pass = new LineChartSeries();
+        pass.setLabel("TOTAL");
+        model.addSeries(pass);
+
+        int index = 0;
+        for (Map<String, Object> result : this.results) {
+            int f = (int) result.get(SuiteResult.NUMBER_OF_FAILURE);
+            int t = (int) result.get(SuiteResult.NUMBER_OF_TESTS);
+            float s = ((long) result.get(SuiteResult.STOP_TIME) - (long) result.get(SuiteResult.START_TIME)) / 1000.0f;
+            String x = (++index) + "";
             time.set(x, s);
+            fail.set(x, f == 0 ? null : f);
+            pass.set(x, t == f ? null : t);
         }
         return model;
     }
