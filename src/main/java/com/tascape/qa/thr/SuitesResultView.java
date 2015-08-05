@@ -86,7 +86,7 @@ public class SuitesResultView implements Serializable {
         }
 
         if (!this.suiteName.isEmpty() || !this.jobName.isEmpty()) {
-            this.barModel = this.initBarModel();
+//            this.barModel = this.initBarModel();
             this.lineModel = this.initLineModel();
         }
     }
@@ -200,14 +200,16 @@ public class SuitesResultView implements Serializable {
         model.setLegendCols(3);
         model.setSeriesColors("000000, ff0000, 00ff00");
         model.setAnimate(true);
-        model.setShowPointLabels(true);
+        model.setShowPointLabels(false);
         model.setZoom(true);
         model.setBreakOnNull(true);
 
         Axis xAxis = new CategoryAxis();
         xAxis.setTickAngle(-90);
         model.getAxes().put(AxisType.X, xAxis);
-        model.getAxis(AxisType.Y).setLabel("Number of Tests");
+        Axis yAxis = model.getAxis(AxisType.Y);
+        yAxis.setLabel("Number of Tests");
+        yAxis.setMin(0);
 
         Axis y2Axis = new LinearAxis("Execution Time (second)");
         y2Axis.setMin(0);
@@ -222,9 +224,9 @@ public class SuitesResultView implements Serializable {
         ChartSeries fail = new LineChartSeries();
         fail.setLabel("FAIL");
         model.addSeries(fail);
-        ChartSeries pass = new LineChartSeries();
-        pass.setLabel("TOTAL");
-        model.addSeries(pass);
+        ChartSeries total = new LineChartSeries();
+        total.setLabel("TOTAL");
+        model.addSeries(total);
 
         int index = 0;
         for (Map<String, Object> result : this.results) {
@@ -234,7 +236,7 @@ public class SuitesResultView implements Serializable {
             String x = (++index) + "";
             time.set(x, s);
             fail.set(x, f == 0 ? null : f);
-            pass.set(x, t == f ? null : t);
+            total.set(x, t == f ? null : t);
         }
         return model;
     }
