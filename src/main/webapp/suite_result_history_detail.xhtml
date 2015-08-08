@@ -34,12 +34,7 @@
 
             <p:column headerText="Test Case" style="white-space: pre;">
                 <ui:param name="tc" value="#{row.get('TEST_CASE')}" />
-                <h:outputLabel value="#{tc.get('_TEST_CLASS')}" title="#{tc.get('TEST_CLASS')}" />
-                <h:outputText value=" / " />
-                <h:outputText value="#{tc.get('TEST_METHOD')}" />
-                <h:outputText value="(" />
-                <h:outputText value="#{tc.get('TEST_DATA')}" />
-                <h:outputText value=")" />
+                <h:outputLabel value="#{tc.get('TEST_CLASS')}.#{tc.get('TEST_METHOD')}(#{tc.get('TEST_DATA')})" />
             </p:column>
 
             <p:columns value="#{suiteResultDetailHistoryView.suitesResult}" var="suiteResult"  style="white-space: nowrap;">

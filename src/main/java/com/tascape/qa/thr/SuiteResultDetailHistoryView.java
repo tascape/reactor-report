@@ -29,7 +29,6 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.naming.NamingException;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,8 +97,6 @@ public class SuiteResultDetailHistoryView implements Serializable {
 
                     if (toAddOneRow) {
                         Map<String, Map<String, Object>> testHistory = new HashMap<>();
-                        testResult.put("_TEST_CLASS",
-                            StringUtils.substringAfterLast(testResult.get("TEST_CLASS").toString(), "."));
                         testHistory.put("TEST_CASE", testResult);
                         testHistory.put(srid, testResult);
                         this.suiteHistoryDetail.add(testHistory); // add one row
