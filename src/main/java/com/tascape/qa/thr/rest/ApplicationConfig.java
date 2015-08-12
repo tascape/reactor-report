@@ -46,10 +46,5 @@ public class ApplicationConfig extends Application {
         resources.add(org.eclipse.persistence.jpa.rs.resources.PersistenceUnitResource.class);
         resources.add(org.eclipse.persistence.jpa.rs.resources.QueryResource.class);
         resources.add(org.eclipse.persistence.jpa.rs.resources.SingleResultQueryResource.class);
-        resources.add(org.eclipse.persistence.jpa.rs.resources.unversioned.EntityResource.class);
-        resources.add(org.eclipse.persistence.jpa.rs.resources.unversioned.PersistenceResource.class);
-        resources.add(org.eclipse.persistence.jpa.rs.resources.unversioned.PersistenceUnitResource.class);
-        resources.add(org.eclipse.persistence.jpa.rs.resources.unversioned.QueryResource.class);
-        resources.add(org.eclipse.persistence.jpa.rs.resources.unversioned.SingleResultQueryResource.class);
     }
 }

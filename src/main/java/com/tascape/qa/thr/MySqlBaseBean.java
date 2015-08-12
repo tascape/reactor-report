@@ -315,7 +315,7 @@ public class MySqlBaseBean implements Serializable {
                 JSONObject tr = trs.getJSONObject(i);
                 for (int col = 1; col <= rsmd.getColumnCount(); col++) {
                     String cn = rsmd.getColumnLabel(col);
-                    rs.updateObject(cn, tr.get(cn));
+                    rs.updateObject(cn, tr.opt(cn));
                 }
                 rs.insertRow();
                 rs.last();

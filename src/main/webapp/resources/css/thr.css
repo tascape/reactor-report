@@ -7,12 +7,37 @@ pre {
 body {
     font-size: small;
     color: black;
-    margin: 10px;
-    border: 0px;
-    padding: 5px;
-    background: #fff;
     direction: ltr;
     overflow: auto;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+}
+
+#masthead {
+    background-color: rgb(185, 225, 245);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100
+}
+
+#masthead img {
+    vertical-align: bottom;
+    margin-left: 5px;
+}
+
+#masthead a {
+    text-decoration: none;
+}
+
+#main {
+    margin-top: 32px; 
+    margin-left: 10px; 
+    margin-right: 10px; 
 }
 
 a, a:visited, a:hover {

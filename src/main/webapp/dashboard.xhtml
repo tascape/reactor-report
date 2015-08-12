@@ -14,66 +14,82 @@
     </h:head>
     <h:body>
 
-        <h:panelGrid columns="2" style="margin-bottom: 10px">
+        <div id="masthead">
             <h:outputLink value="suites_result.xhtml">
                 <h:graphicImage library="img" name="home.png" alt="Home" />
             </h:outputLink>
             <h:outputText value="TestHarness Result Dashboard" style="font-size: x-large; font-variant: small-caps; font-weight: bold;" />
-        </h:panelGrid>
+        </div>
 
-        <p:chart type="bar" model="#{dashboardView.barModel}" style="height:106px" responsive="true" />
-        <p:spacer height="10" />
+        <div id="main">
+            <p:chart type="bar" model="#{dashboardView.barModel}" style="height:106px" responsive="true" />
+            <p:spacer height="10" />
 
-        <p:dataTable value="#{dashboardView.results}" var="row" rowIndexVar="rowIndex"
-                     rowKey="#{row.get('SUITE_RESULT_ID')}" selection="#{suitesResultView2.resultsSelected}">
-            <p:column headerText="Index" width="36">
-                <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') == 0}" />
-                <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') != 0}" style="color: lightgray" />
-            </p:column>
+            <p:dataTable value="#{dashboardView.results}" var="row" rowIndexVar="rowIndex"
+                         rowKey="#{row.get('SUITE_RESULT_ID')}" selection="#{suitesResultView2.resultsSelected}"
+                         sortBy="#{row.get('sort')}">
+                <p:column headerText="Index" width="36">
+                    <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') == 0}" />
+                    <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') != 0}" style="color: lightgray" />
+                </p:column>
 
-            <p:column headerText="Test Suite Name" rendered="#{empty suite}">
-                <ui:param name="suite" value="#{row.get('SUITE_NAME')}" />
-                <h:outputLink value="suites_result.xhtml?suite=#{suite}" target="_blank">#{suite}</h:outputLink>
-            </p:column>
+                <p:column headerText="Test Suite Name" rendered="#{empty suite}">
+                    <ui:param name="suite" value="#{row.get('SUITE_NAME')}" />
+                    <h:outputLink value="suites_result.xhtml?suite=#{suite}" target="_blank">#{suite}</h:outputLink>
+                </p:column>
 
-            <ui:param name="result" value="#{row.get('EXECUTION_RESULT')}" />
-            <p:column headerText="Result" style="white-space: nowrap;"  width="68">
-                <h:outputLink value="suite_result.xhtml?srid=#{row.get('SUITE_RESULT_ID')}" target="_blank">
-                    <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{result =='PASS'}" />
-                    <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{result =='FAIL'}" />
-                    <h:graphicImage library="img" name="skip.png" alt="#{result}" rendered="#{!(result == 'FAIL' || result == 'PASS')}" />
-                    #{result}
-                </h:outputLink>
-            </p:column>
+                <ui:param name="result" value="#{row.get('EXECUTION_RESULT')}" />
+                <p:column headerText="Result" style="white-space: nowrap;"  width="68">
+                    <h:outputLink value="suite_result.xhtml?srid=#{row.get('SUITE_RESULT_ID')}" target="_blank">
+                        <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{result =='PASS'}" />
+                        <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{result =='FAIL'}" />
+                        <h:graphicImage library="img" name="skip.png" alt="#{result}" rendered="#{!(result == 'FAIL' || result == 'PASS')}" />
+                        #{result}
+                    </h:outputLink>
+                </p:column>
 
-            <p:column width="50">
-                <f:facet name="header">
-                    <h:outputText value="# of&#10;Tests" escape="false" />
-                </f:facet>
-                <h:outputText value="#{row.get('NUMBER_OF_TESTS')}" style="float: right" />
-            </p:column>
+                <p:column width="50">
+                    <f:facet name="header">
+                        <h:outputText value="# of&#10;Tests" escape="false" />
+                    </f:facet>
+                    <h:outputText value="#{row.get('NUMBER_OF_TESTS')}" style="float: right" />
+                </p:column>
 
-            <p:column width="50">
-                <f:facet name="header">
-                    <h:outputText value="# of&#10;Failed" escape="false" />
-                </f:facet>
-                <h:outputText value="#{row.get('NUMBER_OF_FAILURE')}" style="float: right" />
-            </p:column>
+                <p:column width="50">
+                    <f:facet name="header">
+                        <h:outputText value="# of&#10;Failed" escape="false" />
+                    </f:facet>
+                    <h:outputText value="#{row.get('NUMBER_OF_FAILURE')}" style="float: right" />
+                </p:column>
 
-            <p:column width="68" headerText="Time">
-                <h:outputText value="#{(row.get('STOP_TIME') - row.get('START_TIME'))/1000.0}" style="font-family: monospace; float: right; white-space: pre;" >
-                    <f:convertNumber pattern="#0.000 S" />
-                </h:outputText>
-            </p:column>
-
-            <p:column headerText="Start Time" width="166">
-                <nobr>
-                    <h:outputText value="#{mySqlBaseBean.convertToDate(row.get('START_TIME'))}" style="font-family: monospace">
-                        <f:convertDateTime type="date" pattern="EEE yyyy-MM-dd HH:mm:ss" timeZone="US/Pacific" />
+                <p:column width="68" headerText="Time">
+                    <h:outputText value="#{(row.get('STOP_TIME') - row.get('START_TIME'))/1000.0}"
+                                  style="font-family: monospace; float: right; white-space: pre;" >
+                        <f:convertNumber pattern="#0.000 S" />
                     </h:outputText>
-                </nobr>
-            </p:column>
-        </p:dataTable>
+                </p:column>
 
+                <p:column headerText="Start Time" width="166">
+                    <nobr>
+                        <h:outputText value="#{mySqlBaseBean.convertToDate(row.get('START_TIME'))}" style="font-family: monospace">
+                            <f:convertDateTime type="date" pattern="EEE yyyy-MM-dd HH:mm:ss" timeZone="US/Pacific" />
+                        </h:outputText>
+                    </nobr>
+                </p:column>
+
+                <p:summaryRow >
+                    <p:column colspan="3" style="text-align: right">
+                        <h:outputText value="Total:" />
+                    </p:column>
+                    <p:column style="text-align: right">
+                        <h:outputText value="#{dashboardView.total}" />
+                    </p:column>
+                    <p:column style="text-align: right; color: red">
+                        <h:outputText value="#{dashboardView.fail}" />
+                    </p:column>
+                    <p:column colspan="2" />
+                </p:summaryRow>
+            </p:dataTable>
+        </div>
     </h:body>
 </html>

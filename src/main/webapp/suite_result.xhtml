@@ -25,91 +25,93 @@
         <ui:param name="url" value="#{suiteResultView.suiteResult.get('JOB_BUILD_URL')}" />
         <ui:param name="jn" value="#{suiteResultView.suiteResult.get('JOB_NAME')}" />
 
-        <h:panelGrid columns="2" style="margin-bottom: 10px">
+        <div id="masthead">
             <h:outputLink value="dashboard.xhtml">
                 <h:graphicImage library="img" name="home.png" alt="Home" />
             </h:outputLink>
             <h:outputLink value="suites_result.xhtml?suite=#{suite}" style="font-size: x-large; font-variant: small-caps; font-weight: bold;" >#{suite}</h:outputLink>
-        </h:panelGrid>
+        </div>
 
-        <h:panelGrid columns="5" >
-            <h:outputLink value="suites_result.xhtml?job=#{jn}" rendered="#{bn gt 0}"  style="font-size: large;" >#{jn}</h:outputLink>
-            <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank">Build ##{bn}</h:outputLink>
-            <h:outputText value="#{result}" class="result-pass" rendered="#{result == 'PASS'}" style="font-size: large;"/>
-            <h:outputText value="#{result}" class="result-fail" rendered="#{result != 'PASS'}" style="font-size: large;"/>
-            <h:outputText value="#{start}" style="font-family: monospace">
-                <f:convertDateTime type="date" pattern="EEE yyyy-MM-dd HH:mm:ss" timeZone="US/Pacific" />
-            </h:outputText>
-            <h:outputLink value="#" id="share">
-                <h:graphicImage library="img" name="share.png" alt="share" width="20" onclick="PF('share_suite_result').show();"/>
-            </h:outputLink>
-        </h:panelGrid>
-
-        <p:tooltip id="toolTipGrow" for="share" value="share this suite execution result" showEffect="clip"
-                   hideEffect="explode" />
-        <p:dialog header="Share" widgetVar="share_suite_result" fitViewport="true">
-            <ui:include src="suite_result_share.xhtml?srid=#{srid}" />
-        </p:dialog>
-
-        <p:chart type="bar" model="#{suiteResultView.barModel}" style="height:106px" responsive="true" />
-        <p:spacer height="10" />
-
-        <p:dataTable value="#{suiteResultView.testsResult}" var="row" rowIndexVar="rowIndex"
-                     rowKey="#{row.get('TEST_RESULT_ID')}">
-            <ui:param name="result" value="#{row.get('EXECUTION_RESULT')}" />
-
-            <p:column headerText="Index" width="36">
-                <h:outputText value="#{rowIndex + 1}" />
-            </p:column>
-
-            <p:column headerText="Test Class">
-                <h:outputText value="#{row.get('TEST_CLASS')}" />
-            </p:column>
-
-            <p:column headerText="Test Method">
-                <nobr><h:outputText value="#{row.get('TEST_METHOD')}(#{row.get('TEST_DATA')})" /></nobr>
-            </p:column>
-
-            <p:column headerText="Result" style="white-space: nowrap;">
-                <h:outputLink value="/logs/#{row.get('LOG_DIR')}/log.html" target="_blank">
-                    <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{result =='PASS'}" />
-                    <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{result =='FAIL'}" />
-                    <h:graphicImage library="img" name="skip.png" alt="#{result}" rendered="#{!(result == 'FAIL' || result == 'PASS')}" />
-                    #{result}
-                </h:outputLink>
-            </p:column>
-
-            <p:column width="68" headerText="Time">
-                <h:outputText value="#{(row.get('STOP_TIME') - row.get('START_TIME'))/1000.0}" style="font-family: monospace; float: right; white-space: nowrap" >
-                    <f:convertNumber pattern="#0.000 S" />
+        <div id="main">
+            <h:panelGrid columns="5" >
+                <h:outputLink value="suites_result.xhtml?job=#{jn}" rendered="#{bn gt 0}"  style="font-size: large;" >#{jn}</h:outputLink>
+                <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank">Build ##{bn}</h:outputLink>
+                <h:outputText value="#{result}" class="result-pass" rendered="#{result == 'PASS'}" style="font-size: large;"/>
+                <h:outputText value="#{result}" class="result-fail" rendered="#{result != 'PASS'}" style="font-size: large;"/>
+                <h:outputText value="#{start}" style="font-family: monospace">
+                    <f:convertDateTime type="date" pattern="EEE yyyy-MM-dd HH:mm:ss" timeZone="US/Pacific" />
                 </h:outputText>
-            </p:column>
+                <h:outputLink value="#" id="share">
+                    <h:graphicImage library="img" name="share.png" alt="share" width="20" onclick="PF('share_suite_result').show();"/>
+                </h:outputLink>
+            </h:panelGrid>
 
-            <p:column headerText="Start Time" width="166">
-                <nobr>
-                    <h:outputText value="#{mySqlBaseBean.convertToDate(row.get('START_TIME'))}" style="font-family: monospace">
-                        <f:convertDateTime type="date" pattern="EEE yyyy-MM-dd HH:mm:ss" timeZone="US/Pacific" />
+            <p:tooltip id="toolTipGrow" for="share" value="share this suite execution result" showEffect="clip"
+                       hideEffect="explode" />
+            <p:dialog header="Share" widgetVar="share_suite_result" fitViewport="true">
+                <ui:include src="suite_result_share.xhtml?srid=#{srid}" />
+            </p:dialog>
+
+            <p:chart type="bar" model="#{suiteResultView.barModel}" style="height:106px" responsive="true" />
+            <p:spacer height="10" />
+
+            <p:dataTable value="#{suiteResultView.testsResult}" var="row" rowIndexVar="rowIndex"
+                         rowKey="#{row.get('TEST_RESULT_ID')}">
+                <ui:param name="result" value="#{row.get('EXECUTION_RESULT')}" />
+
+                <p:column headerText="Index" width="36">
+                    <h:outputText value="#{rowIndex + 1}" />
+                </p:column>
+
+                <p:column headerText="Test Class">
+                    <h:outputText value="#{row.get('TEST_CLASS')}" />
+                </p:column>
+
+                <p:column headerText="Test Method">
+                    <nobr><h:outputText value="#{row.get('TEST_METHOD')}(#{row.get('TEST_DATA')})" /></nobr>
+                </p:column>
+
+                <p:column headerText="Result" style="white-space: nowrap;" width="68">
+                    <h:outputLink value="/logs/#{row.get('LOG_DIR')}/log.html" target="_blank">
+                        <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{result =='PASS'}" />
+                        <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{result =='FAIL'}" />
+                        <h:graphicImage library="img" name="skip.png" alt="#{result}" rendered="#{!(result == 'FAIL' || result == 'PASS')}" />
+                        #{result}
+                    </h:outputLink>
+                </p:column>
+
+                <p:column headerText="Time" width="68">
+                    <h:outputText value="#{(row.get('STOP_TIME') - row.get('START_TIME'))/1000.0}" style="font-family: monospace; float: right; white-space: nowrap" >
+                        <f:convertNumber pattern="#0.000 S" />
                     </h:outputText>
-                </nobr>
-            </p:column>
-        </p:dataTable>
+                </p:column>
 
-        <p:spacer height="28px" width="10px" />
-        <p:panelGrid columns="2" style="border-style: hidden;">
-            <c:forEach items="#{suiteResultView.suiteProperties}" var="row"  >
-                <h:outputText value="#{row.get('PROPERTY_NAME')}" />
-                <h:outputText value="#{row.get('PROPERTY_VALUE')}" />
-            </c:forEach>
-        </p:panelGrid>
-        <p:spacer height="28px" width="10px" />
+                <p:column headerText="Start Time" width="166">
+                    <nobr>
+                        <h:outputText value="#{mySqlBaseBean.convertToDate(row.get('START_TIME'))}" style="font-family: monospace">
+                            <f:convertDateTime type="date" pattern="EEE yyyy-MM-dd HH:mm:ss" timeZone="US/Pacific" />
+                        </h:outputText>
+                    </nobr>
+                </p:column>
+            </p:dataTable>
 
-        <h:link value="Mark Invisible" outcome="suite_result.xhtml" rendered="#{not invisible}">
-            <f:param name="srid" value="#{srid}" />
-            <f:param name="ti" value="#{true}" />
-        </h:link>
-        <h:link value="Mark Visible" outcome="suite_result.xhtml" rendered="#{invisible}">
-            <f:param name="srid" value="#{srid}" />
-            <f:param name="ti" value="#{true}" />
-        </h:link>
+            <p:spacer height="28px" width="10px" />
+            <p:panelGrid columns="2" style="border-style: hidden;">
+                <c:forEach items="#{suiteResultView.suiteProperties}" var="row"  >
+                    <h:outputText value="#{row.get('PROPERTY_NAME')}" />
+                    <h:outputText value="#{row.get('PROPERTY_VALUE')}" />
+                </c:forEach>
+            </p:panelGrid>
+            <p:spacer height="28px" width="10px" />
+
+            <h:link value="Mark Invisible" outcome="suite_result.xhtml" rendered="#{not invisible}">
+                <f:param name="srid" value="#{srid}" />
+                <f:param name="ti" value="#{true}" />
+            </h:link>
+            <h:link value="Mark Visible" outcome="suite_result.xhtml" rendered="#{invisible}">
+                <f:param name="srid" value="#{srid}" />
+                <f:param name="ti" value="#{true}" />
+            </h:link>
+        </div>
     </h:body>
 </html>

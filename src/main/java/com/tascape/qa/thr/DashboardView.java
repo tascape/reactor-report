@@ -54,10 +54,17 @@ public class DashboardView implements Serializable {
 
     private HorizontalBarChartModel barModel;
 
+    private int total;
+
+    private int fail;
+
     @PostConstruct
     public void init() {
         try {
             this.results = this.db.getLatestSuitesResult();
+            this.results.forEach(row -> {
+                row.put("sort", "a");
+            });
         } catch (NamingException | SQLException ex) {
             throw new RuntimeException(ex);
         }
@@ -81,6 +88,14 @@ public class DashboardView implements Serializable {
         return barModel;
     }
 
+    public int getTotal() {
+        return total;
+    }
+
+    public int getFail() {
+        return fail;
+    }
+
     private HorizontalBarChartModel initBarModel() {
         HorizontalBarChartModel model = new HorizontalBarChartModel();
         model.setLegendPosition("n");
@@ -92,10 +107,10 @@ public class DashboardView implements Serializable {
         model.setBarPadding(0);
         model.setAnimate(true);
 
-        ChartSeries fail = new ChartSeries();
-        fail.setLabel("FAIL");
-        ChartSeries pass = new ChartSeries();
-        pass.setLabel("PASS");
+        ChartSeries failSeries = new ChartSeries();
+        failSeries.setLabel("FAIL");
+        ChartSeries passSeries = new ChartSeries();
+        passSeries.setLabel("PASS");
         int f = 0;
         int t = 0;
         for (Map<String, Object> result : this.results) {
@@ -103,15 +118,18 @@ public class DashboardView implements Serializable {
             t += Integer.parseInt(result.get(SuiteResult.NUMBER_OF_TESTS) + "");
         }
         LOG.debug("fail {}, total {}", f, t);
-        fail.set(" ", f);
-        pass.set(" ", t - f);
-        model.addSeries(pass);
-        model.addSeries(fail);
+        failSeries.set(" ", f);
+        passSeries.set(" ", t - f);
+        model.addSeries(passSeries);
+        model.addSeries(failSeries);
+
+        this.total = t;
+        this.fail = f;
 
         Axis xAxis = new LinearAxis("Number of Tests");
         xAxis.setTickAngle(-90);
         xAxis.setMin(0);
-        xAxis.setTickInterval((t/100 + 1) + "");
+        xAxis.setTickInterval((t / 100 + 1) + "");
         xAxis.setMax(t);
         xAxis.setTickFormat("%03d");
         model.getAxes().put(AxisType.X, xAxis);

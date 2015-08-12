@@ -16,47 +16,52 @@
         <ui:param name="suite" value="#{suiteResultDetailHistoryView.suiteName}" />
         <ui:param name="job" value="#{suiteResultDetailHistoryView.jobName}" />
 
-        <h:panelGrid columns="2" style="margin-bottom: 10px">
+        <div id="masthead">
             <h:outputLink value="dashboard.xhtml">
                 <h:graphicImage library="img" name="home.png" alt="Home" />
             </h:outputLink>
-            <h:outputText value="Suite Result Detail History" style="font-size: x-large; font-variant: small-caps; font-weight: bold;" />
-        </h:panelGrid>
+            <h:outputText value="Suite Result Detail History"
+                          style="font-size: x-large; font-variant: small-caps; font-weight: bold;" />
+        </div>
 
-        <h:panelGrid columns="1">
-            <h:outputText value="#{suite}#{job}" style="font-size: large" />
-        </h:panelGrid>
+        <div id="main">
+            <h:panelGrid columns="1">
+                <h:outputText value="#{suite}#{job}" style="font-size: large" />
+            </h:panelGrid>
 
-        <p:dataTable value="#{suiteResultDetailHistoryView.suiteHistoryDetail}" var="row" rowIndexVar="rowIndex" tableStyle="width: auto">
-            <p:column headerText="Index" width="36">
-                <h:outputText value="#{rowIndex + 1}" />
-            </p:column>
+            <p:dataTable value="#{suiteResultDetailHistoryView.suiteHistoryDetail}" var="row" rowIndexVar="rowIndex"
+                         tableStyle="width:auto">
+                <p:column headerText="Index" >
+                    <h:outputText value="#{rowIndex + 1}" />
+                </p:column>
 
-            <p:column headerText="Test Case" style="white-space: pre;">
-                <ui:param name="tc" value="#{row.get('TEST_CASE')}" />
-                <h:outputLabel value="#{tc.get('TEST_CLASS')}.#{tc.get('TEST_METHOD')}(#{tc.get('TEST_DATA')})" />
-            </p:column>
+                <p:column headerText="Test Case" style="white-space: pre;">
+                    <ui:param name="tc" value="#{row.get('TEST_CASE')}" />
+                    <h:outputText value="#{tc.get('TEST_CLASS')}.#{tc.get('TEST_METHOD')}(#{tc.get('TEST_DATA')})" />
+                </p:column>
 
-            <p:columns value="#{suiteResultDetailHistoryView.suitesResult}" var="suiteResult"  style="white-space: nowrap;">
-                <ui:param name="srid" value="#{suiteResult.get('SUITE_RESULT_ID')}" />
-                <ui:param name="result" value="#{row.get(srid).get('EXECUTION_RESULT')}" />
-                <ui:param name="bn" value="#{suiteResult.get('JOB_BUILD_NUMBER')}" />
-                <ui:param name="url" value="#{suiteResult.get('JOB_BUILD_URL')}" />
-                <f:facet name="header">
-                    <h:outputText value="#{mySqlBaseBean.convertToDate(suiteResult.get('START_TIME'))}"
-                                  style="font-family: monospace; white-space: pre;">
-                        <f:convertDateTime type="date" pattern="yyyy-MM-dd&#10;HH:mm:ss&#10;" timeZone="US/Pacific" />
-                    </h:outputText>
-                    <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank" style="font: smaller monospace; color: blue">Build ##{bn}</h:outputLink>
-                </f:facet>
+                <p:columns value="#{suiteResultDetailHistoryView.suitesResult}" var="suiteResult"  style="white-space: nowrap;">
+                    <ui:param name="srid" value="#{suiteResult.get('SUITE_RESULT_ID')}" />
+                    <ui:param name="result" value="#{row.get(srid).get('EXECUTION_RESULT')}" />
+                    <ui:param name="bn" value="#{suiteResult.get('JOB_BUILD_NUMBER')}" />
+                    <ui:param name="url" value="#{suiteResult.get('JOB_BUILD_URL')}" />
+                    <f:facet name="header">
+                        <h:outputText value="#{mySqlBaseBean.convertToDate(suiteResult.get('START_TIME'))}"
+                                      style="font-family: monospace; white-space: pre;">
+                            <f:convertDateTime type="date" pattern="yyyy-MM-dd&#10;HH:mm:ss&#10;" timeZone="US/Pacific" />
+                        </h:outputText>
+                        <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank"
+                                      style="font: smaller monospace; color: blue">Build ##{bn}</h:outputLink>
+                    </f:facet>
 
-                <h:outputLink value="/logs/#{row.get(srid).get('LOG_DIR')}/log.html" target="_blank">
-                    <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{result =='PASS'}" />
-                    <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{result =='FAIL'}" />
-                    <h:graphicImage library="img" name="skip.png" alt="#{result}" rendered="#{!(result == 'FAIL' || result == 'PASS' || result == null)}" />
-                    #{result}
-                </h:outputLink>
-            </p:columns>
-        </p:dataTable>
+                    <h:outputLink value="/logs/#{row.get(srid).get('LOG_DIR')}/log.html" target="_blank">
+                        <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{result =='PASS'}" />
+                        <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{result =='FAIL'}" />
+                        <h:graphicImage library="img" name="skip.png" alt="#{result}" rendered="#{!(result == 'FAIL' || result == 'PASS' || result == null)}" />
+                        #{result}
+                    </h:outputLink>
+                </p:columns>
+            </p:dataTable>
+        </div>
     </h:body>
 </html>
