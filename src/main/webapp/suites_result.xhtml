@@ -67,15 +67,13 @@
                 <p:column headerText="Test Suite Name" rendered="#{empty suite}">
                     <ui:param name="s" value="#{row.get('SUITE_NAME')}" />
                     <h:outputLink onclick="thr.querySuiteResults('#{s}', null);
-                            return false;" rendered="#{not grouped}">#{s}</h:outputLink>
-                    <h:outputText rendered="#{grouped}" value="#{s}" />
+                            return false;">#{s}</h:outputLink>
                 </p:column>
 
                 <p:column headerText="Job Name" style="white-space: pre;" rendered="#{empty job}">
                     <ui:param name="s" value="#{row.get('JOB_NAME')}" />
                     <h:outputLink onclick="thr.querySuiteResults(null, '#{s}');
-                            return false;" rendered="#{not grouped}">#{s}</h:outputLink>
-                    <h:outputText rendered="#{grouped}" value="#{s}" />
+                            return false;">#{s}</h:outputLink>
                 </p:column>
 
                 <ui:param name="bn" value="#{row.get('JOB_BUILD_NUMBER')}" />
