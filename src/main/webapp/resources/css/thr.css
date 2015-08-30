@@ -44,6 +44,13 @@ a, a:visited, a:hover {
     color: #0000AA;
 }
 
+.seg-title {
+    text-align: left;
+    font-size: large;
+    font-variant: small-caps;
+    font-weight: bold;
+}
+
 .result-pass {
     color: green;
 }

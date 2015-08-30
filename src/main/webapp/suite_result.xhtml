@@ -59,7 +59,7 @@
                          rowKey="#{row.get('TEST_RESULT_ID')}">
                 <ui:param name="result" value="#{row.get('EXECUTION_RESULT')}" />
 
-                <p:column headerText="Index" width="36">
+                <p:column headerText="" width="36">
                     <h:outputText value="#{rowIndex + 1}" />
                 </p:column>
 
@@ -97,7 +97,31 @@
                 </p:column>
             </p:dataTable>
 
-            <p:spacer height="28px" width="10px" />
+            <p:outputPanel rendered="#{not empty suiteResultView.testMetrics}">
+            <p:spacer height="38px" width="10px" />
+            <h:outputText value="Test Result Metrics" styleClass="seg-title" />
+            <p:dataTable value="#{suiteResultView.testMetrics}" var="row" rowIndexVar="rowIndex" tableStyle="width:auto"
+                         rowKey="#{row.get('TEST_RESULT_METRIC_ID')}" >
+                <p:column headerText="" width="36">
+                    <h:outputText value="#{rowIndex + 1}" />
+                </p:column>
+
+                <p:column headerText="Group">
+                    <h:outputText value="#{row.get('METRIC_GROUP')}" />
+                </p:column>
+
+                <p:column headerText="Name">
+                    <h:outputText value="#{row.get('METRIC_NAME')}" />
+                </p:column>
+
+                <p:column headerText="Value">
+                    <h:outputText value="#{row.get('METRIC_VALUE')}" />
+                </p:column>
+            </p:dataTable>
+            </p:outputPanel>
+
+            <p:spacer height="38px" width="10px" />
+            <h:outputText value="Suite Execution System Properties" styleClass="seg-title" />
             <p:panelGrid columns="2" style="border-style: hidden;">
                 <c:forEach items="#{suiteResultView.suiteProperties}" var="row"  >
                     <h:outputText value="#{row.get('PROPERTY_NAME')}" />

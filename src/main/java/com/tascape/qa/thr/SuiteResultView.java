@@ -37,12 +37,12 @@ import org.primefaces.model.chart.LinearAxis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-    /**
-     *
-     * @author linsong wang
-     */
-    @Named
-    @RequestScoped
+/**
+ *
+ * @author linsong wang
+ */
+@Named
+@RequestScoped
 public class SuiteResultView implements Serializable {
     private static final Logger LOG = LoggerFactory.getLogger(SuiteResultView.class);
 
@@ -58,6 +58,8 @@ public class SuiteResultView implements Serializable {
     private Map<String, Object> suiteResult;
 
     private List<Map<String, Object>> testsResult;
+
+    private List<Map<String, Object>> testMetrics;
 
     private List<Map<String, Object>> suiteProperties;
 
@@ -75,6 +77,7 @@ public class SuiteResultView implements Serializable {
                 return;
             }
             this.testsResult = this.db.getTestsResult(this.srid);
+            this.testMetrics= this.db.getTestMetrics(this.srid);
             this.suiteProperties = this.db.getSuiteProperties(this.srid);
         } catch (NamingException | SQLException | IOException ex) {
             throw new RuntimeException(ex);
@@ -89,6 +92,10 @@ public class SuiteResultView implements Serializable {
 
     public List<Map<String, Object>> getTestsResult() {
         return testsResult;
+    }
+
+    public List<Map<String, Object>> getTestMetrics() {
+        return testMetrics;
     }
 
     public List<Map<String, Object>> getSuiteProperties() {
@@ -128,7 +135,7 @@ public class SuiteResultView implements Serializable {
         Axis xAxis = new LinearAxis("Number of Tests");
         xAxis.setTickAngle(-90);
         xAxis.setMin(0);
-        xAxis.setTickInterval((t/100 + 1) + "");
+        xAxis.setTickInterval((t / 100 + 1) + "");
         xAxis.setMax(t);
         xAxis.setTickFormat("%03d");
         model.getAxes().put(AxisType.X, xAxis);

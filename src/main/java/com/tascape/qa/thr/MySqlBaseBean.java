@@ -396,6 +396,20 @@ public class MySqlBaseBean implements Serializable {
         }
     }
 
+    List<Map<String, Object>> getTestMetrics(String srid) throws NamingException, SQLException {
+        String sql = "SELECT * FROM " + TestResultMetric.TABLE_NAME + " trm JOIN " + TestResult.TABLE_NAME + " tr"
+            + " ON trm." + TestResultMetric.TEST_RESULT_ID + "=" + "tr." + TestResult.TEST_RESULT_ID
+            + " WHERE " + TestResult.SUITE_RESULT + "=?"
+            + " ORDER BY " + TestResultMetric.METRIC_GROUP + "," + TestResultMetric.METRIC_NAME + ";";
+        try (Connection conn = this.getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, srid);
+            LOG.trace("{}", stmt);
+            ResultSet rs = stmt.executeQuery();
+            return this.dumpResultSetToList(rs);
+        }
+    }
+
     private Connection getConnection() throws NamingException, SQLException {
         Connection conn = this.ds.getConnection();
         if (conn == null) {
