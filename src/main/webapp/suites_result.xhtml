@@ -48,9 +48,10 @@
                 </p:selectOneMenu>
             </h:panelGrid>
 
-            <h:panelGrid columns="2" rendered="#{grouped}">
+            <h:panelGrid columns="3" rendered="#{grouped}">
                 <p:commandButton onclick="thr.querySuiteResults()" value="All Test Suites" style="font-size: xx-small" />
                 <p:commandButton onclick="thr.querySuiteResultDetail('#{suite}', '#{job}')" value="Detail History" style="font-size: xx-small" />
+                <p:commandButton onclick="thr.querySuiteMetricDetail('#{suite}', '#{job}')" value="Metrics History" style="font-size: xx-small" />
             </h:panelGrid>
 
             <p:chart type="bar" model="#{suitesResultView.barModel}" style="height:258px" rendered="false" responsive="true" />

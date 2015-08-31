@@ -16,7 +16,7 @@
 package com.tascape.qa.thr;
 
 import com.tascape.qa.th.db.SuiteResult;
-import com.tascape.qa.th.db.TestCase;
+import com.tascape.qa.th.db.TestResultMetric;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -38,9 +38,9 @@ import org.slf4j.LoggerFactory;
  */
 @Named
 @RequestScoped
-public class SuiteResultDetailHistoryView implements Serializable {
+public class SuiteMetricDetailHistoryView implements Serializable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SuiteResultDetailHistoryView.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SuiteMetricDetailHistoryView.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -61,7 +61,7 @@ public class SuiteResultDetailHistoryView implements Serializable {
 
     private List<Map<String, Object>> suitesResult;
 
-    private final List<Map<String, Map<String, Object>>> suiteHistoryDetail = new ArrayList<>();
+    private final List<Map<String, Map<String, Object>>> testMetricsHistoryDetail = new ArrayList<>();
 
     @PostConstruct
     public void init() {
@@ -74,30 +74,29 @@ public class SuiteResultDetailHistoryView implements Serializable {
             for (Map<String, Object> suiteResult : this.suitesResult) {
                 String srid = suiteResult.get(SuiteResult.SUITE_RESULT_ID).toString();
 
-                List<Map<String, Object>> testsResult = this.db.getTestsResult(srid);
-                for (Map<String, Object> testResult : testsResult) {
-
+                for (Map<String, Object> testResultMetric : this.db.getTestMetrics(srid)) {
                     boolean toAddOneRow = true;
-                    for (Map<String, Map<String, Object>> testHistory : this.suiteHistoryDetail) {
-                        Map<String, Object> tr = testHistory.get(srid);
+                    for (Map<String, Map<String, Object>> metrics : this.testMetricsHistoryDetail) {
+                        Map<String, Object> tr = metrics.get(srid);
                         if (tr != null) {
                             continue;
                         }
 
-                        TestCase testCase = new TestCase(testResult);
-                        TestCase tc = new TestCase(testHistory.get("TEST_CASE"));
-                        if (testCase.equals(tc)) {
-                            testHistory.put(srid, testResult);
+                        Object group = metrics.get("TEST_RESULT_METRIC").get(TestResultMetric.METRIC_GROUP);
+                        Object name = metrics.get("TEST_RESULT_METRIC").get(TestResultMetric.METRIC_NAME);
+                        if (group.equals(testResultMetric.get(TestResultMetric.METRIC_GROUP))
+                            && name.equals(testResultMetric.get(TestResultMetric.METRIC_NAME))) {
+                            metrics.put(srid, testResultMetric);
                             toAddOneRow = false;
                             break;
                         }
                     }
 
                     if (toAddOneRow) {
-                        Map<String, Map<String, Object>> testHistory = new HashMap<>();
-                        testHistory.put("TEST_CASE", testResult);
-                        testHistory.put(srid, testResult);
-                        this.suiteHistoryDetail.add(testHistory); // add one row
+                        Map<String, Map<String, Object>> metrics = new HashMap<>();
+                        metrics.put("TEST_RESULT_METRIC", testResultMetric);
+                        metrics.put(srid, testResultMetric);
+                        this.testMetricsHistoryDetail.add(metrics); // add one row
                     }
                 }
             }
@@ -158,8 +157,8 @@ public class SuiteResultDetailHistoryView implements Serializable {
         return suitesResult;
     }
 
-    public List<Map<String, Map<String, Object>>> getSuiteHistoryDetail() {
-        return suiteHistoryDetail;
+    public List<Map<String, Map<String, Object>>> getTestMetricsHistoryDetail() {
+        return testMetricsHistoryDetail;
     }
 
     private void getParameters() {

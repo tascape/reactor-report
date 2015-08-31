@@ -13,14 +13,14 @@
         <title>Suite Result History Detail</title>
     </h:head>
     <h:body>
-        <ui:param name="suite" value="#{suiteResultDetailHistoryView.suiteName}" />
-        <ui:param name="job" value="#{suiteResultDetailHistoryView.jobName}" />
+        <ui:param name="suite" value="#{suiteMetricDetailHistoryView.suiteName}" />
+        <ui:param name="job" value="#{suiteMetricDetailHistoryView.jobName}" />
 
         <div id="masthead">
             <h:outputLink value="dashboard.xhtml">
                 <h:graphicImage library="img" name="home.png" alt="Home" />
             </h:outputLink>
-            <h:outputText value="Suite Result Detail History"
+            <h:outputText value="Suite Metrics Detail History"
                           style="font-size: x-large; font-variant: small-caps; font-weight: bold;" />
         </div>
 
@@ -30,24 +30,22 @@
                 <h:outputLink value="suites_result.xhtml?job=#{job}" rendered="#{not empty job}" style="font-size: large;">#{job}</h:outputLink>
             </h:panelGrid>
 
-            <p:dataTable value="#{suiteResultDetailHistoryView.suiteHistoryDetail}" var="row" rowIndexVar="rowIndex"
+            <p:dataTable value="#{suiteMetricDetailHistoryView.testMetricsHistoryDetail}" var="row" rowIndexVar="rowIndex"
                          tableStyle="width:auto">
-                <ui:param name="tc" value="#{row.get('TEST_CASE')}" />
+                <ui:param name="trm" value="#{row.get('TEST_RESULT_METRIC')}" />
                 <p:column headerText="" >
                     <h:outputText value="#{rowIndex + 1}" />
                 </p:column>
 
-                <p:column headerText="Test Class" style="white-space: pre;">
-                    <h:outputText value="#{tc.get('TEST_CLASS')}" />
+                <p:column headerText="Group" style="white-space: pre;">
+                    <h:outputText value="#{trm.get('METRIC_GROUP')}" />
+                </p:column>
+                <p:column headerText="Name" style="white-space: pre;">
+                    <h:outputText value="#{trm.get('METRIC_NAME')}" />
                 </p:column>
 
-                <p:column headerText="Test Method" style="white-space: pre;">
-                    <h:outputText value="#{tc.get('TEST_METHOD')}(#{tc.get('TEST_DATA')})" />
-                </p:column>
-
-                <p:columns value="#{suiteResultDetailHistoryView.suitesResult}" var="suiteResult"  style="white-space: nowrap;">
+                <p:columns value="#{suiteMetricDetailHistoryView.suitesResult}" var="suiteResult"  style="white-space: nowrap;">
                     <ui:param name="srid" value="#{suiteResult.get('SUITE_RESULT_ID')}" />
-                    <ui:param name="result" value="#{row.get(srid).get('EXECUTION_RESULT')}" />
                     <ui:param name="bn" value="#{suiteResult.get('JOB_BUILD_NUMBER')}" />
                     <ui:param name="url" value="#{suiteResult.get('JOB_BUILD_URL')}" />
                     <f:facet name="header">
@@ -58,13 +56,7 @@
                         <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank"
                                       style="font: smaller monospace; color: blue">Build ##{bn}</h:outputLink>
                     </f:facet>
-
-                    <h:outputLink value="/logs/#{row.get(srid).get('LOG_DIR')}/log.html" target="_blank">
-                        <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{result =='PASS'}" />
-                        <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{result =='FAIL'}" />
-                        <h:graphicImage library="img" name="skip.png" alt="#{result}" rendered="#{!(result == 'FAIL' || result == 'PASS' || result == null)}" />
-                        #{result}
-                    </h:outputLink>
+                    <h:outputText value="#{row.get(srid).get('METRIC_VALUE')}" />
                 </p:columns>
             </p:dataTable>
         </div>
