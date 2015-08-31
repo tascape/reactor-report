@@ -13,7 +13,7 @@
         <dependency>
             <groupId>com.tascape.qa</groupId>
             <artifactId>testharness</artifactId>
-            <version>[1.0.19, 1.1.0)</version>
+            <version>[1.0.23, 1.1.0)</version>
         </dependency>
         <dependency>
             <groupId>org.primefaces</groupId>
@@ -142,7 +142,7 @@
                                     <artifactId>javaee-endorsed-api</artifactId>
                                     <version>7.0</version>
                                     <type>jar</type>
-                                </artifactItem>
+                                    </artifactItem>
                             </artifactItems>
                         </configuration>
                     </execution>
