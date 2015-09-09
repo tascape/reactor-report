@@ -55,6 +55,8 @@ import org.slf4j.LoggerFactory;
 public class MySqlBaseBean implements Serializable {
     private static final Logger LOG = LoggerFactory.getLogger(MySqlBaseBean.class);
 
+    private static final long serialVersionUID = 1L;
+
     @Resource(name = "jdbc/thr")
     private DataSource ds;
 
@@ -63,6 +65,19 @@ public class MySqlBaseBean implements Serializable {
             + SuiteResult.TABLE_NAME + " WHERE NOT INVISIBLE_ENTRY ORDER BY " + SuiteResult.START_TIME + " DESC) AS T"
             + " GROUP BY " + SuiteResult.SUITE_NAME
             + " ORDER BY " + SuiteResult.SUITE_NAME + ";";
+        try (Connection conn = this.getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            LOG.trace("{}", stmt);
+            ResultSet rs = stmt.executeQuery();
+            return this.dumpResultSetToList(rs);
+        }
+    }
+
+    public List<Map<String, Object>> getLatestJobsResult() throws NamingException, SQLException {
+        String sql = "SELECT * FROM (SELECT * FROM "
+            + SuiteResult.TABLE_NAME + " WHERE NOT INVISIBLE_ENTRY ORDER BY " + SuiteResult.START_TIME + " DESC) AS T"
+            + " GROUP BY " + SuiteResult.JOB_NAME
+            + " ORDER BY " + SuiteResult.JOB_NAME + ";";
         try (Connection conn = this.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(sql);
             LOG.trace("{}", stmt);
