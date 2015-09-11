@@ -22,7 +22,10 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    z-index: 100
+    z-index: 100;
+    font-size: xx-large;
+    font-variant: small-caps;
+    font-weight: bold;
 }
 
 #masthead img {
@@ -35,7 +38,7 @@ body {
 }
 
 #main {
-    margin-top: 32px; 
+    margin-top: 43px; 
     margin-left: 10px; 
     margin-right: 10px; 
 }
