@@ -15,21 +15,39 @@
  */
 package com.tascape.qa.thr;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import com.tascape.qa.th.db.SuiteResult;
 import java.io.Serializable;
-import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.stream.IntStream;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.naming.NamingException;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
-import org.primefaces.model.chart.BarChartModel;
-import org.primefaces.model.chart.ChartSeries;
-import org.primefaces.model.chart.LinearAxis;
+import org.primefaces.model.chart.CategoryAxis;
+import org.primefaces.model.chart.LegendPlacement;
+import org.primefaces.model.chart.LineChartModel;
+import org.primefaces.model.chart.LineChartSeries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,77 +65,142 @@ public class HistoryViewBySuite implements Serializable {
     @Inject
     private MySqlBaseBean db;
 
-    private List<Map<String, Object>> results;
+    private final Table<String, LocalDate, Integer> history = HashBasedTable.create();
 
-    private BarChartModel barModel;
+    private final Set<String> suites = new HashSet<>();
 
-    private int total;
+    private final Set<LocalDate> dates = new HashSet<>();
 
-    private int fail;
+    private final Map<LocalDate, Integer> totals = new HashMap<>();
+
+    private LineChartModel chartModel;
+
+    private int interval = 1;
+
+    private int entries = 30;
 
     @PostConstruct
     public void init() {
-        try {
-            this.results = this.db.getLatestSuitesResult();
-            this.results.forEach(row -> {
-                row.put("sort", "a");
-            });
-        } catch (NamingException | SQLException ex) {
-            throw new RuntimeException(ex);
-        }
+        this.getParameters();
+        LOG.debug("interval {} day(s)", this.interval);
+        LOG.debug("number of entries {}", this.entries);
+        LocalDate now = LocalDate.now();
 
-        this.barModel = this.createBarModel();
+        ExecutorService es = Executors.newFixedThreadPool(1);
+        CompletionService<Map.Entry<LocalDate, List<Map<String, Object>>>> cs = new ExecutorCompletionService<>(es);
+
+        List<Future<Map.Entry<LocalDate, List<Map<String, Object>>>>> futures = new ArrayList<>();
+        IntStream.range(0, entries).forEach(i -> {
+            LocalDate date = now.minusDays(i * interval);
+            futures.add(cs.submit(new Snapshot(date)));
+        });
+        Set<LocalDate> ds = new HashSet<>();
+        futures.forEach(f -> {
+            try {
+                Map.Entry<LocalDate, List<Map<String, Object>>> entry = f.get();
+                LocalDate date = entry.getKey();
+                ds.add(date);
+                entry.getValue().forEach(row -> {
+                    String suite = row.get(SuiteResult.SUITE_NAME).toString();
+                    suites.add(suite);
+                    history.put(suite, date, (Integer) row.get(SuiteResult.NUMBER_OF_TESTS));
+                });
+            } catch (InterruptedException | ExecutionException ex) {
+                LOG.warn("", ex);
+            }
+        });
+        es.shutdown();
+        ds.forEach(date -> {
+            int total = history.column(date).values().stream().mapToInt(Integer::intValue).sum();
+            if (total > 0) {
+                dates.add(date);
+                totals.put(date, total);
+            }
+        });
+
+        this.chartModel = this.createChartModel();
     }
 
-    public List<Map<String, Object>> getResults() {
-        return results;
+    public LineChartModel getChartModel() {
+        return chartModel;
     }
 
-    public BarChartModel getBarModel() {
-        return barModel;
+    public int getInterval() {
+        return interval;
     }
 
-    public int getTotal() {
-        return total;
+    public int getEntries() {
+        return entries;
     }
 
-    public int getFail() {
-        return fail;
+    public List<LocalDate> getDates() {
+        List<LocalDate> l = new ArrayList<>(this.dates);
+        Collections.sort(l);
+        Collections.reverse(l);
+        return l;
     }
 
-    private BarChartModel createBarModel() {
-        BarChartModel model = new BarChartModel();
-        model.setBarMargin(0);
-        model.setBarPadding(0);
+    public List<String> getSuites() {
+        List<String> l = new ArrayList<>(this.suites);
+        Collections.sort(l);
+        return l;
+    }
+
+    public Table<String, LocalDate, Integer> getHistory() {
+        return this.history;
+    }
+
+    public Map<LocalDate, Integer> getTotals() {
+        return totals;
+    }
+
+    private LineChartModel createChartModel() {
+        LineChartModel model = new LineChartModel();
+        model.setLegendPosition("n");
+        model.setLegendPlacement(LegendPlacement.OUTSIDEGRID);
         model.setAnimate(true);
+        model.setShowPointLabels(true);
 
-        ChartSeries failSeries = new ChartSeries();
-        failSeries.setLabel("FAIL");
-        ChartSeries passSeries = new ChartSeries();
-        passSeries.setLabel("PASS");
-        int f = 0;
-        int t = 0;
-        for (Map<String, Object> result : this.results) {
-            f += Integer.parseInt(result.get(SuiteResult.NUMBER_OF_FAILURE) + "");
-            t += Integer.parseInt(result.get(SuiteResult.NUMBER_OF_TESTS) + "");
-        }
-        LOG.debug("fail {}, total {}", f, t);
-        failSeries.set(" ", f);
-        passSeries.set(" ", t - f);
-        model.addSeries(passSeries);
-        model.addSeries(failSeries);
+        LineChartSeries ts = new LineChartSeries();
+        ts.setLabel("Number of Tests");
+        model.addSeries(ts);
+        this.getDates().forEach(date -> {
+            ts.set(date.toString(), totals.get(date));
+        });
 
-        this.total = t;
-        this.fail = f;
-        
         model.getAxis(AxisType.Y).setLabel("Number of Tests");
-        Axis xAxis = new LinearAxis("Date");
-        xAxis.setTickAngle(-90);
-        xAxis.setMin(0);
-        xAxis.setTickInterval((t / 100 + 1) + "");
-        xAxis.setMax(t);
-        xAxis.setTickFormat("%03d");
+        Axis xAxis = new CategoryAxis("Date");
+        xAxis.setTickAngle(-45);
         model.getAxes().put(AxisType.X, xAxis);
         return model;
+    }
+
+    private class Snapshot implements Callable<Map.Entry<LocalDate, List<Map<String, Object>>>> {
+        private final LocalDate date;
+
+        public Snapshot(LocalDate date) {
+            this.date = date;
+        }
+
+        @Override
+        public Map.Entry<LocalDate, List<Map<String, Object>>> call() throws Exception {
+            long epoch = date.atStartOfDay(ZoneId.of("UTC")).toEpochSecond() * 1000;
+            return new AbstractMap.SimpleEntry<>(date, db.getLatestSuitesResult(epoch));
+        }
+    }
+
+    private void getParameters() {
+        Map<String, String> map = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        String v = map.get("interval");
+        if (v != null) {
+            this.interval = Integer.parseInt(v);
+        }
+        v = map.get("entries");
+        if (v != null) {
+            this.entries = Integer.parseInt(v);
+            if (this.entries > 30) {
+                this.entries = 30;
+            }
+        }
     }
 }

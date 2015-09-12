@@ -61,8 +61,14 @@ public class MySqlBaseBean implements Serializable {
     private DataSource ds;
 
     public List<Map<String, Object>> getLatestSuitesResult() throws NamingException, SQLException {
+        return this.getLatestSuitesResult(System.currentTimeMillis());
+    }
+
+    List<Map<String, Object>> getLatestSuitesResult(long date) throws NamingException, SQLException {
         String sql = "SELECT * FROM (SELECT * FROM "
-            + SuiteResult.TABLE_NAME + " WHERE NOT INVISIBLE_ENTRY ORDER BY " + SuiteResult.START_TIME + " DESC) AS T"
+            + SuiteResult.TABLE_NAME + " WHERE (NOT INVISIBLE_ENTRY) AND ("
+            + SuiteResult.START_TIME + " < " + date
+            + ") ORDER BY " + SuiteResult.START_TIME + " DESC) AS T"
             + " GROUP BY " + SuiteResult.SUITE_NAME
             + " ORDER BY " + SuiteResult.SUITE_NAME + ";";
         try (Connection conn = this.getConnection()) {
