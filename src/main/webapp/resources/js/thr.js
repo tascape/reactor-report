@@ -1,4 +1,8 @@
 (function (thr, $, undefined) {
+    thr.setTimeZoneCookie = function () {
+        var offset = new Date().getTimezoneOffset();
+        document.cookie = "TIMEZONE_COOKIE=" + offset; //Cookie name with value
+    };
 
     thr.querySuiteResults = function (suite, job) {
         var start = PF("wv_start").getDate().getTime();
@@ -36,3 +40,5 @@
         location.replace("suite_metric_history_detail.xhtml" + search);
     };
 }(window.thr = window.thr || {}, jQuery));
+
+thr.setTimeZoneCookie();

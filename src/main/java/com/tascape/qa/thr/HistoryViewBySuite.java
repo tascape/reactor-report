@@ -21,6 +21,7 @@ import com.tascape.qa.th.db.SuiteResult;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
@@ -57,7 +59,7 @@ import org.slf4j.LoggerFactory;
  */
 @Named
 @RequestScoped
-public class HistoryViewBySuite implements Serializable {
+public class HistoryViewBySuite extends AbstractReportView implements Serializable {
     private static final Logger LOG = LoggerFactory.getLogger(HistoryViewBySuite.class);
 
     private static final long serialVersionUID = 1L;
@@ -65,13 +67,15 @@ public class HistoryViewBySuite implements Serializable {
     @Inject
     private MySqlBaseBean db;
 
-    private final Table<String, LocalDate, Integer> history = HashBasedTable.create();
+    private final Table<String, LocalDate, Map<String, Object>> history = HashBasedTable.create();
 
     private final Set<String> suites = new HashSet<>();
 
-    private final Set<LocalDate> dates = new HashSet<>();
+    private final Set<LocalDate> dates = new TreeSet<>((LocalDate o1, LocalDate o2) -> o2.compareTo(o1));
 
     private final Map<LocalDate, Integer> totals = new HashMap<>();
+
+    private final Map<LocalDate, Integer> fails = new HashMap<>();
 
     private LineChartModel chartModel;
 
@@ -84,6 +88,46 @@ public class HistoryViewBySuite implements Serializable {
         this.getParameters();
         LOG.debug("interval {} day(s)", this.interval);
         LOG.debug("number of entries {}", this.entries);
+
+        this.loadData();
+        this.chartModel = this.createChartModel();
+    }
+
+    public LineChartModel getChartModel() {
+        return chartModel;
+    }
+
+    public int getInterval() {
+        return interval;
+    }
+
+    public int getEntries() {
+        return entries;
+    }
+
+    public Set<LocalDate> getDates() {
+        return this.dates;
+    }
+
+    public List<String> getSuites() {
+        List<String> l = new ArrayList<>(this.suites);
+        Collections.sort(l);
+        return l;
+    }
+
+    public Table<String, LocalDate, Map<String, Object>> getHistory() {
+        return this.history;
+    }
+
+    public Map<LocalDate, Integer> getTotals() {
+        return totals;
+    }
+
+    public Map<LocalDate, Integer> getFails() {
+        return fails;
+    }
+
+    private void loadData() {
         LocalDate now = LocalDate.now();
 
         ExecutorService es = Executors.newFixedThreadPool(1);
@@ -103,55 +147,26 @@ public class HistoryViewBySuite implements Serializable {
                 entry.getValue().forEach(row -> {
                     String suite = row.get(SuiteResult.SUITE_NAME).toString();
                     suites.add(suite);
-                    history.put(suite, date, (Integer) row.get(SuiteResult.NUMBER_OF_TESTS));
+                    history.put(suite, date, row);
                 });
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.warn("", ex);
             }
         });
         es.shutdown();
-        ds.forEach(date -> {
-            int total = history.column(date).values().stream().mapToInt(Integer::intValue).sum();
+        ds.forEach((LocalDate date) -> {
+            int total = history.column(date).values().stream()
+                .mapToInt(row -> (Integer) row.get(SuiteResult.NUMBER_OF_TESTS))
+                .sum();
+            int fail = history.column(date).values().stream()
+                .mapToInt(row -> (Integer) row.get(SuiteResult.NUMBER_OF_FAILURE))
+                .sum();
             if (total > 0) {
                 dates.add(date);
                 totals.put(date, total);
+                fails.put(date, fail);
             }
         });
-
-        this.chartModel = this.createChartModel();
-    }
-
-    public LineChartModel getChartModel() {
-        return chartModel;
-    }
-
-    public int getInterval() {
-        return interval;
-    }
-
-    public int getEntries() {
-        return entries;
-    }
-
-    public List<LocalDate> getDates() {
-        List<LocalDate> l = new ArrayList<>(this.dates);
-        Collections.sort(l);
-        Collections.reverse(l);
-        return l;
-    }
-
-    public List<String> getSuites() {
-        List<String> l = new ArrayList<>(this.suites);
-        Collections.sort(l);
-        return l;
-    }
-
-    public Table<String, LocalDate, Integer> getHistory() {
-        return this.history;
-    }
-
-    public Map<LocalDate, Integer> getTotals() {
-        return totals;
     }
 
     private LineChartModel createChartModel() {
@@ -162,14 +177,13 @@ public class HistoryViewBySuite implements Serializable {
         model.setShowPointLabels(true);
 
         LineChartSeries ts = new LineChartSeries();
-        ts.setLabel("Number of Tests");
+        ts.setLabel("Total Number of Tests");
         model.addSeries(ts);
         this.getDates().forEach(date -> {
             ts.set(date.toString(), totals.get(date));
         });
 
-        model.getAxis(AxisType.Y).setLabel("Number of Tests");
-        Axis xAxis = new CategoryAxis("Date");
+        Axis xAxis = new CategoryAxis();
         xAxis.setTickAngle(-45);
         model.getAxes().put(AxisType.X, xAxis);
         return model;
@@ -184,7 +198,8 @@ public class HistoryViewBySuite implements Serializable {
 
         @Override
         public Map.Entry<LocalDate, List<Map<String, Object>>> call() throws Exception {
-            long epoch = date.atStartOfDay(ZoneId.of("UTC")).toEpochSecond() * 1000;
+            ZoneId zi = ZoneId.ofOffset("", ZoneOffset.ofHoursMinutes(HistoryViewBySuite.this.clientTimezone, 0));
+            long epoch = date.atStartOfDay(zi).plusDays(1).toEpochSecond() * 1000;
             return new AbstractMap.SimpleEntry<>(date, db.getLatestSuitesResult(epoch));
         }
     }
@@ -202,5 +217,6 @@ public class HistoryViewBySuite implements Serializable {
                 this.entries = 30;
             }
         }
+        LOG.debug("client timezone {}", this.clientTimezone);
     }
 }

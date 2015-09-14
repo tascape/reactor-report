@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -57,6 +58,8 @@ public class MySqlBaseBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private static final Map<Long, List<Map<String, Object>>> LOADED_LATEST_SUITES_RESULT = new ConcurrentHashMap<>();
+
     @Resource(name = "jdbc/thr")
     private DataSource ds;
 
@@ -65,6 +68,11 @@ public class MySqlBaseBean implements Serializable {
     }
 
     List<Map<String, Object>> getLatestSuitesResult(long date) throws NamingException, SQLException {
+        List<Map<String, Object>> list = LOADED_LATEST_SUITES_RESULT.get(date);
+        if (list != null) {
+            LOG.debug("retrieved from cache {}", date);
+            return list;
+        }
         String sql = "SELECT * FROM (SELECT * FROM "
             + SuiteResult.TABLE_NAME + " WHERE (NOT INVISIBLE_ENTRY) AND ("
             + SuiteResult.START_TIME + " < " + date
@@ -75,7 +83,9 @@ public class MySqlBaseBean implements Serializable {
             PreparedStatement stmt = conn.prepareStatement(sql);
             LOG.trace("{}", stmt);
             ResultSet rs = stmt.executeQuery();
-            return this.dumpResultSetToList(rs);
+            list = this.dumpResultSetToList(rs);
+            LOADED_LATEST_SUITES_RESULT.put(date, list);
+            return list;
         }
     }
 

@@ -36,27 +36,34 @@
                     <h:outputLink value="suites_result.xhtml?suite=#{suite}" target="_blank">#{suite}</h:outputLink>
                 </p:column>
 
-                <p:columns value="#{historyViewBySuite.dates}" var="date" style="white-space: nowrap;">
+                <p:columns value="#{historyViewBySuite.dates}" var="date">
+                    <ui:param name="row" value="#{historyViewBySuite.history.get(suite, date)}" />
+                    <ui:param name="total" value="#{row.get('NUMBER_OF_TESTS')}" />
+                    <ui:param name="fail" value="#{row.get('NUMBER_OF_FAILURE')}" />
                     <f:facet name="header">
-                        <h:outputText value="#{date}" />
+                        <h:outputText value="#{date}" style="white-space: pre" />
                     </f:facet>
-                    <h:outputText value="#{historyViewBySuite.history.get(suite, date)}" style="float: right" />
+                    <div>
+                        <h:outputLink value="suite_result.xhtml?srid=#{row.get('SUITE_RESULT_ID')}" target="_blank">#{total}</h:outputLink>
+                        <span style="float: right;" />
+                        <h:outputText value="#{fail}" style="float: right; font-weight: bolder; color: red;" rendered="#{fail > 0}" />
+                    </div>
                 </p:columns>
 
                 <p:columnGroup type="footer">
                     <p:row>
-                        <p:column colspan="2" style="text-align: right" footerText="Total:" />
+                        <p:column colspan="2" style="text-align: right" footerText="Total Number of Tests" />
                         <ui:repeat value="#{historyViewBySuite.dates}" var="date">
-                            <p:column style="text-align: right" footerText="#{historyViewBySuite.totals.get(date)}" />
+                            <p:column style="text-align: left" footerText="#{historyViewBySuite.totals.get(date)}" />
                         </ui:repeat>
                     </p:row>
                 </p:columnGroup>
             </p:dataTable>
         </div>
         <p:stack icon="/resources/images/stack.png" expanded="true">
-            <p:menuitem value="History1" icon="/resources/images/history.png" url="history.xhtml?interval=1&amp;entries=30" />
-            <p:menuitem value="History7" icon="/resources/images/history.png" url="history.xhtml?interval=7&amp;entries=30" />
             <p:menuitem value="Current" icon="/resources/images/current.png" url="dashboard.xhtml" />
+            <p:menuitem value="Weekly" icon="/resources/images/history.png" url="history.xhtml?interval=7&amp;entries=26" />
+            <p:menuitem value="Daily" icon="/resources/images/history.png" url="history.xhtml?interval=1&amp;entries=30" />
         </p:stack>
     </h:body>
 </html>
