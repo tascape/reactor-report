@@ -41,6 +41,10 @@
                             <h:outputLink value="suites_result.xhtml?suite=#{suite}" target="_blank">#{suite}</h:outputLink>
                         </p:column>
 
+                        <p:column headerText="Product under Test" style="white-space: pre;">
+                            <h:outputText value="#{row.get('PRODUCT_UNDER_TEST')}" escape="false" />
+                        </p:column>
+
                         <ui:param name="result" value="#{row.get('EXECUTION_RESULT')}" />
                         <p:column headerText="Result" style="white-space: nowrap;"  width="68">
                             <h:outputLink value="suite_result.xhtml?srid=#{row.get('SUITE_RESULT_ID')}" target="_blank">
@@ -110,6 +114,10 @@
                         <p:column headerText="Execution Job Name">
                             <ui:param name="job" value="#{row.get('JOB_NAME')}" />
                             <h:outputLink value="suites_result.xhtml?job=#{job}" target="_blank">#{job}</h:outputLink>
+                        </p:column>
+
+                        <p:column headerText="Product under Test" style="white-space: pre;">
+                            <h:outputText value="#{row.get('PRODUCT_UNDER_TEST')}" escape="false" />
                         </p:column>
 
                         <ui:param name="result" value="#{row.get('EXECUTION_RESULT')}" />

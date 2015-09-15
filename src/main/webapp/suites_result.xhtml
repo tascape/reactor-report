@@ -82,6 +82,10 @@
                                 return false;">#{s}</h:outputLink>
                     </p:column>
 
+                    <p:column headerText="Product under Test" style="white-space: pre;">
+                        <h:outputText value="#{row.get('PRODUCT_UNDER_TEST')}" escape="false" />
+                    </p:column>
+
                     <ui:param name="bn" value="#{row.get('JOB_BUILD_NUMBER')}" />
                     <ui:param name="url" value="#{row.get('JOB_BUILD_URL')}" />
                     <p:column width="40">
