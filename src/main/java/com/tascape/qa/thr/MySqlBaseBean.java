@@ -84,7 +84,10 @@ public class MySqlBaseBean implements Serializable {
             LOG.trace("{}", stmt);
             ResultSet rs = stmt.executeQuery();
             list = this.dumpResultSetToList(rs);
-            LOADED_LATEST_SUITES_RESULT.put(date, list);
+            if (date < System.currentTimeMillis()) {
+                LOG.debug("cache history data");
+                LOADED_LATEST_SUITES_RESULT.put(date, list);
+            }
             return list;
         }
     }

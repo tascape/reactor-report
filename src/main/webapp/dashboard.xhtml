@@ -45,6 +45,15 @@
                             <h:outputText value="#{row.get('PRODUCT_UNDER_TEST')}" escape="false" />
                         </p:column>
 
+                        <ui:param name="bn" value="#{row.get('JOB_BUILD_NUMBER')}" />
+                        <ui:param name="url" value="#{row.get('JOB_BUILD_URL')}" />
+                        <p:column width="40">
+                            <f:facet name="header">
+                                <h:outputText value="Build&#10;#" escape="false" />
+                            </f:facet>
+                            <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank">#{bn}</h:outputLink>
+                        </p:column>
+
                         <ui:param name="result" value="#{row.get('EXECUTION_RESULT')}" />
                         <p:column headerText="Result" style="white-space: nowrap;"  width="68">
                             <h:outputLink value="suite_result.xhtml?srid=#{row.get('SUITE_RESULT_ID')}" target="_blank">
@@ -85,7 +94,7 @@
                         </p:column>
 
                         <p:summaryRow >
-                            <p:column colspan="3" style="text-align: right">
+                            <p:column colspan="5" style="text-align: right">
                                 <h:outputText value="Total Number of Tests" />
                             </p:column>
                             <p:column style="text-align: right">
@@ -120,6 +129,15 @@
                             <h:outputText value="#{row.get('PRODUCT_UNDER_TEST')}" escape="false" />
                         </p:column>
 
+                        <ui:param name="bn" value="#{row.get('JOB_BUILD_NUMBER')}" />
+                        <ui:param name="url" value="#{row.get('JOB_BUILD_URL')}" />
+                        <p:column width="40">
+                            <f:facet name="header">
+                                <h:outputText value="Build&#10;#" escape="false" />
+                            </f:facet>
+                            <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank">#{bn}</h:outputLink>
+                        </p:column>
+
                         <ui:param name="result" value="#{row.get('EXECUTION_RESULT')}" />
                         <p:column headerText="Result" style="white-space: nowrap;"  width="68">
                             <h:outputLink value="suite_result.xhtml?srid=#{row.get('SUITE_RESULT_ID')}" target="_blank">
@@ -160,7 +178,7 @@
                         </p:column>
 
                         <p:summaryRow >
-                            <p:column colspan="3" style="text-align: right">
+                            <p:column colspan="5" style="text-align: right">
                                 <h:outputText value="Total Number of Tests" />
                             </p:column>
                             <p:column style="text-align: right">
