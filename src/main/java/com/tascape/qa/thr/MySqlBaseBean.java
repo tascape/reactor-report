@@ -76,6 +76,7 @@ public class MySqlBaseBean implements Serializable {
         String sql = "SELECT * FROM (SELECT * FROM "
             + SuiteResult.TABLE_NAME + " WHERE (NOT INVISIBLE_ENTRY) AND ("
             + SuiteResult.START_TIME + " < " + date
+            + " AND " + SuiteResult.START_TIME + " > " + (date - 604800000) // a week
             + ") ORDER BY " + SuiteResult.START_TIME + " DESC) AS T"
             + " GROUP BY " + SuiteResult.SUITE_NAME
             + " ORDER BY " + SuiteResult.SUITE_NAME + ";";

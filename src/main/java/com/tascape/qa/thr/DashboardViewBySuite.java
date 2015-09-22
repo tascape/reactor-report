@@ -126,7 +126,7 @@ public class DashboardViewBySuite implements Serializable {
         this.total = t;
         this.fail = f;
 
-        Axis xAxis = new LinearAxis("Number of Tests");
+        Axis xAxis = new LinearAxis("Total Number of Tests");
         xAxis.setTickAngle(-90);
         xAxis.setMin(0);
         xAxis.setTickInterval((t / 100 + 1) + "");
