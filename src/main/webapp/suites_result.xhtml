@@ -64,7 +64,7 @@
                 </p:panel>
 
                 <p:dataTable value="#{suitesResultView.results}" var="row" rowIndexVar="rowIndex"
-                             rowKey="#{row.get('SUITE_RESULT_ID')}" selection="#{suitesResultView.resultsSelected}">
+                             rowKey="#{row.get('SUITE_RESULT_ID')}" selection="#{suitesResultView.resultsSelected}" resizableColumns="true">
                     <p:column headerText="" width="36">
                         <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') == 0}" />
                         <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') != 0}" style="color: lightgray" />
