@@ -52,7 +52,7 @@
                 <ui:include src="suite_result_share.xhtml?srid=#{srid}" />
             </p:dialog>
 
-            <p:chart type="bar" model="#{suiteResultView.barModel}" style="height:106px" responsive="true" />
+            <p:chart type="bar" model="#{suiteResultView.barModel}" style="height:#{suiteResultView.chartHeight}px" responsive="true" />
             <p:spacer height="10" />
 
             <p:dataTable value="#{suiteResultView.testsResult}" var="row" rowIndexVar="rowIndex"
@@ -98,26 +98,26 @@
             </p:dataTable>
 
             <p:outputPanel rendered="#{not empty suiteResultView.testMetrics}">
-            <p:spacer height="38px" width="10px" />
-            <h:outputText value="Test Result Metrics" styleClass="seg-title" />
-            <p:dataTable value="#{suiteResultView.testMetrics}" var="row" rowIndexVar="rowIndex" tableStyle="width:auto"
-                         rowKey="#{row.get('TEST_RESULT_METRIC_ID')}" >
-                <p:column headerText="" width="36">
-                    <h:outputText value="#{rowIndex + 1}" />
-                </p:column>
+                <p:spacer height="38px" width="10px" />
+                <h:outputText value="Test Result Metrics" styleClass="seg-title" />
+                <p:dataTable value="#{suiteResultView.testMetrics}" var="row" rowIndexVar="rowIndex" tableStyle="width:auto"
+                             rowKey="#{row.get('TEST_RESULT_METRIC_ID')}" >
+                    <p:column headerText="" width="36">
+                        <h:outputText value="#{rowIndex + 1}" />
+                    </p:column>
 
-                <p:column headerText="Group">
-                    <h:outputText value="#{row.get('METRIC_GROUP')}" />
-                </p:column>
+                    <p:column headerText="Group">
+                        <h:outputText value="#{row.get('METRIC_GROUP')}" />
+                    </p:column>
 
-                <p:column headerText="Name">
-                    <h:outputText value="#{row.get('METRIC_NAME')}" />
-                </p:column>
+                    <p:column headerText="Name">
+                        <h:outputText value="#{row.get('METRIC_NAME')}" />
+                    </p:column>
 
-                <p:column headerText="Value">
-                    <h:outputText value="#{row.get('METRIC_VALUE')}" />
-                </p:column>
-            </p:dataTable>
+                    <p:column headerText="Value">
+                        <h:outputText value="#{row.get('METRIC_VALUE')}" />
+                    </p:column>
+                </p:dataTable>
             </p:outputPanel>
 
             <p:spacer height="38px" width="10px" />

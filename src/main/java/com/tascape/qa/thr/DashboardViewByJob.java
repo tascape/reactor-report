@@ -54,6 +54,8 @@ public class DashboardViewByJob implements Serializable {
 
     private HorizontalBarChartModel barModel;
 
+    private int chartHeight = 88;
+
     private int total;
 
     private int fail;
@@ -96,6 +98,10 @@ public class DashboardViewByJob implements Serializable {
         return fail;
     }
 
+    public int getChartHeight() {
+        return chartHeight;
+    }
+
     private HorizontalBarChartModel initBarModel() {
         HorizontalBarChartModel model = new HorizontalBarChartModel();
         model.setLegendPosition("n");
@@ -105,7 +111,7 @@ public class DashboardViewByJob implements Serializable {
         model.setStacked(true);
         model.setBarMargin(0);
         model.setBarPadding(0);
-        model.setAnimate(true);
+        model.setAnimate(false);
 
         ChartSeries failSeries = new ChartSeries();
         failSeries.setLabel("FAIL");
@@ -129,10 +135,14 @@ public class DashboardViewByJob implements Serializable {
         Axis xAxis = new LinearAxis("Total Number of Tests");
         xAxis.setTickAngle(-90);
         xAxis.setMin(0);
-        xAxis.setTickInterval((t / 100 + 1) + "");
+        if (t <= 28) {
+            xAxis.setTickInterval("1");
+        }
         xAxis.setMax(t);
-        xAxis.setTickFormat("%03d");
+        xAxis.setTickFormat("%" + (t + "").length() + "d");
         model.getAxes().put(AxisType.X, xAxis);
+
+        this.chartHeight = 86 + (t + "").length() * 7;
         return model;
     }
 }

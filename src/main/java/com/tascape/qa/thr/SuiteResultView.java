@@ -65,6 +65,8 @@ public class SuiteResultView implements Serializable {
 
     private HorizontalBarChartModel barModel;
 
+    private int chartHeight = 88;
+
     @PostConstruct
     public void init() {
         this.getParameters();
@@ -77,7 +79,7 @@ public class SuiteResultView implements Serializable {
                 return;
             }
             this.testsResult = this.db.getTestsResult(this.srid);
-            this.testMetrics= this.db.getTestMetrics(this.srid);
+            this.testMetrics = this.db.getTestMetrics(this.srid);
             this.suiteProperties = this.db.getSuiteProperties(this.srid);
         } catch (NamingException | SQLException | IOException ex) {
             throw new RuntimeException(ex);
@@ -110,6 +112,10 @@ public class SuiteResultView implements Serializable {
         return barModel;
     }
 
+    public int getChartHeight() {
+        return chartHeight;
+    }
+
     private HorizontalBarChartModel initBarModel() {
         HorizontalBarChartModel model = new HorizontalBarChartModel();
         model.setLegendPosition("n");
@@ -119,7 +125,7 @@ public class SuiteResultView implements Serializable {
         model.setStacked(true);
         model.setBarMargin(0);
         model.setBarPadding(0);
-        model.setAnimate(true);
+        model.setAnimate(false);
 
         ChartSeries fail = new ChartSeries();
         fail.setLabel("FAIL");
@@ -135,10 +141,14 @@ public class SuiteResultView implements Serializable {
         Axis xAxis = new LinearAxis("Number of Tests");
         xAxis.setTickAngle(-90);
         xAxis.setMin(0);
-        xAxis.setTickInterval((t / 100 + 1) + "");
+        if (t <= 28) {
+            xAxis.setTickInterval("1");
+        }
         xAxis.setMax(t);
-        xAxis.setTickFormat("%03d");
+        xAxis.setTickFormat("%" + (t + "").length() + "d");
         model.getAxes().put(AxisType.X, xAxis);
+
+        this.chartHeight = 86 + (t + "").length() * 7;
         return model;
     }
 

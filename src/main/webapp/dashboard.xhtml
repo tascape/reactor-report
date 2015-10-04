@@ -25,7 +25,7 @@
         <div id="main">
             <p:tabView dynamic="true" cache="true" orientation="bottom" style="border-width: 0">
                 <p:tab title="Test Suite">
-                    <p:chart type="bar" model="#{dashboardViewBySuite.barModel}" style="height:106px" responsive="true" />
+                    <p:chart type="bar" model="#{dashboardViewBySuite.barModel}" style="height:#{dashboardViewBySuite.chartHeight}px" responsive="true" />
                     <p:spacer height="10" />
 
                     <p:dataTable value="#{dashboardViewBySuite.results}" var="row" rowIndexVar="rowIndex"
@@ -109,7 +109,7 @@
                 </p:tab>
 
                 <p:tab title="Execution Job">
-                    <p:chart type="bar" model="#{dashboardViewByJob.barModel}" style="height:106px" responsive="true" />
+                    <p:chart type="bar" model="#{dashboardViewByJob.barModel}" style="height:#{dashboardViewByJob.chartHeight}px" responsive="true" />
                     <p:spacer height="10" />
 
                     <p:dataTable value="#{dashboardViewByJob.results}" var="row" rowIndexVar="rowIndex"
