@@ -16,9 +16,12 @@
 package com.tascape.qa.thr;
 
 import com.tascape.qa.th.db.SuiteResult;
+import com.tascape.qa.th.db.TestResultMetric;
 import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -28,6 +31,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.naming.NamingException;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.ChartSeries;
@@ -158,6 +162,38 @@ public class SuiteResultView implements Serializable {
         String url = context.getRequestContextPath() + context.getRequestServletPath() + "?srid=" + srid;
         LOG.debug("redirect to {}", url);
         context.redirect(url);
+    }
+
+    private void processMetrics() {
+        Map<String, Map<String, Object>> tm = new HashMap<>();
+        this.testMetrics.forEach(row -> {
+            String key = row.get(TestResultMetric.METRIC_GROUP) + "." + row.get(TestResultMetric.METRIC_NAME);
+            Map<String, Object> r = tm.get(key);
+            if (r == null) {
+                tm.put(key, row);
+                List<Double> values = new ArrayList<>();
+                values.add((double) row.get(TestResultMetric.METRIC_VALUE));
+                row.put("values", values);
+            } else {
+                @SuppressWarnings("unchecked")
+                List<Double> values = (List<Double>) r.get("values");
+                values.add((double) row.get(TestResultMetric.METRIC_VALUE));
+            }
+        });
+
+        tm.values().stream().forEach(row -> {
+            @SuppressWarnings("unchecked")
+            List<Double> values = (List<Double>) row.get("values");
+            if (values.size() > 1) {
+                DescriptiveStatistics stats = new DescriptiveStatistics();
+                values.forEach(v -> stats.addValue(v));
+                row.put("max", stats.getMax());
+                row.put("min", stats.getMin());
+                row.put("mean", stats.getMean());
+            }
+        });
+
+        this.testMetrics = new ArrayList<>(tm.values());
     }
 
     private void getParameters() {

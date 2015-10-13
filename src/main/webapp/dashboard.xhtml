@@ -114,7 +114,7 @@
 
                     <p:dataTable value="#{dashboardViewByJob.results}" var="row" rowIndexVar="rowIndex"
                                  rowKey="#{row.get('SUITE_RESULT_ID')}" selection="#{suitesResultView2.resultsSelected}"
-                                 sortBy="#{row.get('sort')}">
+                                 sortBy="#{row.get('sort')}" resizableColumns="true">
                         <p:column headerText="" width="36">
                             <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') == 0}" />
                             <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') != 0}" style="color: lightgray" />

@@ -166,7 +166,7 @@ public class SuitesResultView implements Serializable {
         model.setLegendCols(3);
         model.setSeriesColors("00ff00, ff0000");
         model.setStacked(true);
-        model.setAnimate(true);
+        model.setAnimate(false);
         model.setShowPointLabels(true);
         model.setZoom(true);
 

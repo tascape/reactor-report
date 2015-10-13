@@ -60,6 +60,8 @@ public class MySqlBaseBean implements Serializable {
 
     private static final Map<Long, List<Map<String, Object>>> LOADED_LATEST_SUITES_RESULT = new ConcurrentHashMap<>();
 
+    private static final Map<Long, List<Map<String, Object>>> LOADED_LATEST_JOBS_RESULT = new ConcurrentHashMap<>();
+
     @Resource(name = "jdbc/thr")
     private DataSource ds;
 
@@ -94,15 +96,32 @@ public class MySqlBaseBean implements Serializable {
     }
 
     public List<Map<String, Object>> getLatestJobsResult() throws NamingException, SQLException {
+        return this.getLatestJobsResult(System.currentTimeMillis());
+    }
+
+    public List<Map<String, Object>> getLatestJobsResult(long date) throws NamingException, SQLException {
+        List<Map<String, Object>> list = LOADED_LATEST_JOBS_RESULT.get(date);
+        if (list != null) {
+            LOG.debug("retrieved from cache {}", date);
+            return list;
+        }
         String sql = "SELECT * FROM (SELECT * FROM "
-            + SuiteResult.TABLE_NAME + " WHERE NOT INVISIBLE_ENTRY ORDER BY " + SuiteResult.START_TIME + " DESC) AS T"
+            + SuiteResult.TABLE_NAME + " WHERE (NOT INVISIBLE_ENTRY) AND ("
+            + SuiteResult.START_TIME + " < " + date
+            + " AND " + SuiteResult.START_TIME + " > " + (date - 604800000) // a week
+            + ") ORDER BY " + SuiteResult.START_TIME + " DESC) AS T"
             + " GROUP BY " + SuiteResult.JOB_NAME
             + " ORDER BY " + SuiteResult.JOB_NAME + ";";
         try (Connection conn = this.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(sql);
             LOG.trace("{}", stmt);
             ResultSet rs = stmt.executeQuery();
-            return this.dumpResultSetToList(rs);
+            list = this.dumpResultSetToList(rs);
+            if (date < System.currentTimeMillis()) {
+                LOG.debug("cache history data");
+                LOADED_LATEST_JOBS_RESULT.put(date, list);
+            }
+            return list;
         }
     }
 
@@ -112,9 +131,9 @@ public class MySqlBaseBean implements Serializable {
         String sql = "SELECT * FROM " + SuiteResult.TABLE_NAME
             + " WHERE " + SuiteResult.START_TIME + " > ?"
             + " AND " + SuiteResult.STOP_TIME + " < ?";
-        if (notEmpty(suiteName)) {
+        if (StringUtils.isNotEmpty(suiteName)) {
             sql += " AND " + SuiteResult.SUITE_NAME + " = ?";
-        } else if (notEmpty(jobName)) {
+        } else if (StringUtils.isNotEmpty(jobName)) {
             sql += " AND " + SuiteResult.JOB_NAME + " = ?";
         }
         if (!invisibleIncluded) {
@@ -125,9 +144,9 @@ public class MySqlBaseBean implements Serializable {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setLong(1, startTime);
             stmt.setLong(2, stopTime);
-            if (notEmpty(suiteName)) {
+            if (StringUtils.isNotEmpty(suiteName)) {
                 stmt.setString(3, suiteName);
-            } else if (notEmpty(jobName)) {
+            } else if (StringUtils.isNotEmpty(jobName)) {
                 stmt.setString(3, jobName);
             }
             LOG.trace("{}", stmt);
@@ -406,16 +425,6 @@ public class MySqlBaseBean implements Serializable {
             LOG.trace("ldt {}", ldt);
             return ldt.toInstant(ZoneOffset.ofHours(-8)).toEpochMilli();
         }
-    }
-
-    public static boolean notEmpty(String string) {
-        if (string == null) {
-            return false;
-        }
-        if (string.trim().isEmpty()) {
-            return false;
-        }
-        return true;
     }
 
     List<Map<String, Object>> getSuiteProperties(String srid) throws NamingException, SQLException {

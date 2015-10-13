@@ -117,6 +117,18 @@
                     <p:column headerText="Value">
                         <h:outputText value="#{row.get('METRIC_VALUE')}" />
                     </p:column>
+
+                    <p:column headerText="Min">
+                        <h:outputText value="#{row.get('min')}" />
+                    </p:column>
+
+                    <p:column headerText="Max">
+                        <h:outputText value="#{row.get('max')}" />
+                    </p:column>
+
+                    <p:column headerText="Mean">
+                        <h:outputText value="#{row.get('mean')}" />
+                    </p:column>
                 </p:dataTable>
             </p:outputPanel>
 
