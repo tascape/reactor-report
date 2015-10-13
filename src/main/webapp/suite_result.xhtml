@@ -115,7 +115,7 @@
                     </p:column>
 
                     <p:column headerText="Value">
-                        <h:outputText value="#{row.get('METRIC_VALUE')}" />
+                        <h:outputText value="#{row.get('METRIC_VALUE')}" rendered="#{empty row.get('size')}" />
                     </p:column>
 
                     <p:column headerText="Min">
@@ -128,6 +128,10 @@
 
                     <p:column headerText="Mean">
                         <h:outputText value="#{row.get('mean')}" />
+                    </p:column>
+
+                    <p:column headerText="Number of Samples">
+                        <h:outputText value="#{row.get('size')}" />
                     </p:column>
                 </p:dataTable>
             </p:outputPanel>

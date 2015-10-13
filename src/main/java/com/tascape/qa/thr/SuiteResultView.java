@@ -190,6 +190,7 @@ public class SuiteResultView implements Serializable {
                 row.put("max", stats.getMax());
                 row.put("min", stats.getMin());
                 row.put("mean", stats.getMean());
+                row.put("size", values.size());
             }
         });
 
