@@ -85,6 +85,8 @@ public class SuiteResultView implements Serializable {
             this.testsResult = this.db.getTestsResult(this.srid);
             this.testMetrics = this.db.getTestMetrics(this.srid);
             this.suiteProperties = this.db.getSuiteProperties(this.srid);
+            
+            this.processMetrics();
         } catch (NamingException | SQLException | IOException ex) {
             throw new RuntimeException(ex);
         }
