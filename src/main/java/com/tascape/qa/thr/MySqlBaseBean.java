@@ -280,7 +280,7 @@ public class MySqlBaseBean implements Serializable {
             rs.moveToInsertRow();
             for (int col = 1; col <= rsmd.getColumnCount(); col++) {
                 String cn = rsmd.getColumnLabel(col);
-                rs.updateObject(cn, sr.get(cn));
+                rs.updateObject(cn, sr.opt(cn));
             }
             rs.insertRow();
             rs.last();
