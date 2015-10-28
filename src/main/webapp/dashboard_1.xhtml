@@ -1,0 +1,218 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <meta http-equiv="refresh" content="181" />
+        <h:outputStylesheet library="css" name="thr.css" />
+        <h:outputStylesheet library="css" name="primefaces-ex.css" />
+        <h:outputScript library="js" name="thr.js" />
+        <link rel="icon" type="image/png" href="#{request.contextPath}/resources/img/favicon.png" />
+        <title>TestHarness Result Dashboard</title>
+    </h:head>
+    <h:body>
+
+        <div id="masthead">
+            <h:form>
+                <p:menubar>
+                    <p:menuitem >
+                        <h:outputLink value="suites_result.xhtml" >
+                            <h:graphicImage library="img" name="home.png" alt="Home" /></h:outputLink>
+                    </p:menuitem>
+                    <p:menuitem value="TestHarness Result Dashboard" />
+
+                    <p:submenu label="Projects" style=" vertical-align: bottom;font-size: small" >
+                        <p:menuitem value="Ads" url="?project=ads" icon="ui-icon-extlink"/>
+                        <p:menuitem value="All" url="?" icon="ui-icon-extlink"/>
+                    </p:submenu>
+
+                    <f:facet name="">
+                        <p:menuitem value="" >
+                            <h:graphicImage library="img" name="home.png" alt="Home" />
+                        </p:menuitem>
+                    </f:facet>
+                </p:menubar>
+            </h:form>
+        </div>
+
+        <div id="main">
+            <p:tabView dynamic="true" cache="true" orientation="bottom" style="border-width: 0">
+                <p:tab title="Test Suite">
+                    <p:chart type="bar" model="#{dashboardViewBySuite.barModel}" style="height:#{dashboardViewBySuite.chartHeight}px" responsive="true" />
+                    <p:spacer height="10" />
+
+                    <p:dataTable value="#{dashboardViewBySuite.results}" var="row" rowIndexVar="rowIndex"
+                                 rowKey="#{row.get('SUITE_RESULT_ID')}" selection="#{suitesResultView2.resultsSelected}"
+                                 sortBy="#{row.get('sort')}" resizableColumns="true">
+                        <p:column headerText="" width="36">
+                            <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') == 0}" />
+                            <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') != 0}" style="color: lightgray" />
+                        </p:column>
+
+                        <p:column headerText="Test Suite Name">
+                            <ui:param name="suite" value="#{row.get('SUITE_NAME')}" />
+                            <h:outputLink value="suites_result.xhtml?suite=#{suite}" target="_blank">#{suite}</h:outputLink>
+                        </p:column>
+
+                        <p:column headerText="Product under Test" style="white-space: pre;">
+                            <h:outputText value="#{row.get('PRODUCT_UNDER_TEST')}" escape="false" />
+                        </p:column>
+
+                        <ui:param name="bn" value="#{row.get('JOB_BUILD_NUMBER')}" />
+                        <ui:param name="url" value="#{row.get('JOB_BUILD_URL')}" />
+                        <p:column width="40">
+                            <f:facet name="header">
+                                <h:outputText value="Build&#10;#" escape="false" />
+                            </f:facet>
+                            <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank">#{bn}</h:outputLink>
+                        </p:column>
+
+                        <ui:param name="result" value="#{row.get('EXECUTION_RESULT')}" />
+                        <p:column headerText="Result" style="white-space: nowrap;"  width="68">
+                            <h:outputLink value="suite_result.xhtml?srid=#{row.get('SUITE_RESULT_ID')}" target="_blank">
+                                <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{result =='PASS'}" />
+                                <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{result =='FAIL'}" />
+                                <h:graphicImage library="img" name="skip.png" alt="#{result}" rendered="#{!(result == 'FAIL' || result == 'PASS')}" />
+                                #{result}
+                            </h:outputLink>
+                        </p:column>
+
+                        <p:column width="50">
+                            <f:facet name="header">
+                                <h:outputText value="# of&#10;Tests" escape="false" />
+                            </f:facet>
+                            <h:outputText value="#{row.get('NUMBER_OF_TESTS')}" style="float: right" />
+                        </p:column>
+
+                        <p:column width="50">
+                            <f:facet name="header">
+                                <h:outputText value="# of&#10;Failed" escape="false" />
+                            </f:facet>
+                            <h:outputText value="#{row.get('NUMBER_OF_FAILURE')}" style="float: right" />
+                        </p:column>
+
+                        <p:column width="68" headerText="Time">
+                            <h:outputText value="#{(row.get('STOP_TIME') - row.get('START_TIME'))/1000.0}"
+                                          style="font-family: monospace; float: right; white-space: pre;" >
+                                <f:convertNumber pattern="#0.000 S" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Start Time" width="166">
+                            <nobr>
+                                <h:outputText value="#{mySqlBaseBean.convertToDate(row.get('START_TIME'))}" style="font-family: monospace">
+                                    <f:convertDateTime type="date" pattern="EEE yyyy-MM-dd HH:mm:ss" timeZone="US/Pacific" />
+                                </h:outputText>
+                            </nobr>
+                        </p:column>
+
+                        <p:summaryRow >
+                            <p:column colspan="5" style="text-align: right">
+                                <h:outputText value="Total Number of Tests" />
+                            </p:column>
+                            <p:column style="text-align: right">
+                                <h:outputText value="#{dashboardViewBySuite.total}" />
+                            </p:column>
+                            <p:column style="text-align: right; color: red">
+                                <h:outputText value="#{dashboardViewBySuite.fail}" />
+                            </p:column>
+                            <p:column colspan="2" />
+                        </p:summaryRow>
+                    </p:dataTable>
+                </p:tab>
+
+                <p:tab title="Execution Job">
+                    <p:chart type="bar" model="#{dashboardViewByJob.barModel}" style="height:#{dashboardViewByJob.chartHeight}px" responsive="true" />
+                    <p:spacer height="10" />
+
+                    <p:dataTable value="#{dashboardViewByJob.results}" var="row" rowIndexVar="rowIndex"
+                                 rowKey="#{row.get('SUITE_RESULT_ID')}" selection="#{suitesResultView2.resultsSelected}"
+                                 sortBy="#{row.get('sort')}" resizableColumns="true">
+                        <p:column headerText="" width="36">
+                            <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') == 0}" />
+                            <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') != 0}" style="color: lightgray" />
+                        </p:column>
+
+                        <p:column headerText="Execution Job Name">
+                            <ui:param name="job" value="#{row.get('JOB_NAME')}" />
+                            <h:outputLink value="suites_result.xhtml?job=#{job}" target="_blank">#{job}</h:outputLink>
+                        </p:column>
+
+                        <p:column headerText="Product under Test" style="white-space: pre;">
+                            <h:outputText value="#{row.get('PRODUCT_UNDER_TEST')}" escape="false" />
+                        </p:column>
+
+                        <ui:param name="bn" value="#{row.get('JOB_BUILD_NUMBER')}" />
+                        <ui:param name="url" value="#{row.get('JOB_BUILD_URL')}" />
+                        <p:column width="40">
+                            <f:facet name="header">
+                                <h:outputText value="Build&#10;#" escape="false" />
+                            </f:facet>
+                            <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank">#{bn}</h:outputLink>
+                        </p:column>
+
+                        <ui:param name="result" value="#{row.get('EXECUTION_RESULT')}" />
+                        <p:column headerText="Result" style="white-space: nowrap;"  width="68">
+                            <h:outputLink value="suite_result.xhtml?srid=#{row.get('SUITE_RESULT_ID')}" target="_blank">
+                                <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{result =='PASS'}" />
+                                <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{result =='FAIL'}" />
+                                <h:graphicImage library="img" name="skip.png" alt="#{result}" rendered="#{!(result == 'FAIL' || result == 'PASS')}" />
+                                #{result}
+                            </h:outputLink>
+                        </p:column>
+
+                        <p:column width="50">
+                            <f:facet name="header">
+                                <h:outputText value="# of&#10;Tests" escape="false" />
+                            </f:facet>
+                            <h:outputText value="#{row.get('NUMBER_OF_TESTS')}" style="float: right" />
+                        </p:column>
+
+                        <p:column width="50">
+                            <f:facet name="header">
+                                <h:outputText value="# of&#10;Failed" escape="false" />
+                            </f:facet>
+                            <h:outputText value="#{row.get('NUMBER_OF_FAILURE')}" style="float: right" />
+                        </p:column>
+
+                        <p:column width="68" headerText="Time">
+                            <h:outputText value="#{(row.get('STOP_TIME') - row.get('START_TIME'))/1000.0}"
+                                          style="font-family: monospace; float: right; white-space: pre;" >
+                                <f:convertNumber pattern="#0.000 S" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Start Time" width="166">
+                            <nobr>
+                                <h:outputText value="#{mySqlBaseBean.convertToDate(row.get('START_TIME'))}" style="font-family: monospace">
+                                    <f:convertDateTime type="date" pattern="EEE yyyy-MM-dd HH:mm:ss" timeZone="US/Pacific" />
+                                </h:outputText>
+                            </nobr>
+                        </p:column>
+
+                        <p:summaryRow >
+                            <p:column colspan="5" style="text-align: right">
+                                <h:outputText value="Total Number of Tests" />
+                            </p:column>
+                            <p:column style="text-align: right">
+                                <h:outputText value="#{dashboardViewByJob.total}" />
+                            </p:column>
+                            <p:column style="text-align: right; color: red">
+                                <h:outputText value="#{dashboardViewByJob.fail}" />
+                            </p:column>
+                            <p:column colspan="2" />
+                        </p:summaryRow>
+                    </p:dataTable>
+                </p:tab>
+            </p:tabView>
+        </div>
+        <p:stack icon="/resources/images/stack.png" expanded="true">
+            <p:menuitem value="Current" icon="/resources/images/current.png" url="dashboard.xhtml" />
+            <p:menuitem value="Weekly" icon="/resources/images/history.png" url="history.xhtml?interval=7&amp;entries=26" />
+            <p:menuitem value="Daily" icon="/resources/images/history.png" url="history.xhtml?interval=1&amp;entries=30" />
+        </p:stack>
+    </h:body>
+</html>
