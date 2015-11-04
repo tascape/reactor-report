@@ -90,7 +90,7 @@
                     <ui:param name="url" value="#{row.get('JOB_BUILD_URL')}" />
                     <p:column width="43">
                         <f:facet name="header">
-                            <h:outputText value="Build&#10;#" escape="false" />
+                            <h:outputText value="Build&#10;#" escape="false" style="white-space: pre-wrap" />
                         </f:facet>
                         <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank">#{bn}</h:outputLink>
                     </p:column>
@@ -107,14 +107,14 @@
 
                     <p:column width="50">
                         <f:facet name="header">
-                            <h:outputText value="# of&#10;Tests" escape="false" />
+                            <h:outputText value="# of&#10;Tests" escape="false" style="white-space: pre-wrap" />
                         </f:facet>
                         <h:outputText value="#{row.get('NUMBER_OF_TESTS')}" style="float: right" />
                     </p:column>
 
                     <p:column width="50">
                         <f:facet name="header">
-                            <h:outputText value="# of&#10;Failed" escape="false" />
+                            <h:outputText value="# of&#10;Failed" escape="false" style="white-space: pre-wrap" />
                         </f:facet>
                         <h:outputText value="#{row.get('NUMBER_OF_FAILURE')}" style="float: right" />
                     </p:column>

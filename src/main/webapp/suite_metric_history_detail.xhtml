@@ -49,7 +49,7 @@
                     <ui:param name="url" value="#{suiteResult.get('JOB_BUILD_URL')}" />
                     <f:facet name="header">
                         <h:outputText value="#{mySqlBaseBean.convertToDate(suiteResult.get('START_TIME'))}"
-                                      style="font-family: monospace; white-space: pre;">
+                                      style="font-family: monospace; white-space: pre-wrap;">
                             <f:convertDateTime type="date" pattern="yyyy-MM-dd&#10;HH:mm:ss&#10;" timeZone="US/Pacific" />
                         </h:outputText>
                         <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank"
