@@ -1,5 +1,5 @@
 /*
- * Copyright 2015.
+ * Copyright 2016 tascape.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class DashboardView implements Serializable {
     @Inject
     private MySqlBaseBean db;
 
-    private static final Map<String, String> projects = new HashMap<>();
+    private static final Map<String, String> PROJECTS = new HashMap<>();
 
     private List<Map<String, Object>> results;
 
@@ -61,8 +61,8 @@ public class DashboardView implements Serializable {
     private int fail;
 
     static {
-        projects.put("advertising", "advertising");
-        projects.put("recommendation", "recommendation");
+        PROJECTS.put("go90", "Go90");
+        PROJECTS.put("iptv", "IPTV");
     }
 
     public void showProject(String project) throws IOException {
@@ -101,7 +101,7 @@ public class DashboardView implements Serializable {
     }
 
     public Map<String, String> getProjects() {
-        return projects;
+        return PROJECTS;
     }
 
     protected HorizontalBarChartModel initBarModel() {
