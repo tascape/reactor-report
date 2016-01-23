@@ -1,5 +1,5 @@
 /*
- * Copyright 2015.
+ * Copyright 2016 tascape.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package com.tascape.qa.thr;
 
-import java.io.Serializable;
 import java.sql.SQLException;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
@@ -31,14 +30,13 @@ import org.slf4j.LoggerFactory;
  */
 @Named
 @RequestScoped
-public class DashboardViewBySuite extends DashboardView implements Serializable {
+public class DashboardViewBySuite extends DashboardView {
     private static final Logger LOG = LoggerFactory.getLogger(DashboardViewBySuite.class);
 
     private static final long serialVersionUID = 5749324382L;
 
     @Inject
     private MySqlBaseBean db;
-
 
     @PostConstruct
     public void init() {

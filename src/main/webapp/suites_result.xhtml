@@ -70,7 +70,7 @@
                         <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') != 0}" style="color: lightgray" />
                     </p:column>
 
-                    <p:column headerText="Test Suite Name" rendered="#{empty suite}">
+                    <p:column headerText="Test Suite Name" rendered="#{empty suite}" style="min-width: 800px">
                         <ui:param name="s" value="#{row.get('SUITE_NAME')}" />
                         <h:outputLink onclick="thr.querySuiteResults('#{s}', null);
                                 return false;">#{s}</h:outputLink>
@@ -125,7 +125,7 @@
                         </h:outputText>
                     </p:column>
 
-                    <p:column headerText="Start Time" width="166">
+                    <p:column width="186" headerText="Start Time">
                         <nobr>
                             <h:outputText value="#{mySqlBaseBean.convertToDate(row.get('START_TIME'))}" style="font-family: monospace">
                                 <f:convertDateTime type="date" pattern="EEE yyyy-MM-dd HH:mm:ss" timeZone="US/Pacific" />

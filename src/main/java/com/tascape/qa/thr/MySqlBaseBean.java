@@ -1,5 +1,5 @@
 /*
- * Copyright 2015.
+ * Copyright 2016 tascape.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,22 +66,27 @@ public class MySqlBaseBean implements Serializable {
     private DataSource ds;
 
     public List<Map<String, Object>> getLatestSuitesResult() throws NamingException, SQLException {
-        return this.getLatestSuitesResult(System.currentTimeMillis());
+        return this.getLatestSuitesResult(System.currentTimeMillis(), "");
     }
 
-    List<Map<String, Object>> getLatestSuitesResult(long date) throws NamingException, SQLException {
+    public List<Map<String, Object>> getLatestSuitesResult(String project) throws NamingException, SQLException {
+        return this.getLatestSuitesResult(System.currentTimeMillis(), project);
+    }
+
+    List<Map<String, Object>> getLatestSuitesResult(long date, String project) throws NamingException, SQLException {
         List<Map<String, Object>> list = LOADED_LATEST_SUITES_RESULT.get(date);
         if (list != null) {
             LOG.debug("retrieved from cache {}", date);
             return list;
         }
-        String sql = "SELECT * FROM (SELECT * FROM "
-            + SuiteResult.TABLE_NAME + " WHERE (NOT INVISIBLE_ENTRY) AND ("
-            + SuiteResult.START_TIME + " < " + date
-            + " AND " + SuiteResult.START_TIME + " > " + (date - 604800000) // a week
-            + ") ORDER BY " + SuiteResult.START_TIME + " DESC) AS T"
-            + " GROUP BY " + SuiteResult.SUITE_NAME
-            + " ORDER BY " + SuiteResult.SUITE_NAME + ";";
+        String sql = new StringBuilder("SELECT * FROM (SELECT * FROM ").append(SuiteResult.TABLE_NAME)
+            .append(" WHERE (NOT INVISIBLE_ENTRY) AND (")
+            .append(SuiteResult.START_TIME + " < ").append(date)
+            .append(" AND " + SuiteResult.START_TIME + " > ").append(date - 604800000) // a week
+            .append(StringUtils.isBlank(project) ? "" : " AND " + SuiteResult.PROJECT_NAME + " = " + project)
+            .append(") ORDER BY " + SuiteResult.START_TIME + " DESC) AS T")
+            .append(" GROUP BY " + SuiteResult.SUITE_NAME)
+            .append(" ORDER BY " + SuiteResult.SUITE_NAME + ";").toString();
         try (Connection conn = this.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(sql);
             LOG.trace("{}", stmt);
@@ -96,22 +101,27 @@ public class MySqlBaseBean implements Serializable {
     }
 
     public List<Map<String, Object>> getLatestJobsResult() throws NamingException, SQLException {
-        return this.getLatestJobsResult(System.currentTimeMillis());
+        return this.getLatestJobsResult(System.currentTimeMillis(), "");
     }
 
-    public List<Map<String, Object>> getLatestJobsResult(long date) throws NamingException, SQLException {
+    public List<Map<String, Object>> getLatestJobsResult(String project) throws NamingException, SQLException {
+        return this.getLatestJobsResult(System.currentTimeMillis(), project);
+    }
+
+    public List<Map<String, Object>> getLatestJobsResult(long date, String project) throws NamingException, SQLException {
         List<Map<String, Object>> list = LOADED_LATEST_JOBS_RESULT.get(date);
         if (list != null) {
             LOG.debug("retrieved from cache {}", date);
             return list;
         }
-        String sql = "SELECT * FROM (SELECT * FROM "
-            + SuiteResult.TABLE_NAME + " WHERE (NOT INVISIBLE_ENTRY) AND ("
-            + SuiteResult.START_TIME + " < " + date
-            + " AND " + SuiteResult.START_TIME + " > " + (date - 604800000) // a week
-            + ") ORDER BY " + SuiteResult.START_TIME + " DESC) AS T"
-            + " GROUP BY " + SuiteResult.JOB_NAME
-            + " ORDER BY " + SuiteResult.JOB_NAME + ";";
+        String sql = new StringBuilder("SELECT * FROM (SELECT * FROM ").append(SuiteResult.TABLE_NAME)
+            .append(" WHERE (NOT INVISIBLE_ENTRY) AND (")
+            .append(SuiteResult.START_TIME + " < ").append(date)
+            .append(" AND " + SuiteResult.START_TIME + " > ").append(date - 604800000) // a week
+            .append(StringUtils.isBlank(project) ? "" : " AND " + SuiteResult.PROJECT_NAME + " = " + project)
+            .append(") ORDER BY " + SuiteResult.START_TIME + " DESC) AS T")
+            .append(" GROUP BY " + SuiteResult.JOB_NAME)
+            .append(" ORDER BY " + SuiteResult.JOB_NAME + ";").toString();
         try (Connection conn = this.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(sql);
             LOG.trace("{}", stmt);
