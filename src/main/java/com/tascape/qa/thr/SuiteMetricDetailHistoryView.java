@@ -1,5 +1,5 @@
 /*
- * Copyright 2015.
+ * Copyright 2016 tascape.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,8 @@ public class SuiteMetricDetailHistoryView implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private String project = "";
+
     private long startTime = System.currentTimeMillis() - 5184000000L; // two months
 
     private long stopTime = System.currentTimeMillis() + 86400000L; // one day
@@ -68,7 +70,7 @@ public class SuiteMetricDetailHistoryView implements Serializable {
         this.getParameters();
 
         try {
-            this.suitesResult = this.db.getSuitesResult(this.startTime, this.stopTime, this.numberOfEntries,
+            this.suitesResult = this.db.getSuitesResult(project, this.startTime, this.stopTime, this.numberOfEntries,
                 this.suiteName, this.jobName, this.invisibleIncluded);
 
             for (Map<String, Object> suiteResult : this.suitesResult) {

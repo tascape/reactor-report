@@ -1,5 +1,5 @@
 /*
- * Copyright 2015.
+ * Copyright 2016 tascape.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +51,8 @@ public class SuitesResultView implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private String project = "";
+
     private long startTime = System.currentTimeMillis() - 5184000000L; // two months
 
     private long stopTime = System.currentTimeMillis() + 86400000L; // one day
@@ -79,7 +81,7 @@ public class SuitesResultView implements Serializable {
         this.getParameters();
 
         try {
-            this.results = this.db.getSuitesResult(this.startTime, this.stopTime, this.numberOfEntries,
+            this.results = this.db.getSuitesResult(project, this.startTime, this.stopTime, this.numberOfEntries,
                 this.suiteName, this.jobName, this.invisibleIncluded);
         } catch (NamingException | SQLException ex) {
             throw new RuntimeException(ex);
@@ -157,6 +159,10 @@ public class SuitesResultView implements Serializable {
 
     public LineChartModel getLineModel() {
         return lineModel;
+    }
+
+    public String getProject() {
+        return project;
     }
 
     private BarChartModel initBarModel() {
@@ -266,12 +272,17 @@ public class SuitesResultView implements Serializable {
         v = map.get("suite");
         if (v != null) {
             this.suiteName = v;
-            LOG.warn("suite={}", this.suiteName);
+            LOG.debug("suite={}", this.suiteName);
         }
         v = map.get("job");
         if (v != null) {
             this.jobName = v;
-            LOG.warn("job={}", this.jobName);
+            LOG.debug("job={}", this.jobName);
+        }
+        v = map.get("project");
+        if (v != null) {
+            this.project = v;
+            LOG.debug("project={}", this.project);
         }
     }
 }

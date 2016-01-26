@@ -16,21 +16,27 @@
 package com.tascape.qa.thr;
 
 import com.tascape.qa.th.db.SuiteResult;
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashMap;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.naming.NamingException;
+import org.apache.commons.lang3.StringUtils;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.ChartSeries;
 import org.primefaces.model.chart.HorizontalBarChartModel;
 import org.primefaces.model.chart.LegendPlacement;
 import org.primefaces.model.chart.LinearAxis;
+import org.primefaces.model.menu.DefaultMenuItem;
+import org.primefaces.model.menu.DefaultMenuModel;
+import org.primefaces.model.menu.MenuModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,9 +54,11 @@ public class DashboardView implements Serializable {
     @Inject
     private MySqlBaseBean db;
 
-    private static final Map<String, String> PROJECTS = new HashMap<>();
+    private final List<String> projects = new ArrayList<>();
 
-    private List<Map<String, Object>> results;
+    private String project = "";
+
+    private final List<Map<String, Object>> results = new ArrayList<>();
 
     private HorizontalBarChartModel barModel;
 
@@ -60,13 +68,24 @@ public class DashboardView implements Serializable {
 
     private int fail;
 
-    static {
-        PROJECTS.put("go90", "Go90");
-        PROJECTS.put("iptv", "IPTV");
-    }
+    private MenuModel model;
 
-    public void showProject(String project) throws IOException {
-        FacesContext.getCurrentInstance().getExternalContext().redirect("?project=" + project);
+    @PostConstruct
+    public void init() {
+        this.getParameters();
+        try {
+            projects.addAll(this.db.loadProjects());
+        } catch (SQLException | NamingException ex) {
+            LOG.warn(ex.getMessage());
+        }
+
+        model = new DefaultMenuModel();
+        for (String p : projects) {
+            DefaultMenuItem item = new DefaultMenuItem(StringUtils.isBlank(p)? "all projects": p);
+            item.setUrl("dashboard.xhtml?project=" + p);
+            item.setIcon("ui-icon-home");
+            model.addElement(item);
+        }
     }
 
     public List<Map<String, Object>> getResults() {
@@ -90,7 +109,7 @@ public class DashboardView implements Serializable {
     }
 
     public void setResults(List<Map<String, Object>> results) {
-        this.results = results;
+        this.results.addAll(results);
         this.results.forEach(row -> {
             row.put("sort", "a");
         });
@@ -100,8 +119,20 @@ public class DashboardView implements Serializable {
         this.barModel = barModel;
     }
 
-    public Map<String, String> getProjects() {
-        return PROJECTS;
+    public String getProject() {
+        return project;
+    }
+
+    public void setProject(String project) {
+        this.project = project;
+    }
+
+    public List<String> getProjects() {
+        return projects;
+    }
+
+    public MenuModel getModel() {
+        return model;
     }
 
     protected HorizontalBarChartModel initBarModel() {
@@ -146,5 +177,13 @@ public class DashboardView implements Serializable {
 
         this.chartHeight = 86 + (t + "").length() * 7;
         return barModel;
+    }
+
+    private void getParameters() {
+        Map<String, String> map = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        String v = map.get("project");
+        if (v != null) {
+            this.project = v;
+        }
     }
 }

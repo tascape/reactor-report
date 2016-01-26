@@ -65,6 +65,23 @@ public class MySqlBaseBean implements Serializable {
     @Resource(name = "jdbc/thr")
     private DataSource ds;
 
+    List<String> loadProjects() throws SQLException, NamingException {
+        List<String> projects = new ArrayList<>();
+        String sql = "SELECT DISTINCT " + SuiteResult.PROJECT_NAME + " FROM " + SuiteResult.TABLE_NAME
+            + " ORDER BY " + SuiteResult.PROJECT_NAME + ";";
+        try (Connection conn = this.getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            LOG.trace("{}", stmt);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                if (rs.getString(1) != null) {
+                    projects.add(rs.getString(1));
+                }
+            }
+        }
+        return projects;
+    }
+
     public List<Map<String, Object>> getLatestSuitesResult() throws NamingException, SQLException {
         return this.getLatestSuitesResult(System.currentTimeMillis(), "");
     }
@@ -82,9 +99,9 @@ public class MySqlBaseBean implements Serializable {
         String sql = new StringBuilder("SELECT * FROM (SELECT * FROM ").append(SuiteResult.TABLE_NAME)
             .append(" WHERE (NOT INVISIBLE_ENTRY) AND (")
             .append(SuiteResult.START_TIME + " < ").append(date)
-            .append(" AND " + SuiteResult.START_TIME + " > ").append(date - 604800000) // a week
-            .append(StringUtils.isBlank(project) ? "" : " AND " + SuiteResult.PROJECT_NAME + " = " + project)
-            .append(") ORDER BY " + SuiteResult.START_TIME + " DESC) AS T")
+            .append(") AND (" + SuiteResult.START_TIME + " > ").append(date - 604800000) // a week
+            .append(StringUtils.isBlank(project) ? ")" : ") AND (" + SuiteResult.PROJECT_NAME + " = '" + project + "')")
+            .append(" ORDER BY " + SuiteResult.START_TIME + " DESC) AS T")
             .append(" GROUP BY " + SuiteResult.SUITE_NAME)
             .append(" ORDER BY " + SuiteResult.SUITE_NAME + ";").toString();
         try (Connection conn = this.getConnection()) {
@@ -117,9 +134,9 @@ public class MySqlBaseBean implements Serializable {
         String sql = new StringBuilder("SELECT * FROM (SELECT * FROM ").append(SuiteResult.TABLE_NAME)
             .append(" WHERE (NOT INVISIBLE_ENTRY) AND (")
             .append(SuiteResult.START_TIME + " < ").append(date)
-            .append(" AND " + SuiteResult.START_TIME + " > ").append(date - 604800000) // a week
-            .append(StringUtils.isBlank(project) ? "" : " AND " + SuiteResult.PROJECT_NAME + " = " + project)
-            .append(") ORDER BY " + SuiteResult.START_TIME + " DESC) AS T")
+            .append(") AND (" + SuiteResult.START_TIME + " > ").append(date - 604800000) // a week
+            .append(StringUtils.isBlank(project) ? ")" : ") AND (" + SuiteResult.PROJECT_NAME + " = '" + project + "')")
+            .append(" ORDER BY " + SuiteResult.START_TIME + " DESC) AS T")
             .append(" GROUP BY " + SuiteResult.JOB_NAME)
             .append(" ORDER BY " + SuiteResult.JOB_NAME + ";").toString();
         try (Connection conn = this.getConnection()) {
@@ -135,16 +152,19 @@ public class MySqlBaseBean implements Serializable {
         }
     }
 
-    public List<Map<String, Object>> getSuitesResult(long startTime, long stopTime, int numberOfEntries,
+    public List<Map<String, Object>> getSuitesResult(String project, long startTime, long stopTime, int numberOfEntries,
         String suiteName, String jobName, boolean invisibleIncluded)
         throws NamingException, SQLException {
         String sql = "SELECT * FROM " + SuiteResult.TABLE_NAME
-            + " WHERE " + SuiteResult.START_TIME + " > ?"
-            + " AND " + SuiteResult.STOP_TIME + " < ?";
-        if (StringUtils.isNotEmpty(suiteName)) {
-            sql += " AND " + SuiteResult.SUITE_NAME + " = ?";
-        } else if (StringUtils.isNotEmpty(jobName)) {
-            sql += " AND " + SuiteResult.JOB_NAME + " = ?";
+            + " WHERE (" + SuiteResult.START_TIME + " > ?)"
+            + " AND (" + SuiteResult.STOP_TIME + " < ?)";
+        if (StringUtils.isNotBlank(suiteName)) {
+            sql += " AND (" + SuiteResult.SUITE_NAME + " = ?)";
+        } else if (StringUtils.isNotBlank(jobName)) {
+            sql += " AND (" + SuiteResult.JOB_NAME + " = ?)";
+        }
+        if (StringUtils.isNotBlank(project)) {
+            sql += " AND (" + SuiteResult.PROJECT_NAME + " = ?)";
         }
         if (!invisibleIncluded) {
             sql += " AND NOT " + SuiteResult.INVISIBLE_ENTRY;
@@ -154,10 +174,17 @@ public class MySqlBaseBean implements Serializable {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setLong(1, startTime);
             stmt.setLong(2, stopTime);
-            if (StringUtils.isNotEmpty(suiteName)) {
+            if (StringUtils.isNotBlank(suiteName)) {
                 stmt.setString(3, suiteName);
-            } else if (StringUtils.isNotEmpty(jobName)) {
+            } else if (StringUtils.isNotBlank(jobName)) {
                 stmt.setString(3, jobName);
+            }
+            if (StringUtils.isNotBlank(project)) {
+                if (StringUtils.isNotBlank(suiteName) || StringUtils.isNotBlank(jobName)) {
+                    stmt.setString(4, project);
+                } else {
+                    stmt.setString(3, project);
+                }
             }
             LOG.trace("{}", stmt);
             stmt.setMaxRows(numberOfEntries);

@@ -14,23 +14,25 @@
         <title>TestHarness Result Dashboard</title>
     </h:head>
     <h:body>
+        <ui:param name="project" value="#{dashboardView.project}" />
 
-        <div id="masthead">
-            <h:outputLink value="suites_result.xhtml">
+        <h:form id="masthead">
+            <h:outputLink value="suites_result.xhtml?project=#{project}">
                 <h:graphicImage library="img" name="home.png" alt="Home" />
             </h:outputLink>
             <h:outputText value="TestHarness Result Dashboard" />
-        </div>
-
+            <p:spacer width="20" />
+            <p:menuButton value="#{project}" model="#{dashboardView.model}" iconPos="right" style="font-size: x-small;" />
+        </h:form>
         <div id="main">
-            <p:tabView dynamic="true" cache="true" orientation="bottom" style="border-width: 0">
+            <p:tabView dynamic="false" cache="true" orientation="bottom" style="border-width: 0">
                 <p:tab title="Test Suite">
                     <p:chart type="bar" model="#{dashboardViewBySuite.barModel}" style="height:#{dashboardViewBySuite.chartHeight}px" responsive="true" />
                     <p:spacer height="10" />
 
                     <p:dataTable value="#{dashboardViewBySuite.results}" var="row" rowIndexVar="rowIndex"
                                  rowKey="#{row.get('SUITE_RESULT_ID')}" selection="#{suitesResultView2.resultsSelected}"
-                                 sortBy="#{row.get('sort')}" resizableColumns="true">
+                                 sortBy="#{row.get('sort')}" resizableColumns="true" scrollable="true">
                         <p:column headerText="" width="36">
                             <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') == 0}" />
                             <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') != 0}" style="color: lightgray" />
@@ -38,7 +40,7 @@
 
                         <p:column headerText="Test Suite Name">
                             <ui:param name="suite" value="#{row.get('SUITE_NAME')}" />
-                            <h:outputLink value="suites_result.xhtml?suite=#{suite}" target="_blank">#{suite}</h:outputLink>
+                            <h:outputLink value="suites_result.xhtml?project=#{project}&amp;suite=#{suite}" target="_blank">#{suite}</h:outputLink>
                         </p:column>
 
                         <p:column headerText="Product under Test" style="white-space: pre;">
@@ -122,7 +124,7 @@
 
                         <p:column headerText="Execution Job Name">
                             <ui:param name="job" value="#{row.get('JOB_NAME')}" />
-                            <h:outputLink value="suites_result.xhtml?job=#{job}" target="_blank">#{job}</h:outputLink>
+                            <h:outputLink value="suites_result.xhtml?project=#{project}&amp;sjob=#{job}" target="_blank">#{job}</h:outputLink>
                         </p:column>
 
                         <p:column headerText="Product under Test" style="white-space: pre;">

@@ -40,8 +40,9 @@ public class DashboardViewBySuite extends DashboardView {
 
     @PostConstruct
     public void init() {
+        super.init();
         try {
-            this.setResults(this.db.getLatestSuitesResult());
+            this.setResults(this.db.getLatestSuitesResult(this.getProject()));
         } catch (NamingException | SQLException ex) {
             throw new RuntimeException(ex);
         }

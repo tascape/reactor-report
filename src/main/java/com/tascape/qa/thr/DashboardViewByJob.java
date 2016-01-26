@@ -40,8 +40,9 @@ public class DashboardViewByJob extends DashboardView {
 
     @PostConstruct
     public void init() {
+        super.init();
         try {
-            this.setResults(this.db.getLatestJobsResult());
+            this.setResults(this.db.getLatestJobsResult(this.getProject()));
         } catch (NamingException | SQLException ex) {
             throw new RuntimeException(ex);
         }
