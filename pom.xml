@@ -19,6 +19,7 @@
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
             <version>5.3</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
