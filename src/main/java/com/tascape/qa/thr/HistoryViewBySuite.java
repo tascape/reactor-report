@@ -79,6 +79,8 @@ public class HistoryViewBySuite extends AbstractReportView implements Serializab
 
     private LineChartModel chartModel;
 
+    private String project = "";
+
     private int interval = 1;
 
     private int entries = 30;
@@ -125,6 +127,10 @@ public class HistoryViewBySuite extends AbstractReportView implements Serializab
 
     public Map<LocalDate, Integer> getFails() {
         return fails;
+    }
+
+    public String getProject() {
+        return project;
     }
 
     private void loadData() {
@@ -200,7 +206,7 @@ public class HistoryViewBySuite extends AbstractReportView implements Serializab
         public Map.Entry<LocalDate, List<Map<String, Object>>> call() throws Exception {
             ZoneId zi = ZoneId.ofOffset("", ZoneOffset.ofHoursMinutes(HistoryViewBySuite.this.clientTimezone, 0));
             long epoch = date.atStartOfDay(zi).plusDays(1).toEpochSecond() * 1000;
-            return new AbstractMap.SimpleEntry<>(date, db.getLatestSuitesResult(epoch, ""));
+            return new AbstractMap.SimpleEntry<>(date, db.getLatestSuitesResult(epoch, project));
         }
     }
 
@@ -216,6 +222,11 @@ public class HistoryViewBySuite extends AbstractReportView implements Serializab
             if (this.entries > 30) {
                 this.entries = 30;
             }
+        }
+        v = map.get("project");
+        if (v != null) {
+            this.project = v;
+            LOG.debug("project={}", this.project);
         }
         LOG.debug("client timezone {}", this.clientTimezone);
     }

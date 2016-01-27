@@ -19,6 +19,7 @@ import com.tascape.qa.th.db.SuiteResult;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -75,15 +76,16 @@ public class DashboardView implements Serializable {
         this.getParameters();
         try {
             projects.addAll(this.db.loadProjects());
+            Collections.sort(projects);
         } catch (SQLException | NamingException ex) {
             LOG.warn(ex.getMessage());
         }
 
         model = new DefaultMenuModel();
         for (String p : projects) {
-            DefaultMenuItem item = new DefaultMenuItem(StringUtils.isBlank(p)? "all projects": p);
+            DefaultMenuItem item = new DefaultMenuItem(StringUtils.isBlank(p) ? "all projects" : p);
             item.setUrl("dashboard.xhtml?project=" + p);
-            item.setIcon("ui-icon-home");
+            item.setIcon("ui-icon-arrowreturnthick-1-n");
             model.addElement(item);
         }
     }

@@ -196,9 +196,9 @@
             </p:tabView>
         </div>
         <p:stack icon="/resources/images/stack.png" expanded="true">
-            <p:menuitem value="Current" icon="/resources/images/current.png" url="dashboard.xhtml" />
-            <p:menuitem value="Weekly" icon="/resources/images/history.png" url="history.xhtml?interval=7&amp;entries=26" />
-            <p:menuitem value="Daily" icon="/resources/images/history.png" url="history.xhtml?interval=1&amp;entries=30" />
+            <p:menuitem value="Current" icon="/resources/images/current.png" url="dashboard.xhtml?project=#{project}" />
+            <p:menuitem value="Weekly" icon="/resources/images/history.png" url="history.xhtml?interval=7&amp;entries=26&amp;project=#{project}" />
+            <p:menuitem value="Daily" icon="/resources/images/history.png" url="history.xhtml?interval=1&amp;entries=30&amp;project=#{project}" />
         </p:stack>
     </h:body>
 </html>

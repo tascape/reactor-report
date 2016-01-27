@@ -32,6 +32,8 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,8 +67,8 @@ public class MySqlBaseBean implements Serializable {
     @Resource(name = "jdbc/thr")
     private DataSource ds;
 
-    List<String> loadProjects() throws SQLException, NamingException {
-        List<String> projects = new ArrayList<>();
+    Set<String> loadProjects() throws SQLException, NamingException {
+        Set<String> projects = new HashSet<>();
         String sql = "SELECT DISTINCT " + SuiteResult.PROJECT_NAME + " FROM " + SuiteResult.TABLE_NAME
             + " ORDER BY " + SuiteResult.PROJECT_NAME + ";";
         try (Connection conn = this.getConnection()) {
@@ -79,6 +81,7 @@ public class MySqlBaseBean implements Serializable {
                 }
             }
         }
+        projects.add("");
         return projects;
     }
 
