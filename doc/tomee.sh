@@ -10,7 +10,7 @@ pushd /usr/share/tomee/conf
   echo '</tomcat-users>' >> aa.txt
   mv tomcat-users.xml tomcat-users.xml.bk
   mv aa.txt tomcat-users.xml
-  wget "https://oss.sonatype.org/content/repositories/releases/com/tascape/qa/thr/1.0.30/thr-1.0.30.war" -O ../webapps/thr.war
+  wget "https://oss.sonatype.org/content/repositories/releases/com/tascape/qa/thr/1.1.1/thr-1.1.1.war" -O ../webapps/thr.war
   ../bin/startup.sh
 popd
 
