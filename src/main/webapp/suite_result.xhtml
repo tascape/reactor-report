@@ -7,6 +7,7 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <h:head>
+        <meta http-equiv="refresh" content="61" />
         <h:outputStylesheet library="css" name="thr.css" />
         <h:outputStylesheet library="css" name="primefaces-ex.css" />
         <h:outputScript library="js" name="thr.js" />
@@ -88,10 +89,10 @@
                     </h:outputText>
                 </p:column>
 
-                <p:column headerText="Start Time" width="166">
+                <p:column headerText="Start Time" width="78">
                     <nobr>
                         <h:outputText value="#{mySqlBaseBean.convertToDate(row.get('START_TIME'))}" style="font-family: monospace">
-                            <f:convertDateTime type="date" pattern="EEE yyyy-MM-dd HH:mm:ss" timeZone="US/Pacific" />
+                            <f:convertDateTime type="date" pattern="HH:mm:ss" timeZone="US/Pacific" />
                         </h:outputText>
                     </nobr>
                 </p:column>
