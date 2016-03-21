@@ -76,8 +76,18 @@ public class MySqlBaseBean implements Serializable {
             LOG.trace("{}", stmt);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                if (rs.getString(1) != null) {
-                    projects.add(rs.getString(1));
+                String name = rs.getString(1);
+                if (name != null) {
+                    projects.add(name);
+                    while (true) {
+                        int i = name.lastIndexOf("-");
+                        if (i != -1) {
+                            name = name.substring(0, i);
+                            projects.add(name);
+                        } else {
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -103,7 +113,8 @@ public class MySqlBaseBean implements Serializable {
             .append(" WHERE (NOT INVISIBLE_ENTRY) AND (")
             .append(SuiteResult.START_TIME + " < ").append(date)
             .append(") AND (" + SuiteResult.START_TIME + " > ").append(date - 604800000) // a week
-            .append(StringUtils.isBlank(project) ? ")" : ") AND (" + SuiteResult.PROJECT_NAME + " = '" + project + "')")
+            .append(StringUtils.isBlank(project) ? ")" : ") AND (" + SuiteResult.PROJECT_NAME + " LIKE '" + project
+                + "%')")
             .append(" ORDER BY " + SuiteResult.START_TIME + " DESC) AS T")
             .append(" GROUP BY " + SuiteResult.SUITE_NAME)
             .append(" ORDER BY " + SuiteResult.SUITE_NAME + ";").toString();
