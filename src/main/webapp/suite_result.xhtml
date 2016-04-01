@@ -59,6 +59,7 @@
             <p:dataTable value="#{suiteResultView.testsResult}" var="row" rowIndexVar="rowIndex"
                          rowKey="#{row.get('TEST_RESULT_ID')}">
                 <ui:param name="result" value="#{row.get('EXECUTION_RESULT')}" />
+                <ui:param name="env" value="#{row.get('TEST_ENV')}" />
 
                 <p:column headerText="" width="36">
                     <h:outputText value="#{rowIndex + 1}" />
@@ -70,6 +71,10 @@
 
                 <p:column headerText="Test Method">
                     <nobr><h:outputText value="#{row.get('TEST_METHOD')}(#{row.get('TEST_DATA')})" /></nobr>
+                </p:column>
+
+                <p:column headerText="Env" width="36">
+                    <nobr><h:outputText value="#{env.split(' ')[0]}" title="#{env}"/></nobr>
                 </p:column>
 
                 <p:column headerText="Result" style="white-space: nowrap;" width="68">

@@ -15,7 +15,10 @@
  */
 package com.tascape.qa.thr;
 
+import com.tascape.qa.th.SystemConfiguration;
+import com.tascape.qa.th.db.SuiteProperty;
 import com.tascape.qa.th.db.SuiteResult;
+import com.tascape.qa.th.db.TestResult;
 import com.tascape.qa.th.db.TestResultMetric;
 import java.io.IOException;
 import java.io.Serializable;
@@ -85,7 +88,8 @@ public class SuiteResultView implements Serializable {
             this.testsResult = this.db.getTestsResult(this.srid);
             this.testMetrics = this.db.getTestMetrics(this.srid);
             this.suiteProperties = this.db.getSuiteProperties(this.srid);
-            
+
+            this.processEnvs();
             this.processMetrics();
         } catch (NamingException | SQLException | IOException ex) {
             throw new RuntimeException(ex);
@@ -164,6 +168,17 @@ public class SuiteResultView implements Serializable {
         String url = context.getRequestContextPath() + context.getRequestServletPath() + "?srid=" + srid;
         LOG.debug("redirect to {}", url);
         context.redirect(url);
+    }
+
+    private void processEnvs() {
+        this.testsResult.forEach(row -> {
+            String env = SystemConfiguration.SYSPROP_TEST_ENV + "." + row.get(TestResult.TEST_ENV);
+            Map<String, Object> p = this.suiteProperties.stream()
+                .filter(prop -> prop.get(SuiteProperty.PROPERTY_NAME).equals(env)).findFirst().orElse(null);
+            if (p != null) {
+                row.put(TestResult.TEST_ENV, p.get(SuiteProperty.PROPERTY_VALUE));
+            }
+        });
     }
 
     private void processMetrics() {
