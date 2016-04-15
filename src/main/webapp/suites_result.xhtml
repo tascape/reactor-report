@@ -97,12 +97,11 @@
                     </p:column>
 
                     <ui:param name="result" value="#{row.get('EXECUTION_RESULT')}" />
-                    <p:column headerText="Result" style="white-space: nowrap;" width="68">
+                    <p:column headerText="Result" style="white-space: nowrap; text-align: center" width="52">
                         <h:outputLink value="suite_result.xhtml?srid=#{row.get('SUITE_RESULT_ID')}" target="_blank">
                             <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{result =='PASS'}" />
                             <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{result =='FAIL'}" />
                             <h:graphicImage library="img" name="skip.png" alt="#{result}" rendered="#{!(result == 'FAIL' || result == 'PASS')}" />
-                            #{result}
                         </h:outputLink>
                     </p:column>
 

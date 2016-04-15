@@ -77,14 +77,13 @@
                     <nobr><h:outputText value="#{env.split(' ')[0]}" title="#{env}"/></nobr>
                 </p:column>
 
-                <p:column headerText="Result" style="white-space: nowrap;" width="68">
+                <p:column headerText="Result" style="white-space: nowrap; text-align: center" width="52">
                     <ui:param name="p" value="#{result =='PASS' or result.endsWith('/0')}" />
                     <ui:param name="f" value="#{result =='FAIL' or (result.contains('/') and not result.endsWith('/0'))}" />
                     <h:outputLink value="/logs/#{row.get('LOG_DIR')}/log.html" target="_blank">
                         <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{p}" />
                         <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{f}" />
                         <h:graphicImage library="img" name="skip.png" alt="#{result}" rendered="#{not p and not f}" />
-                        #{result}
                     </h:outputLink>
                 </p:column>
 

@@ -45,7 +45,7 @@
                     <h:outputText value="#{tc.get('TEST_METHOD')}(#{tc.get('TEST_DATA')})" />
                 </p:column>
 
-                <p:columns value="#{suiteResultDetailHistoryView.suitesResult}" var="suiteResult"  style="white-space: nowrap;">
+                <p:columns value="#{suiteResultDetailHistoryView.suitesResult}" var="suiteResult"  style="white-space: nowrap; text-align: center">
                     <ui:param name="srid" value="#{suiteResult.get('SUITE_RESULT_ID')}" />
                     <ui:param name="result" value="#{row.get(srid).get('EXECUTION_RESULT')}" />
                     <ui:param name="bn" value="#{suiteResult.get('JOB_BUILD_NUMBER')}" />
@@ -63,7 +63,6 @@
                         <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{result =='PASS'}" />
                         <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{result =='FAIL'}" />
                         <h:graphicImage library="img" name="skip.png" alt="#{result}" rendered="#{!(result == 'FAIL' || result == 'PASS' || result == null)}" />
-                        #{result}
                     </h:outputLink>
                 </p:columns>
             </p:dataTable>

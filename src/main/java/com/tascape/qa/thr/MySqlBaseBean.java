@@ -70,6 +70,7 @@ public class MySqlBaseBean implements Serializable {
     Set<String> loadProjects() throws SQLException, NamingException {
         Set<String> projects = new HashSet<>();
         String sql = "SELECT DISTINCT " + SuiteResult.PROJECT_NAME + " FROM " + SuiteResult.TABLE_NAME
+            + " WHERE (NOT " + SuiteResult.INVISIBLE_ENTRY + ")"
             + " ORDER BY " + SuiteResult.PROJECT_NAME + ";";
         try (Connection conn = this.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -149,7 +150,7 @@ public class MySqlBaseBean implements Serializable {
             .append(" WHERE (NOT INVISIBLE_ENTRY) AND (")
             .append(SuiteResult.START_TIME + " < ").append(date)
             .append(") AND (" + SuiteResult.START_TIME + " > ").append(date - 604800000) // a week
-            .append(StringUtils.isBlank(project) ? ")" : ") AND (" + SuiteResult.PROJECT_NAME + " = '" + project + "')")
+            .append(StringUtils.isBlank(project) ? ")" : ") AND (" + SuiteResult.PROJECT_NAME + " LIKE '" + project + "%')")
             .append(" ORDER BY " + SuiteResult.START_TIME + " DESC) AS T")
             .append(" GROUP BY " + SuiteResult.JOB_NAME)
             .append(" ORDER BY " + SuiteResult.JOB_NAME + ";").toString();
@@ -178,7 +179,7 @@ public class MySqlBaseBean implements Serializable {
             sql += " AND (" + SuiteResult.JOB_NAME + " = ?)";
         }
         if (StringUtils.isNotBlank(project)) {
-            sql += " AND (" + SuiteResult.PROJECT_NAME + " = ?)";
+            sql += " AND (" + SuiteResult.PROJECT_NAME + " LIKE ?)";
         }
         if (!invisibleIncluded) {
             sql += " AND NOT " + SuiteResult.INVISIBLE_ENTRY;
@@ -195,9 +196,9 @@ public class MySqlBaseBean implements Serializable {
             }
             if (StringUtils.isNotBlank(project)) {
                 if (StringUtils.isNotBlank(suiteName) || StringUtils.isNotBlank(jobName)) {
-                    stmt.setString(4, project);
+                    stmt.setString(4, project + "%");
                 } else {
-                    stmt.setString(3, project);
+                    stmt.setString(3, project + "%");
                 }
             }
             LOG.trace("{}", stmt);
