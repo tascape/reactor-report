@@ -123,7 +123,7 @@
 
                         <p:column headerText="Execution Job Name">
                             <ui:param name="job" value="#{row.get('JOB_NAME')}" />
-                            <h:outputLink value="suites_result.xhtml?project=#{project}&amp;sjob=#{job}" target="_blank">#{job}</h:outputLink>
+                            <h:outputLink value="suites_result.xhtml?project=#{project}&amp;job=#{job}" target="_blank">#{job}</h:outputLink>
                         </p:column>
 
                         <p:column headerText="Product under Test" style="white-space: pre;">
