@@ -87,9 +87,9 @@
                     </h:outputLink>
                 </p:column>
 
-                <p:column headerText="Time" width="68">
+                <p:column headerText="Time (S)" width="68">
                     <h:outputText value="#{(row.get('STOP_TIME') - row.get('START_TIME'))/1000.0}" style="font-family: monospace; float: right; white-space: nowrap" >
-                        <f:convertNumber pattern="#0.000 S" />
+                        <f:convertNumber pattern="#0.000" />
                     </h:outputText>
                 </p:column>
 

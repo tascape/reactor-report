@@ -119,9 +119,9 @@
                         <h:outputText value="#{row.get('NUMBER_OF_FAILURE')}" style="float: right" />
                     </p:column>
 
-                    <p:column width="68" headerText="Time">
+                    <p:column width="68" headerText="Time (S)">
                         <h:outputText value="#{(row.get('STOP_TIME') - row.get('START_TIME'))/1000.0}" style="font-family: monospace; float: right; white-space: pre;" >
-                            <f:convertNumber pattern="#0.000 S" />
+                            <f:convertNumber pattern="#0.000" />
                         </h:outputText>
                     </p:column>
 
