@@ -58,7 +58,7 @@
 
                         <ui:param name="result" value="#{row.get('EXECUTION_RESULT')}" />
                         <p:column headerText="Result" style="white-space: nowrap; text-align: center"  width="52">
-                            <h:outputLink value="suite_result.xhtml?srid=#{row.get('SUITE_RESULT_ID')}" target="_blank">
+                            <h:outputLink value="suite_result.xhtml?srid=#{row.get('SUITE_RESULT_ID')}" target="_blank" title="#{result}">
                                 <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{result =='PASS'}" />
                                 <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{result =='FAIL'}" />
                                 <h:graphicImage library="img" name="skip.png" alt="#{result}" rendered="#{!(result == 'FAIL' || result == 'PASS')}" />
@@ -86,7 +86,7 @@
                             </h:outputText>
                         </p:column>
 
-                        <p:column headerText="Start Time" width="166">
+                        <p:column headerText="Start Time" width="186">
                             <nobr>
                                 <h:outputText value="#{mySqlBaseBean.convertToDate(row.get('START_TIME'))}" style="font-family: monospace">
                                     <f:convertDateTime type="date" pattern="EEE yyyy-MM-dd HH:mm:ss" timeZone="US/Pacific" />
@@ -141,7 +141,7 @@
 
                         <ui:param name="result" value="#{row.get('EXECUTION_RESULT')}" />
                         <p:column headerText="Result" style="white-space: nowrap; text-align: center"  width="52">
-                            <h:outputLink value="suite_result.xhtml?srid=#{row.get('SUITE_RESULT_ID')}" target="_blank">
+                            <h:outputLink value="suite_result.xhtml?srid=#{row.get('SUITE_RESULT_ID')}" target="_blank" title="#{result}">
                                 <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{result =='PASS'}" />
                                 <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{result =='FAIL'}" />
                                 <h:graphicImage library="img" name="skip.png" alt="#{result}" rendered="#{!(result == 'FAIL' || result == 'PASS')}" />
@@ -169,7 +169,7 @@
                             </h:outputText>
                         </p:column>
 
-                        <p:column headerText="Start Time" width="166">
+                        <p:column headerText="Start Time" width="186">
                             <nobr>
                                 <h:outputText value="#{mySqlBaseBean.convertToDate(row.get('START_TIME'))}" style="font-family: monospace">
                                     <f:convertDateTime type="date" pattern="EEE yyyy-MM-dd HH:mm:ss" timeZone="US/Pacific" />
