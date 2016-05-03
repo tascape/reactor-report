@@ -89,6 +89,7 @@ public class SuiteResultView implements Serializable {
             this.testMetrics = this.db.getTestMetrics(this.srid);
             this.suiteProperties = this.db.getSuiteProperties(this.srid);
 
+            this.processResults();
             this.processEnvs();
             this.processMetrics();
         } catch (NamingException | SQLException | IOException ex) {
@@ -168,6 +169,18 @@ public class SuiteResultView implements Serializable {
         String url = context.getRequestContextPath() + context.getRequestServletPath() + "?srid=" + srid;
         LOG.debug("redirect to {}", url);
         context.redirect(url);
+    }
+
+    /*
+     * for backward compatible - only use test log directory name
+     */
+    private void processResults() {
+        this.testsResult.forEach(row -> {
+            String logDir = row.get(TestResult.LOG_DIR) + "";
+            logDir = logDir.replace(srid, "");
+            logDir = logDir.replaceAll("/", "");
+            row.put(TestResult.LOG_DIR, logDir);
+        });
     }
 
     private void processEnvs() {
