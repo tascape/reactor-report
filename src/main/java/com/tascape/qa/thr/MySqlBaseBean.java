@@ -60,9 +60,9 @@ public class MySqlBaseBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<Long, List<Map<String, Object>>> LOADED_LATEST_SUITES_RESULT = new ConcurrentHashMap<>();
+    private static final Map<String, List<Map<String, Object>>> LOADED_LATEST_SUITES_RESULT = new ConcurrentHashMap<>();
 
-    private static final Map<Long, List<Map<String, Object>>> LOADED_LATEST_JOBS_RESULT = new ConcurrentHashMap<>();
+    private static final Map<String, List<Map<String, Object>>> LOADED_LATEST_JOBS_RESULT = new ConcurrentHashMap<>();
 
     @Resource(name = "jdbc/thr")
     private DataSource ds;
@@ -105,7 +105,7 @@ public class MySqlBaseBean implements Serializable {
     }
 
     List<Map<String, Object>> getLatestSuitesResult(long date, String project) throws NamingException, SQLException {
-        List<Map<String, Object>> list = LOADED_LATEST_SUITES_RESULT.get(date);
+        List<Map<String, Object>> list = LOADED_LATEST_SUITES_RESULT.get(date + project);
         if (list != null) {
             LOG.debug("retrieved from cache {}", date);
             return list;
@@ -126,7 +126,7 @@ public class MySqlBaseBean implements Serializable {
             list = this.dumpResultSetToList(rs);
             if (date < System.currentTimeMillis()) {
                 LOG.debug("cache history data");
-                LOADED_LATEST_SUITES_RESULT.put(date, list);
+//                LOADED_LATEST_SUITES_RESULT.put(date + project, list);
             }
             return list;
         }
@@ -141,7 +141,7 @@ public class MySqlBaseBean implements Serializable {
     }
 
     public List<Map<String, Object>> getLatestJobsResult(long date, String project) throws NamingException, SQLException {
-        List<Map<String, Object>> list = LOADED_LATEST_JOBS_RESULT.get(date);
+        List<Map<String, Object>> list = LOADED_LATEST_JOBS_RESULT.get(date + project);
         if (list != null) {
             LOG.debug("retrieved from cache {}", date);
             return list;
@@ -150,7 +150,8 @@ public class MySqlBaseBean implements Serializable {
             .append(" WHERE (NOT INVISIBLE_ENTRY) AND (")
             .append(SuiteResult.START_TIME + " < ").append(date)
             .append(") AND (" + SuiteResult.START_TIME + " > ").append(date - 604800000) // a week
-            .append(StringUtils.isBlank(project) ? ")" : ") AND (" + SuiteResult.PROJECT_NAME + " LIKE '" + project + "%')")
+            .append(StringUtils.isBlank(project) ? ")" : ") AND (" + SuiteResult.PROJECT_NAME + " LIKE '" + project
+                + "%')")
             .append(" ORDER BY " + SuiteResult.START_TIME + " DESC) AS T")
             .append(" GROUP BY " + SuiteResult.JOB_NAME)
             .append(" ORDER BY " + SuiteResult.JOB_NAME + ";").toString();
@@ -161,7 +162,7 @@ public class MySqlBaseBean implements Serializable {
             list = this.dumpResultSetToList(rs);
             if (date < System.currentTimeMillis()) {
                 LOG.debug("cache history data");
-                LOADED_LATEST_JOBS_RESULT.put(date, list);
+//                LOADED_LATEST_JOBS_RESULT.put(date + project, list);
             }
             return list;
         }

@@ -59,7 +59,7 @@
                                       style="font: smaller monospace; color: blue">Build ##{bn}</h:outputLink>
                     </f:facet>
 
-                    <h:outputLink value="/logs/#{row.get(srid).get('LOG_DIR')}/log.html" target="_blank" title="#{result}">
+                    <h:outputLink value="/logs/#{srid}/#{row.get(srid).get('LOG_DIR')}/log.html" target="_blank" title="#{result}">
                         <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{result =='PASS'}" />
                         <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{result =='FAIL'}" />
                         <h:graphicImage library="img" name="skip.png" alt="#{result}" rendered="#{!(result == 'FAIL' || result == 'PASS' || result == null)}" />
