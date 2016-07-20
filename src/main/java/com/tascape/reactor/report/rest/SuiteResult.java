@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.tascape.qa.thr.rest;
+package com.tascape.reactor.report.rest;
 
-import com.tascape.qa.thr.MySqlBaseBean;
+import com.tascape.reactor.report.MySqlBaseBean;
 import java.sql.SQLException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;

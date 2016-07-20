@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.tascape.qa.thr;
+package com.tascape.reactor.report;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import com.tascape.qa.th.db.SuiteResult;
+import com.tascape.reactor.db.SuiteResult;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;

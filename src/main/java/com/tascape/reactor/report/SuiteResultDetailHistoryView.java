@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.tascape.qa.thr;
+package com.tascape.reactor.report;
 
-import com.tascape.qa.th.db.SuiteResult;
-import com.tascape.qa.th.db.TestCase;
+import com.tascape.reactor.db.SuiteResult;
+import com.tascape.reactor.db.TestCase;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
