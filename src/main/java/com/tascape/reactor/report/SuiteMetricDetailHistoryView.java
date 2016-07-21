@@ -16,7 +16,7 @@
 package com.tascape.reactor.report;
 
 import com.tascape.reactor.db.SuiteResult;
-import com.tascape.reactor.db.TestResultMetric;
+import com.tascape.reactor.db.caseResultMetric;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -84,10 +84,10 @@ public class SuiteMetricDetailHistoryView implements Serializable {
                             continue;
                         }
 
-                        Object group = metrics.get("TEST_RESULT_METRIC").get(TestResultMetric.METRIC_GROUP);
-                        Object name = metrics.get("TEST_RESULT_METRIC").get(TestResultMetric.METRIC_NAME);
-                        if (group.equals(testResultMetric.get(TestResultMetric.METRIC_GROUP))
-                            && name.equals(testResultMetric.get(TestResultMetric.METRIC_NAME))) {
+                        Object group = metrics.get("TEST_RESULT_METRIC").get(caseResultMetric.METRIC_GROUP);
+                        Object name = metrics.get("TEST_RESULT_METRIC").get(caseResultMetric.METRIC_NAME);
+                        if (group.equals(testResultMetric.get(caseResultMetric.METRIC_GROUP))
+                            && name.equals(testResultMetric.get(caseResultMetric.METRIC_NAME))) {
                             metrics.put(srid, testResultMetric);
                             toAddOneRow = false;
                             break;

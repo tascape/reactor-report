@@ -16,7 +16,7 @@
 package com.tascape.reactor.report;
 
 import com.tascape.reactor.db.SuiteResult;
-import com.tascape.reactor.db.TestCase;
+import com.tascape.reactor.db.TaskCase;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -86,8 +86,8 @@ public class SuiteResultDetailHistoryView implements Serializable {
                             continue;
                         }
 
-                        TestCase testCase = new TestCase(testResult);
-                        TestCase tc = new TestCase(testHistory.get("TEST_CASE"));
+                        TaskCase testCase = new TaskCase(testResult);
+                        TaskCase tc = new TaskCase(testHistory.get("TEST_CASE"));
                         if (testCase.equals(tc)) {
                             testHistory.put(srid, testResult);
                             toAddOneRow = false;

@@ -18,8 +18,8 @@ package com.tascape.reactor.report;
 import com.tascape.reactor.SystemConfiguration;
 import com.tascape.reactor.db.SuiteProperty;
 import com.tascape.reactor.db.SuiteResult;
-import com.tascape.reactor.db.TestResult;
-import com.tascape.reactor.db.TestResultMetric;
+import com.tascape.reactor.db.CaseResult;
+import com.tascape.reactor.db.caseResultMetric;
 import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -176,20 +176,20 @@ public class SuiteResultView implements Serializable {
      */
     private void processResults() {
         this.testsResult.forEach(row -> {
-            String logDir = row.get(TestResult.LOG_DIR) + "";
+            String logDir = row.get(CaseResult.LOG_DIR) + "";
             logDir = logDir.replace(srid, "");
             logDir = logDir.replaceAll("/", "");
-            row.put(TestResult.LOG_DIR, logDir);
+            row.put(CaseResult.LOG_DIR, logDir);
         });
     }
 
     private void processEnvs() {
         this.testsResult.forEach(row -> {
-            String env = SystemConfiguration.SYSPROP_TEST_ENV + "." + row.get(TestResult.TEST_ENV);
+            String env = SystemConfiguration.SYSPROP_CASE_ENV + "." + row.get(CaseResult.CASE_ENV);
             Map<String, Object> p = this.suiteProperties.stream()
                 .filter(prop -> prop.get(SuiteProperty.PROPERTY_NAME).equals(env)).findFirst().orElse(null);
             if (p != null) {
-                row.put(TestResult.TEST_ENV, p.get(SuiteProperty.PROPERTY_VALUE));
+                row.put(CaseResult.CASE_ENV, p.get(SuiteProperty.PROPERTY_VALUE));
             }
         });
     }
@@ -197,17 +197,17 @@ public class SuiteResultView implements Serializable {
     private void processMetrics() {
         Map<String, Map<String, Object>> tm = new HashMap<>();
         this.testMetrics.forEach(row -> {
-            String key = row.get(TestResultMetric.METRIC_GROUP) + "." + row.get(TestResultMetric.METRIC_NAME);
+            String key = row.get(caseResultMetric.METRIC_GROUP) + "." + row.get(caseResultMetric.METRIC_NAME);
             Map<String, Object> r = tm.get(key);
             if (r == null) {
                 tm.put(key, row);
                 List<Double> values = new ArrayList<>();
-                values.add((double) row.get(TestResultMetric.METRIC_VALUE));
+                values.add((double) row.get(caseResultMetric.METRIC_VALUE));
                 row.put("values", values);
             } else {
                 @SuppressWarnings("unchecked")
                 List<Double> values = (List<Double>) r.get("values");
-                values.add((double) row.get(TestResultMetric.METRIC_VALUE));
+                values.add((double) row.get(caseResultMetric.METRIC_VALUE));
             }
         });
 

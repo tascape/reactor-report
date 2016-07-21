@@ -17,9 +17,9 @@ package com.tascape.reactor.report;
 
 import com.tascape.reactor.db.SuiteProperty;
 import com.tascape.reactor.db.SuiteResult;
-import com.tascape.reactor.db.TestCase;
-import com.tascape.reactor.db.TestResult;
-import com.tascape.reactor.db.TestResultMetric;
+import com.tascape.reactor.db.TaskCase;
+import com.tascape.reactor.db.CaseResult;
+import com.tascape.reactor.db.caseResultMetric;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -60,9 +60,9 @@ public class MySqlBaseBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, List<Map<String, Object>>> LOADED_LATEST_SUITES_RESULT = new ConcurrentHashMap<>();
+    private static final Map<String, List<Map<String, Object>>> LOADED_LACASE_SUITES_RESULT = new ConcurrentHashMap<>();
 
-    private static final Map<String, List<Map<String, Object>>> LOADED_LATEST_JOBS_RESULT = new ConcurrentHashMap<>();
+    private static final Map<String, List<Map<String, Object>>> LOADED_LACASE_JOBS_RESULT = new ConcurrentHashMap<>();
 
     @Resource(name = "jdbc/thr")
     private DataSource ds;
@@ -105,7 +105,7 @@ public class MySqlBaseBean implements Serializable {
     }
 
     List<Map<String, Object>> getLatestSuitesResult(long date, String project) throws NamingException, SQLException {
-        List<Map<String, Object>> list = LOADED_LATEST_SUITES_RESULT.get(date + project);
+        List<Map<String, Object>> list = LOADED_LACASE_SUITES_RESULT.get(date + project);
         if (list != null) {
             LOG.debug("retrieved from cache {}", date);
             return list;
@@ -126,7 +126,7 @@ public class MySqlBaseBean implements Serializable {
             list = this.dumpResultSetToList(rs);
             if (date < System.currentTimeMillis()) {
                 LOG.debug("cache history data");
-//                LOADED_LATEST_SUITES_RESULT.put(date + project, list);
+//                LOADED_LACASE_SUITES_RESULT.put(date + project, list);
             }
             return list;
         }
@@ -141,7 +141,7 @@ public class MySqlBaseBean implements Serializable {
     }
 
     public List<Map<String, Object>> getLatestJobsResult(long date, String project) throws NamingException, SQLException {
-        List<Map<String, Object>> list = LOADED_LATEST_JOBS_RESULT.get(date + project);
+        List<Map<String, Object>> list = LOADED_LACASE_JOBS_RESULT.get(date + project);
         if (list != null) {
             LOG.debug("retrieved from cache {}", date);
             return list;
@@ -162,7 +162,7 @@ public class MySqlBaseBean implements Serializable {
             list = this.dumpResultSetToList(rs);
             if (date < System.currentTimeMillis()) {
                 LOG.debug("cache history data");
-//                LOADED_LATEST_JOBS_RESULT.put(date + project, list);
+//                LOADED_LACASE_JOBS_RESULT.put(date + project, list);
             }
             return list;
         }
@@ -226,11 +226,11 @@ public class MySqlBaseBean implements Serializable {
     }
 
     public List<Map<String, Object>> getTestsResult(String srid) throws NamingException, SQLException {
-        String sql = "SELECT * FROM " + TestResult.TABLE_NAME + " TR "
-            + "INNER JOIN " + TestCase.TABLE_NAME + " TC "
-            + "ON TR.TEST_CASE_ID = TC.TEST_CASE_ID "
-            + "WHERE " + TestResult.SUITE_RESULT + " = ? "
-            + "ORDER BY " + TestResult.START_TIME + " DESC;";
+        String sql = "SELECT * FROM " + CaseResult.TABLE_NAME + " TR "
+            + "INNER JOIN " + TaskCase.TABLE_NAME + " TC "
+            + "ON TR.CASE_CASE_ID = TC.CASE_CASE_ID "
+            + "WHERE " + CaseResult.SUITE_RESULT + " = ? "
+            + "ORDER BY " + CaseResult.START_TIME + " DESC;";
         try (Connection conn = this.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, srid);
@@ -241,12 +241,12 @@ public class MySqlBaseBean implements Serializable {
     }
 
     public List<Map<String, Object>> getTestsResult(List<String> srids) throws NamingException, SQLException {
-        String sql = "SELECT * FROM " + TestResult.TABLE_NAME + " TR "
-            + "INNER JOIN " + TestCase.TABLE_NAME + " TC "
-            + "ON TR.TEST_CASE_ID = TC.TEST_CASE_ID "
-            + "WHERE " + TestResult.SUITE_RESULT + " IN (" + StringUtils.join(srids, ",") + ") "
-            + "ORDER BY " + TestCase.SUITE_CLASS + "," + TestCase.TEST_CLASS + ","
-            + TestCase.TEST_METHOD + "," + TestCase.TEST_DATA_INFO + " DESC;";
+        String sql = "SELECT * FROM " + CaseResult.TABLE_NAME + " TR "
+            + "INNER JOIN " + TaskCase.TABLE_NAME + " TC "
+            + "ON TR.CASE_CASE_ID = TC.CASE_CASE_ID "
+            + "WHERE " + CaseResult.SUITE_RESULT + " IN (" + StringUtils.join(srids, ",") + ") "
+            + "ORDER BY " + TaskCase.SUITE_CLASS + "," + TaskCase.CASE_CLASS + ","
+            + TaskCase.CASE_METHOD + "," + TaskCase.CASE_DATA_INFO + " DESC;";
         try (Connection conn = this.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(sql);
             LOG.trace("{}", stmt);
@@ -281,8 +281,8 @@ public class MySqlBaseBean implements Serializable {
         }
         sr += " ORDER BY " + SuiteResult.START_TIME + " DESC;";
 
-        String tr = "SELECT * FROM " + TestResult.TABLE_NAME
-            + " WHERE " + TestResult.EXECUTION_RESULT
+        String tr = "SELECT * FROM " + CaseResult.TABLE_NAME
+            + " WHERE " + CaseResult.EXECUTION_RESULT
             + " IN (" + sr + ")"
             + " ORDER BY " + SuiteResult.START_TIME + " DESC;";
         try (Connection conn = this.getConnection()) {
@@ -369,49 +369,49 @@ public class MySqlBaseBean implements Serializable {
             LOG.debug("sps imported");
         }
 
-        JSONArray trs = sr.getJSONArray("test_results");
+        JSONArray trs = sr.getJSONArray("CASE_results");
         int len = trs.length();
 
         try (Connection conn = this.getConnection()) {
             String sql = String.format("SELECT * FROM %s WHERE %s=? AND %s=? AND %s=? AND %s=? AND %s=?;",
-                TestCase.TABLE_NAME,
-                TestCase.SUITE_CLASS,
-                TestCase.TEST_CLASS,
-                TestCase.TEST_METHOD,
-                TestCase.TEST_DATA_INFO,
-                TestCase.TEST_DATA
+                TaskCase.TABLE_NAME,
+                TaskCase.SUITE_CLASS,
+                TaskCase.CASE_CLASS,
+                TaskCase.CASE_METHOD,
+                TaskCase.CASE_DATA_INFO,
+                TaskCase.CASE_DATA
             );
             PreparedStatement stmt
                 = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             stmt.setMaxRows(1);
             for (int i = 0; i < len; i++) {
                 JSONObject tr = trs.getJSONObject(i);
-                stmt.setString(1, tr.getString(TestCase.SUITE_CLASS));
-                stmt.setString(2, tr.getString(TestCase.TEST_CLASS));
-                stmt.setString(3, tr.getString(TestCase.TEST_METHOD));
-                stmt.setString(4, tr.getString(TestCase.TEST_DATA_INFO));
-                stmt.setString(5, tr.getString(TestCase.TEST_DATA));
+                stmt.setString(1, tr.getString(TaskCase.SUITE_CLASS));
+                stmt.setString(2, tr.getString(TaskCase.CASE_CLASS));
+                stmt.setString(3, tr.getString(TaskCase.CASE_METHOD));
+                stmt.setString(4, tr.getString(TaskCase.CASE_DATA_INFO));
+                stmt.setString(5, tr.getString(TaskCase.CASE_DATA));
                 ResultSet rs = stmt.executeQuery();
                 if (!rs.first()) {
                     rs.moveToInsertRow();
-                    rs.updateString(TestCase.SUITE_CLASS, tr.getString(TestCase.SUITE_CLASS));
-                    rs.updateString(TestCase.TEST_CLASS, tr.getString(TestCase.TEST_CLASS));
-                    rs.updateString(TestCase.TEST_METHOD, tr.getString(TestCase.TEST_METHOD));
-                    rs.updateString(TestCase.TEST_DATA_INFO, tr.getString(TestCase.TEST_DATA_INFO));
-                    rs.updateString(TestCase.TEST_DATA, tr.getString(TestCase.TEST_DATA));
+                    rs.updateString(TaskCase.SUITE_CLASS, tr.getString(TaskCase.SUITE_CLASS));
+                    rs.updateString(TaskCase.CASE_CLASS, tr.getString(TaskCase.CASE_CLASS));
+                    rs.updateString(TaskCase.CASE_METHOD, tr.getString(TaskCase.CASE_METHOD));
+                    rs.updateString(TaskCase.CASE_DATA_INFO, tr.getString(TaskCase.CASE_DATA_INFO));
+                    rs.updateString(TaskCase.CASE_DATA, tr.getString(TaskCase.CASE_DATA));
                     rs.insertRow();
                     rs.last();
                     rs.updateRow();
                     rs = stmt.executeQuery();
                     rs.first();
                 }
-                tr.put(TestCase.TEST_CASE_ID, rs.getLong(TestCase.TEST_CASE_ID));
+                tr.put(TaskCase.TASK_CASE_ID, rs.getLong(TaskCase.TASK_CASE_ID));
             }
             LOG.debug("tcid updated");
         }
 
         try (Connection conn = this.getConnection()) {
-            String sql = "SELECT * FROM " + TestResult.TABLE_NAME + " WHERE " + TestResult.SUITE_RESULT + " = ?;";
+            String sql = "SELECT * FROM " + CaseResult.TABLE_NAME + " WHERE " + CaseResult.SUITE_RESULT + " = ?;";
             PreparedStatement stmt = conn.prepareStatement(sql,
                 ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             stmt.setString(1, srid);
@@ -432,14 +432,14 @@ public class MySqlBaseBean implements Serializable {
         }
 
         try (Connection conn = this.getConnection()) {
-            String sql = "SELECT * FROM " + TestResultMetric.TABLE_NAME + ";";
+            String sql = "SELECT * FROM " + caseResultMetric.TABLE_NAME + ";";
             PreparedStatement stmt = conn.prepareStatement(sql,
                 ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             stmt.setMaxRows(1);
             ResultSet rs = stmt.executeQuery();
             ResultSetMetaData rsmd = rs.getMetaData();
             for (int i = 0; i < len; i++) {
-                JSONArray jarr = trs.getJSONObject(i).optJSONArray("test_result_metrics");
+                JSONArray jarr = trs.getJSONObject(i).optJSONArray("CASE_result_metrics");
                 if (jarr == null) {
                     continue;
                 }
@@ -449,7 +449,7 @@ public class MySqlBaseBean implements Serializable {
                     rs.moveToInsertRow();
                     for (int col = 1; col <= rsmd.getColumnCount(); col++) {
                         String cn = rsmd.getColumnLabel(col);
-                        if (cn.equals(TestResultMetric.TEST_RESULT_METRIC_ID)) {
+                        if (cn.equals(caseResultMetric.CASE_RESULT_METRIC_ID)) {
                             continue;
                         }
                         rs.updateObject(cn, trm.get(cn));
@@ -494,10 +494,10 @@ public class MySqlBaseBean implements Serializable {
     }
 
     List<Map<String, Object>> getTestMetrics(String srid) throws NamingException, SQLException {
-        String sql = "SELECT * FROM " + TestResultMetric.TABLE_NAME + " trm JOIN " + TestResult.TABLE_NAME + " tr"
-            + " ON trm." + TestResultMetric.TEST_RESULT_ID + "=" + "tr." + TestResult.TEST_RESULT_ID
-            + " WHERE " + TestResult.SUITE_RESULT + "=?"
-            + " ORDER BY " + TestResultMetric.METRIC_GROUP + "," + TestResultMetric.METRIC_NAME + ";";
+        String sql = "SELECT * FROM " + caseResultMetric.TABLE_NAME + " trm JOIN " + CaseResult.TABLE_NAME + " tr"
+            + " ON trm." + caseResultMetric.CASE_RESULT_ID + "=" + "tr." + CaseResult.CASE_RESULT_ID
+            + " WHERE " + CaseResult.SUITE_RESULT + "=?"
+            + " ORDER BY " + caseResultMetric.METRIC_GROUP + "," + caseResultMetric.METRIC_NAME + ";";
         try (Connection conn = this.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, srid);
