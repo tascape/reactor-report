@@ -143,7 +143,7 @@ public class SuiteResultView implements Serializable {
         ChartSeries pass = new ChartSeries();
         pass.setLabel("PASS");
         int f = (int) suiteResult.get(SuiteResult.NUMBER_OF_FAILURE);
-        int t = (int) suiteResult.get(SuiteResult.NUMBER_OF_TESTS);
+        int t = (int) suiteResult.get(SuiteResult.NUMBER_OF_CASES);
         fail.set(" ", f);
         pass.set(" ", t - f);
         model.addSeries(pass);

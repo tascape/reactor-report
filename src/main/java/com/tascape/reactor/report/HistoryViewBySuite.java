@@ -162,7 +162,7 @@ public class HistoryViewBySuite extends AbstractReportView implements Serializab
         es.shutdown();
         ds.forEach((LocalDate date) -> {
             int total = history.column(date).values().stream()
-                .mapToInt(row -> (Integer) row.get(SuiteResult.NUMBER_OF_TESTS))
+                .mapToInt(row -> (Integer) row.get(SuiteResult.NUMBER_OF_CASES))
                 .sum();
             int fail = history.column(date).values().stream()
                 .mapToInt(row -> (Integer) row.get(SuiteResult.NUMBER_OF_FAILURE))

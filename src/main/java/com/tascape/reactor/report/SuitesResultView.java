@@ -190,7 +190,7 @@ public class SuitesResultView implements Serializable {
         int index = 0;
         for (Map<String, Object> result : this.results) {
             int f = (int) result.get(SuiteResult.NUMBER_OF_FAILURE);
-            int t = (int) result.get(SuiteResult.NUMBER_OF_TESTS);
+            int t = (int) result.get(SuiteResult.NUMBER_OF_CASES);
             float s = ((long) result.get(SuiteResult.STOP_TIME) - (long) result.get(SuiteResult.START_TIME)) / 1000.0f;
             String x = (++index) + "";
             fail.set(x, f);
@@ -237,7 +237,7 @@ public class SuitesResultView implements Serializable {
         int index = 0;
         for (Map<String, Object> result : this.results) {
             int f = (int) result.get(SuiteResult.NUMBER_OF_FAILURE);
-            int t = (int) result.get(SuiteResult.NUMBER_OF_TESTS);
+            int t = (int) result.get(SuiteResult.NUMBER_OF_CASES);
             float s = ((long) result.get(SuiteResult.STOP_TIME) - (long) result.get(SuiteResult.START_TIME)) / 1000.0f;
             String x = (++index) + "";
             time.set(x, s);

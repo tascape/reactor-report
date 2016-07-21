@@ -123,7 +123,7 @@ public class MenuView implements Serializable {
         int t = 0;
         for (Map<String, Object> result : this.results) {
             f += Integer.parseInt(result.get(SuiteResult.NUMBER_OF_FAILURE) + "");
-            t += Integer.parseInt(result.get(SuiteResult.NUMBER_OF_TESTS) + "");
+            t += Integer.parseInt(result.get(SuiteResult.NUMBER_OF_CASES) + "");
         }
         LOG.debug("fail {}, total {}", f, t);
         failSeries.set(" ", f);
