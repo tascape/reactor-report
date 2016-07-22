@@ -10,10 +10,10 @@ pushd /usr/share/tomee/conf
   echo '</tomcat-users>' >> aa.txt
   mv tomcat-users.xml tomcat-users.xml.bk
   mv aa.txt tomcat-users.xml
-  wget "https://oss.sonatype.org/content/repositories/releases/com/tascape/qa/thr/1.1.6/thr-1.1.6.war" -O ../webapps/thr.war
+  wget "https://oss.sonatype.org/content/repositories/releases/com/tascape/reactor-report/1.2.0/reactor-report-1.2.0.war" -O ../webapps/reactor-report.war
   ../bin/startup.sh
 popd
 
-wget "https://raw.githubusercontent.com/tascape/testharness-report/master/doc/tomee" -O /etc/init.d/tomee
+wget "https://raw.githubusercontent.com/tascape/reactor-report/master/doc/tomee" -O /etc/init.d/tomee
 chmod 755 /etc/init.d/tomee
 update-rc.d tomee defaults
