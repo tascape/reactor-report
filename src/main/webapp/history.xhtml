@@ -11,7 +11,7 @@
         <h:outputStylesheet library="css" name="primefaces-ex.css" />
         <h:outputScript library="js" name="thr.js" />
         <link rel="icon" type="image/png" href="#{request.contextPath}/resources/img/favicon.png" />
-        <title>TestHarness Result History</title>
+        <title>Reactor Result History</title>
     </h:head>
 
     <h:body>
@@ -20,7 +20,7 @@
             <h:outputLink value="suites_result.xhtml">
                 <h:graphicImage library="img" name="home.png" alt="Home" />
             </h:outputLink>
-            <h:outputText value="TestHarness Result History" />
+            <h:outputText value="Reactor Result History" />
         </div>
 
         <div id="main">
@@ -33,13 +33,13 @@
                     <h:outputText value="#{rowIndex + 1}" />
                 </p:column>
 
-                <p:column headerText="Test Suite Name">
+                <p:column headerText="Suite Name">
                     <h:outputLink value="suites_result.xhtml?suite=#{suite}" target="_blank">#{suite}</h:outputLink>
                 </p:column>
 
                 <p:columns value="#{historyViewBySuite.dates}" var="date">
                     <ui:param name="row" value="#{historyViewBySuite.history.get(suite, date)}" />
-                    <ui:param name="total" value="#{row.get('NUMBER_OF_TESTS')}" />
+                    <ui:param name="total" value="#{row.get('NUMBER_OF_CASES')}" />
                     <ui:param name="fail" value="#{row.get('NUMBER_OF_FAILURE')}" />
                     <f:facet name="header">
                         <h:outputText value="#{date}" style="white-space: pre" />
@@ -53,7 +53,7 @@
 
                 <p:columnGroup type="footer">
                     <p:row>
-                        <p:column colspan="2" style="text-align: right" footerText="Total Number of Tests" />
+                        <p:column colspan="2" style="text-align: right" footerText="Total Number of Cases" />
                         <ui:repeat value="#{historyViewBySuite.dates}" var="date">
                             <p:column style="text-align: left" footerText="#{historyViewBySuite.totals.get(date)}" />
                         </ui:repeat>

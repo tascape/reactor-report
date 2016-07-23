@@ -29,9 +29,9 @@
                 <h:outputLink value="suites_result.xhtml?job=#{job}" rendered="#{not empty job}" style="font-size: large;">#{job}</h:outputLink>
             </h:panelGrid>
 
-            <p:dataTable value="#{suiteMetricDetailHistoryView.testMetricsHistoryDetail}" var="row" rowIndexVar="rowIndex"
+            <p:dataTable value="#{suiteMetricDetailHistoryView.caseMetricsHistoryDetail}" var="row" rowIndexVar="rowIndex"
                          tableStyle="width:auto">
-                <ui:param name="trm" value="#{row.get('TEST_RESULT_METRIC')}" />
+                <ui:param name="trm" value="#{row.get('CASE_RESULT_METRIC')}" />
                 <p:column headerText="" >
                     <h:outputText value="#{rowIndex + 1}" />
                 </p:column>

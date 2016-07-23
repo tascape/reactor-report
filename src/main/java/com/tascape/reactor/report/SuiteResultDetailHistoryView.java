@@ -76,30 +76,30 @@ public class SuiteResultDetailHistoryView implements Serializable {
             for (Map<String, Object> suiteResult : this.suitesResult) {
                 String srid = suiteResult.get(SuiteResult.SUITE_RESULT_ID).toString();
 
-                List<Map<String, Object>> testsResult = this.db.getTestsResult(srid);
-                for (Map<String, Object> testResult : testsResult) {
+                List<Map<String, Object>> casesResult = this.db.getCasesResult(srid);
+                for (Map<String, Object> caseResult : casesResult) {
 
                     boolean toAddOneRow = true;
-                    for (Map<String, Map<String, Object>> testHistory : this.suiteHistoryDetail) {
-                        Map<String, Object> tr = testHistory.get(srid);
+                    for (Map<String, Map<String, Object>> caseHistory : this.suiteHistoryDetail) {
+                        Map<String, Object> tr = caseHistory.get(srid);
                         if (tr != null) {
                             continue;
                         }
 
-                        TaskCase testCase = new TaskCase(testResult);
-                        TaskCase tc = new TaskCase(testHistory.get("TEST_CASE"));
-                        if (testCase.equals(tc)) {
-                            testHistory.put(srid, testResult);
+                        TaskCase kase = new TaskCase(caseResult);
+                        TaskCase tc = new TaskCase(caseHistory.get("TASK_CASE"));
+                        if (kase.equals(tc)) {
+                            caseHistory.put(srid, caseResult);
                             toAddOneRow = false;
                             break;
                         }
                     }
 
                     if (toAddOneRow) {
-                        Map<String, Map<String, Object>> testHistory = new HashMap<>();
-                        testHistory.put("TEST_CASE", testResult);
-                        testHistory.put(srid, testResult);
-                        this.suiteHistoryDetail.add(testHistory); // add one row
+                        Map<String, Map<String, Object>> caseHistory = new HashMap<>();
+                        caseHistory.put("TASK_CASE", caseResult);
+                        caseHistory.put(srid, caseResult);
+                        this.suiteHistoryDetail.add(caseHistory); // add one row
                     }
                 }
             }

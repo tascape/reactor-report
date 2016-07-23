@@ -19,7 +19,7 @@ import com.tascape.reactor.db.SuiteProperty;
 import com.tascape.reactor.db.SuiteResult;
 import com.tascape.reactor.db.TaskCase;
 import com.tascape.reactor.db.CaseResult;
-import com.tascape.reactor.db.caseResultMetric;
+import com.tascape.reactor.db.CaseResultMetric;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -225,7 +225,7 @@ public class MySqlBaseBean implements Serializable {
         }
     }
 
-    public List<Map<String, Object>> getTestsResult(String srid) throws NamingException, SQLException {
+    public List<Map<String, Object>> getCasesResult(String srid) throws NamingException, SQLException {
         String sql = "SELECT * FROM " + CaseResult.TABLE_NAME + " TR "
             + "INNER JOIN " + TaskCase.TABLE_NAME + " TC "
             + "ON TR.CASE_CASE_ID = TC.CASE_CASE_ID "
@@ -240,7 +240,7 @@ public class MySqlBaseBean implements Serializable {
         }
     }
 
-    public List<Map<String, Object>> getTestsResult(List<String> srids) throws NamingException, SQLException {
+    public List<Map<String, Object>> getCasesResult(List<String> srids) throws NamingException, SQLException {
         String sql = "SELECT * FROM " + CaseResult.TABLE_NAME + " TR "
             + "INNER JOIN " + TaskCase.TABLE_NAME + " TC "
             + "ON TR.CASE_CASE_ID = TC.CASE_CASE_ID "
@@ -432,7 +432,7 @@ public class MySqlBaseBean implements Serializable {
         }
 
         try (Connection conn = this.getConnection()) {
-            String sql = "SELECT * FROM " + caseResultMetric.TABLE_NAME + ";";
+            String sql = "SELECT * FROM " + CaseResultMetric.TABLE_NAME + ";";
             PreparedStatement stmt = conn.prepareStatement(sql,
                 ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             stmt.setMaxRows(1);
@@ -449,7 +449,7 @@ public class MySqlBaseBean implements Serializable {
                     rs.moveToInsertRow();
                     for (int col = 1; col <= rsmd.getColumnCount(); col++) {
                         String cn = rsmd.getColumnLabel(col);
-                        if (cn.equals(caseResultMetric.CASE_RESULT_METRIC_ID)) {
+                        if (cn.equals(CaseResultMetric.CASE_RESULT_METRIC_ID)) {
                             continue;
                         }
                         rs.updateObject(cn, trm.get(cn));
@@ -493,11 +493,11 @@ public class MySqlBaseBean implements Serializable {
         }
     }
 
-    List<Map<String, Object>> getTestMetrics(String srid) throws NamingException, SQLException {
-        String sql = "SELECT * FROM " + caseResultMetric.TABLE_NAME + " trm JOIN " + CaseResult.TABLE_NAME + " tr"
-            + " ON trm." + caseResultMetric.CASE_RESULT_ID + "=" + "tr." + CaseResult.CASE_RESULT_ID
+    List<Map<String, Object>> getCaseMetrics(String srid) throws NamingException, SQLException {
+        String sql = "SELECT * FROM " + CaseResultMetric.TABLE_NAME + " trm JOIN " + CaseResult.TABLE_NAME + " tr"
+            + " ON trm." + CaseResultMetric.CASE_RESULT_ID + "=" + "tr." + CaseResult.CASE_RESULT_ID
             + " WHERE " + CaseResult.SUITE_RESULT + "=?"
-            + " ORDER BY " + caseResultMetric.METRIC_GROUP + "," + caseResultMetric.METRIC_NAME + ";";
+            + " ORDER BY " + CaseResultMetric.METRIC_GROUP + "," + CaseResultMetric.METRIC_NAME + ";";
         try (Connection conn = this.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, srid);

@@ -183,7 +183,7 @@ public class HistoryViewBySuite extends AbstractReportView implements Serializab
         model.setShowPointLabels(true);
 
         LineChartSeries ts = new LineChartSeries();
-        ts.setLabel("Total Number of Tests");
+        ts.setLabel("Total Number of Cases");
         model.addSeries(ts);
         this.getDates().forEach(date -> {
             ts.set(date.toString(), totals.get(date));

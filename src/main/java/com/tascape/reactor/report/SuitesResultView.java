@@ -177,7 +177,7 @@ public class SuitesResultView implements Serializable {
         model.setZoom(true);
 
         Axis yAxis = model.getAxis(AxisType.Y);
-        yAxis.setLabel("Number of Tests");
+        yAxis.setLabel("Number of Cases");
         model.getAxis(AxisType.X).setTickAngle(-90);
 
         ChartSeries pass = new BarChartSeries();
@@ -214,7 +214,7 @@ public class SuitesResultView implements Serializable {
         xAxis.setTickAngle(-90);
         model.getAxes().put(AxisType.X, xAxis);
         Axis yAxis = model.getAxis(AxisType.Y);
-        yAxis.setLabel("Number of Tests");
+        yAxis.setLabel("Number of Cases");
         yAxis.setMin(0);
 
         Axis y2Axis = new LinearAxis("Execution Time (second)");

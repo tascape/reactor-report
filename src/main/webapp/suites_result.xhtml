@@ -10,7 +10,7 @@
         <h:outputStylesheet library="css" name="primefaces-ex.css" />
         <h:outputScript library="js" name="thr.js" />
         <link rel="icon" type="image/png" href="#{request.contextPath}/resources/img/favicon.png" />
-        <title>Test Suites Result</title>
+        <title>Suites Result</title>
     </h:head>
     <h:body>
         <ui:param name="project" value="#{suitesResultView.project}" />
@@ -22,9 +22,9 @@
             <h:outputLink value="dashboard.xhtml?project=#{suitesResultView.project}">
                 <h:graphicImage library="img" name="home.png" alt="Home" />
             </h:outputLink>
-            <h:outputText value="Test Suites Result" />
+            <h:outputText value="Suites Result" />
             <p:spacer width="20" />
-            <h:outputLabel style="font-size: large" value="(Test Suite #{suite})" rendered="#{not empty suite}" />
+            <h:outputLabel style="font-size: large" value="(Suite #{suite})" rendered="#{not empty suite}" />
             <h:outputLabel style="font-size: large" value="(Job Name: #{job})" rendered="#{not empty job}" />
         </div>
 
@@ -50,7 +50,7 @@
             </h:panelGrid>
 
             <h:panelGrid columns="3" rendered="#{grouped}">
-                <p:commandButton onclick="thr.querySuiteResults()" value="All Test Suites" style="font-size: xx-small" />
+                <p:commandButton onclick="thr.querySuiteResults()" value="All Suites" style="font-size: xx-small" />
                 <p:commandButton onclick="thr.querySuiteResultDetail('#{suite}', '#{job}', '#{project}')" value="Detail History" style="font-size: xx-small" />
                 <p:commandButton onclick="thr.querySuiteMetricDetail('#{suite}', '#{job}', '#{project}')" value="Metrics History" style="font-size: xx-small" />
             </h:panelGrid>
@@ -71,7 +71,7 @@
                         <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') != 0}" style="color: lightgray" />
                     </p:column>
 
-                    <p:column headerText="Test Suite Name" rendered="#{empty suite}" style="min-width: 388px">
+                    <p:column headerText="Suite Name" rendered="#{empty suite}" style="min-width: 388px">
                         <ui:param name="s" value="#{row.get('SUITE_NAME')}" />
                         <h:outputLink onclick="thr.querySuiteResults('#{s}', null,'#{project}');
                                 return false;">#{s}</h:outputLink>
@@ -83,8 +83,8 @@
                                 return false;">#{s}</h:outputLink>
                     </p:column>
 
-                    <p:column headerText="Product under Test" style="white-space: pre;">
-                        <h:outputText value="#{row.get('PRODUCT_UNDER_TEST')}" escape="false" />
+                    <p:column headerText="Product" style="white-space: pre;">
+                        <h:outputText value="#{row.get('PRODUCT_UNDER_TASK')}" escape="false" />
                     </p:column>
 
                     <ui:param name="bn" value="#{row.get('JOB_BUILD_NUMBER')}" />
@@ -107,9 +107,9 @@
 
                     <p:column width="50">
                         <f:facet name="header">
-                            <h:outputText value="# of&#10;Tests" escape="false" style="white-space: pre-wrap" />
+                            <h:outputText value="# of&#10;Cases" escape="false" style="white-space: pre-wrap" />
                         </f:facet>
-                        <h:outputText value="#{row.get('NUMBER_OF_TESTS')}" style="float: right" />
+                        <h:outputText value="#{row.get('NUMBER_OF_CASES')}" style="float: right" />
                     </p:column>
 
                     <p:column width="50">

@@ -134,7 +134,7 @@ public class MenuView implements Serializable {
         this.total = t;
         this.fail = f;
 
-        Axis xAxis = new LinearAxis("Total Number of Tests");
+        Axis xAxis = new LinearAxis("Total Number of Cases");
         xAxis.setTickAngle(-90);
         xAxis.setMin(0);
         if (t <= 28) {

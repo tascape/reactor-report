@@ -19,7 +19,7 @@ import com.tascape.reactor.SystemConfiguration;
 import com.tascape.reactor.db.SuiteProperty;
 import com.tascape.reactor.db.SuiteResult;
 import com.tascape.reactor.db.CaseResult;
-import com.tascape.reactor.db.caseResultMetric;
+import com.tascape.reactor.db.CaseResultMetric;
 import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -64,9 +64,9 @@ public class SuiteResultView implements Serializable {
 
     private Map<String, Object> suiteResult;
 
-    private List<Map<String, Object>> testsResult;
+    private List<Map<String, Object>> casesResult;
 
-    private List<Map<String, Object>> testMetrics;
+    private List<Map<String, Object>> caseMetrics;
 
     private List<Map<String, Object>> suiteProperties;
 
@@ -85,8 +85,8 @@ public class SuiteResultView implements Serializable {
                 this.setInvisible(!invisible);
                 return;
             }
-            this.testsResult = this.db.getTestsResult(this.srid);
-            this.testMetrics = this.db.getTestMetrics(this.srid);
+            this.casesResult = this.db.getCasesResult(this.srid);
+            this.caseMetrics = this.db.getCaseMetrics(this.srid);
             this.suiteProperties = this.db.getSuiteProperties(this.srid);
 
             this.processResults();
@@ -103,12 +103,12 @@ public class SuiteResultView implements Serializable {
         return suiteResult;
     }
 
-    public List<Map<String, Object>> getTestsResult() {
-        return testsResult;
+    public List<Map<String, Object>> getCasesResult() {
+        return casesResult;
     }
 
-    public List<Map<String, Object>> getTestMetrics() {
-        return testMetrics;
+    public List<Map<String, Object>> getCaseMetrics() {
+        return caseMetrics;
     }
 
     public List<Map<String, Object>> getSuiteProperties() {
@@ -149,7 +149,7 @@ public class SuiteResultView implements Serializable {
         model.addSeries(pass);
         model.addSeries(fail);
 
-        Axis xAxis = new LinearAxis("Number of Tests");
+        Axis xAxis = new LinearAxis("Number of Cases");
         xAxis.setTickAngle(-90);
         xAxis.setMin(0);
         if (t <= 28) {
@@ -172,10 +172,10 @@ public class SuiteResultView implements Serializable {
     }
 
     /*
-     * for backward compatible - only use test log directory name
+     * for backward compatible - only use case log directory name
      */
     private void processResults() {
-        this.testsResult.forEach(row -> {
+        this.casesResult.forEach(row -> {
             String logDir = row.get(CaseResult.LOG_DIR) + "";
             logDir = logDir.replace(srid, "");
             logDir = logDir.replaceAll("/", "");
@@ -184,7 +184,7 @@ public class SuiteResultView implements Serializable {
     }
 
     private void processEnvs() {
-        this.testsResult.forEach(row -> {
+        this.casesResult.forEach(row -> {
             String env = SystemConfiguration.SYSPROP_CASE_ENV + "." + row.get(CaseResult.CASE_ENV);
             Map<String, Object> p = this.suiteProperties.stream()
                 .filter(prop -> prop.get(SuiteProperty.PROPERTY_NAME).equals(env)).findFirst().orElse(null);
@@ -196,18 +196,18 @@ public class SuiteResultView implements Serializable {
 
     private void processMetrics() {
         Map<String, Map<String, Object>> tm = new HashMap<>();
-        this.testMetrics.forEach(row -> {
-            String key = row.get(caseResultMetric.METRIC_GROUP) + "." + row.get(caseResultMetric.METRIC_NAME);
+        this.caseMetrics.forEach(row -> {
+            String key = row.get(CaseResultMetric.METRIC_GROUP) + "." + row.get(CaseResultMetric.METRIC_NAME);
             Map<String, Object> r = tm.get(key);
             if (r == null) {
                 tm.put(key, row);
                 List<Double> values = new ArrayList<>();
-                values.add((double) row.get(caseResultMetric.METRIC_VALUE));
+                values.add((double) row.get(CaseResultMetric.METRIC_VALUE));
                 row.put("values", values);
             } else {
                 @SuppressWarnings("unchecked")
                 List<Double> values = (List<Double>) r.get("values");
-                values.add((double) row.get(caseResultMetric.METRIC_VALUE));
+                values.add((double) row.get(CaseResultMetric.METRIC_VALUE));
             }
         });
 
@@ -224,7 +224,7 @@ public class SuiteResultView implements Serializable {
             }
         });
 
-        this.testMetrics = new ArrayList<>(tm.values());
+        this.caseMetrics = new ArrayList<>(tm.values());
     }
 
     private void getParameters() {

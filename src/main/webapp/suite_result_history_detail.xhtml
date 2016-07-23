@@ -32,17 +32,17 @@
 
             <p:dataTable value="#{suiteResultDetailHistoryView.suiteHistoryDetail}" var="row" rowIndexVar="rowIndex"
                          tableStyle="width:auto">
-                <ui:param name="tc" value="#{row.get('TEST_CASE')}" />
+                <ui:param name="tc" value="#{row.get('TASK_CASE')}" />
                 <p:column headerText="" >
                     <h:outputText value="#{rowIndex + 1}" />
                 </p:column>
 
-                <p:column headerText="Test Class" style="white-space: pre;">
-                    <h:outputText value="#{tc.get('TEST_CLASS')}" />
+                <p:column headerText="Case Class" style="white-space: pre;">
+                    <h:outputText value="#{tc.get('CASE_CLASS')}" />
                 </p:column>
 
-                <p:column headerText="Test Method" style="white-space: pre;">
-                    <h:outputText value="#{tc.get('TEST_METHOD')}(#{tc.get('TEST_DATA')})" />
+                <p:column headerText="Case Method" style="white-space: pre;">
+                    <h:outputText value="#{tc.get('CASE_METHOD')}(#{tc.get('CASE_DATA')})" />
                 </p:column>
 
                 <p:columns value="#{suiteResultDetailHistoryView.suitesResult}" var="suiteResult"  style="white-space: nowrap; text-align: center">

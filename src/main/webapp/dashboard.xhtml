@@ -11,7 +11,7 @@
         <h:outputStylesheet library="css" name="primefaces-ex.css" />
         <h:outputScript library="js" name="thr.js" />
         <link rel="icon" type="image/png" href="#{request.contextPath}/resources/img/favicon.png" />
-        <title>TestHarness Result Dashboard</title>
+        <title>Reactor Result Dashboard</title>
     </h:head>
     <h:body>
         <ui:param name="project" value="#{dashboardView.project}" />
@@ -20,13 +20,13 @@
             <h:outputLink value="suites_result.xhtml?project=#{project}">
                 <h:graphicImage library="img" name="home.png" alt="Home" />
             </h:outputLink>
-            <h:outputText value="TestHarness Result Dashboard" />
+            <h:outputText value="Reactor Result Dashboard" />
             <p:spacer width="20" />
             <p:menuButton value="#{project}" model="#{dashboardView.model}" iconPos="right" style="font-size: x-small;" />
         </h:form>
         <div id="main">
             <p:tabView dynamic="false" cache="true" orientation="bottom" style="border-width: 0">
-                <p:tab title="Test Suite">
+                <p:tab title="Suite">
                     <p:chart type="bar" model="#{dashboardViewBySuite.barModel}" style="height:#{dashboardViewBySuite.chartHeight}px" responsive="true" />
                     <p:spacer height="10" />
 
@@ -38,13 +38,13 @@
                             <h:outputText value="#{rowIndex + 1}" rendered="#{row.get('INVISIBLE_ENTRY') != 0}" style="color: lightgray" />
                         </p:column>
 
-                        <p:column headerText="Test Suite Name">
+                        <p:column headerText="Suite Name">
                             <ui:param name="suite" value="#{row.get('SUITE_NAME')}" />
                             <h:outputLink value="suites_result.xhtml?project=#{project}&amp;suite=#{suite}" target="_blank">#{suite}</h:outputLink>
                         </p:column>
 
-                        <p:column headerText="Product under Test" style="white-space: pre;">
-                            <h:outputText value="#{row.get('PRODUCT_UNDER_TEST')}" escape="false" />
+                        <p:column headerText="Product" style="white-space: pre;">
+                            <h:outputText value="#{row.get('PRODUCT_UNDER_TASK')}" escape="false" />
                         </p:column>
 
                         <ui:param name="bn" value="#{row.get('JOB_BUILD_NUMBER')}" />
@@ -67,9 +67,9 @@
 
                         <p:column width="50">
                             <f:facet name="header">
-                                <h:outputText value="# of&#10;Tests" escape="false" style="white-space: pre-wrap" />
+                                <h:outputText value="# of&#10;Casess" escape="false" style="white-space: pre-wrap" />
                             </f:facet>
-                            <h:outputText value="#{row.get('NUMBER_OF_TESTS')}" style="float: right" />
+                            <h:outputText value="#{row.get('NUMBER_OF_CASES')}" style="float: right" />
                         </p:column>
 
                         <p:column width="50">
@@ -96,7 +96,7 @@
 
                         <p:summaryRow >
                             <p:column colspan="5" style="text-align: right">
-                                <h:outputText value="Total Number of Tests" />
+                                <h:outputText value="Total Number of Cases" />
                             </p:column>
                             <p:column style="text-align: right">
                                 <h:outputText value="#{dashboardViewBySuite.total}" />
@@ -126,8 +126,8 @@
                             <h:outputLink value="suites_result.xhtml?project=#{project}&amp;job=#{job}" target="_blank">#{job}</h:outputLink>
                         </p:column>
 
-                        <p:column headerText="Product under Test" style="white-space: pre;">
-                            <h:outputText value="#{row.get('PRODUCT_UNDER_TEST')}" escape="false" />
+                        <p:column headerText="Product" style="white-space: pre;">
+                            <h:outputText value="#{row.get('PRODUCT_UNDER_TASK')}" escape="false" />
                         </p:column>
 
                         <ui:param name="bn" value="#{row.get('JOB_BUILD_NUMBER')}" />
@@ -150,9 +150,9 @@
 
                         <p:column width="50">
                             <f:facet name="header">
-                                <h:outputText value="# of&#10;Tests" escape="false" style="white-space: pre-wrap" />
+                                <h:outputText value="# of&#10;Casess" escape="false" style="white-space: pre-wrap" />
                             </f:facet>
-                            <h:outputText value="#{row.get('NUMBER_OF_TESTS')}" style="float: right" />
+                            <h:outputText value="#{row.get('NUMBER_OF_CASESS')}" style="float: right" />
                         </p:column>
 
                         <p:column width="50">
@@ -179,7 +179,7 @@
 
                         <p:summaryRow >
                             <p:column colspan="5" style="text-align: right">
-                                <h:outputText value="Total Number of Tests" />
+                                <h:outputText value="Total Number of Cases" />
                             </p:column>
                             <p:column style="text-align: right">
                                 <h:outputText value="#{dashboardViewByJob.total}" />

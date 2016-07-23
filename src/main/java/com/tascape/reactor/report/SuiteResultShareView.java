@@ -46,7 +46,7 @@ public class SuiteResultShareView implements Serializable {
 
     private Map<String, Object> suiteResult;
 
-    private List<Map<String, Object>> testsResult;
+    private List<Map<String, Object>> casesResult;
 
     private List<Map<String, Object>> suiteProperties;
 
@@ -56,7 +56,7 @@ public class SuiteResultShareView implements Serializable {
 
         try {
             this.suiteResult = this.db.getSuiteResult(this.srid);
-            this.testsResult = this.db.getTestsResult(this.srid);
+            this.casesResult = this.db.getCasesResult(this.srid);
             this.suiteProperties = this.db.getSuiteProperties(this.srid);
         } catch (NamingException | SQLException ex) {
             throw new RuntimeException(ex);
@@ -71,8 +71,8 @@ public class SuiteResultShareView implements Serializable {
         return suiteResult;
     }
 
-    public List<Map<String, Object>> getTestsResult() {
-        return testsResult;
+    public List<Map<String, Object>> getCasesResult() {
+        return casesResult;
     }
 
     public List<Map<String, Object>> getSuiteProperties() {

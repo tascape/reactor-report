@@ -12,7 +12,7 @@
         <h:outputStylesheet library="css" name="primefaces-ex.css" />
         <h:outputScript library="js" name="thr.js" />
         <link rel="icon" type="image/png" href="#{request.contextPath}/resources/img/favicon.png" />
-        <title>Test Suite Result</title>
+        <title>Suite Result</title>
     </h:head>
 
     <h:body>
@@ -56,21 +56,21 @@
             <p:chart type="bar" model="#{suiteResultView.barModel}" style="height:#{suiteResultView.chartHeight}px" responsive="true" />
             <p:spacer height="10" />
 
-            <p:dataTable value="#{suiteResultView.testsResult}" var="row" rowIndexVar="rowIndex"
-                         rowKey="#{row.get('TEST_RESULT_ID')}">
+            <p:dataTable value="#{suiteResultView.casesResult}" var="row" rowIndexVar="rowIndex"
+                         rowKey="#{row.get('CASE_RESULT_ID')}">
                 <ui:param name="result" value="#{row.get('EXECUTION_RESULT')}" />
-                <ui:param name="env" value="#{row.get('TEST_ENV')}" />
+                <ui:param name="env" value="#{row.get('CASE_ENV')}" />
 
                 <p:column headerText="" width="36">
                     <h:outputText value="#{rowIndex + 1}" />
                 </p:column>
 
-                <p:column headerText="Test Class">
-                    <h:outputText value="#{row.get('TEST_CLASS')}" />
+                <p:column headerText="Case Class">
+                    <h:outputText value="#{row.get('CASE_CLASS')}" />
                 </p:column>
 
-                <p:column headerText="Test Method">
-                    <nobr><h:outputText value="#{row.get('TEST_METHOD')}(#{row.get('TEST_DATA')})" /></nobr>
+                <p:column headerText="Case Method">
+                    <nobr><h:outputText value="#{row.get('CASE_METHOD')}(#{row.get('CASE_DATA')})" /></nobr>
                 </p:column>
 
                 <p:column headerText="Env" width="36">
@@ -102,11 +102,11 @@
                 </p:column>
             </p:dataTable>
 
-            <p:outputPanel rendered="#{not empty suiteResultView.testMetrics}">
+            <p:outputPanel rendered="#{not empty suiteResultView.caseMetrics}">
                 <p:spacer height="38px" width="10px" />
-                <h:outputText value="Test Result Metrics" styleClass="seg-title" />
-                <p:dataTable value="#{suiteResultView.testMetrics}" var="row" rowIndexVar="rowIndex" tableStyle="width:auto"
-                             rowKey="#{row.get('TEST_RESULT_METRIC_ID')}" >
+                <h:outputText value="Case Result Metrics" styleClass="seg-title" />
+                <p:dataTable value="#{suiteResultView.caseMetrics}" var="row" rowIndexVar="rowIndex" tableStyle="width:auto"
+                             rowKey="#{row.get('CASE_RESULT_METRIC_ID')}" >
                     <p:column headerText="" width="36">
                         <h:outputText value="#{rowIndex + 1}" />
                     </p:column>

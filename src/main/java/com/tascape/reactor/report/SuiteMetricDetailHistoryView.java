@@ -16,7 +16,7 @@
 package com.tascape.reactor.report;
 
 import com.tascape.reactor.db.SuiteResult;
-import com.tascape.reactor.db.caseResultMetric;
+import com.tascape.reactor.db.CaseResultMetric;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -63,7 +63,7 @@ public class SuiteMetricDetailHistoryView implements Serializable {
 
     private List<Map<String, Object>> suitesResult;
 
-    private final List<Map<String, Map<String, Object>>> testMetricsHistoryDetail = new ArrayList<>();
+    private final List<Map<String, Map<String, Object>>> caseMetricsHistoryDetail = new ArrayList<>();
 
     @PostConstruct
     public void init() {
@@ -76,19 +76,19 @@ public class SuiteMetricDetailHistoryView implements Serializable {
             for (Map<String, Object> suiteResult : this.suitesResult) {
                 String srid = suiteResult.get(SuiteResult.SUITE_RESULT_ID).toString();
 
-                for (Map<String, Object> testResultMetric : this.db.getTestMetrics(srid)) {
+                for (Map<String, Object> caseResultMetric : this.db.getCaseMetrics(srid)) {
                     boolean toAddOneRow = true;
-                    for (Map<String, Map<String, Object>> metrics : this.testMetricsHistoryDetail) {
+                    for (Map<String, Map<String, Object>> metrics : this.caseMetricsHistoryDetail) {
                         Map<String, Object> tr = metrics.get(srid);
                         if (tr != null) {
                             continue;
                         }
 
-                        Object group = metrics.get("TEST_RESULT_METRIC").get(caseResultMetric.METRIC_GROUP);
-                        Object name = metrics.get("TEST_RESULT_METRIC").get(caseResultMetric.METRIC_NAME);
-                        if (group.equals(testResultMetric.get(caseResultMetric.METRIC_GROUP))
-                            && name.equals(testResultMetric.get(caseResultMetric.METRIC_NAME))) {
-                            metrics.put(srid, testResultMetric);
+                        Object group = metrics.get("CASE_RESULT_METRIC").get(CaseResultMetric.METRIC_GROUP);
+                        Object name = metrics.get("CASE_RESULT_METRIC").get(CaseResultMetric.METRIC_NAME);
+                        if (group.equals(caseResultMetric.get(CaseResultMetric.METRIC_GROUP))
+                            && name.equals(caseResultMetric.get(CaseResultMetric.METRIC_NAME))) {
+                            metrics.put(srid, caseResultMetric);
                             toAddOneRow = false;
                             break;
                         }
@@ -96,9 +96,9 @@ public class SuiteMetricDetailHistoryView implements Serializable {
 
                     if (toAddOneRow) {
                         Map<String, Map<String, Object>> metrics = new HashMap<>();
-                        metrics.put("TEST_RESULT_METRIC", testResultMetric);
-                        metrics.put(srid, testResultMetric);
-                        this.testMetricsHistoryDetail.add(metrics); // add one row
+                        metrics.put("CASE_RESULT_METRIC", caseResultMetric);
+                        metrics.put(srid, caseResultMetric);
+                        this.caseMetricsHistoryDetail.add(metrics); // add one row
                     }
                 }
             }
@@ -159,8 +159,8 @@ public class SuiteMetricDetailHistoryView implements Serializable {
         return suitesResult;
     }
 
-    public List<Map<String, Map<String, Object>>> getTestMetricsHistoryDetail() {
-        return testMetricsHistoryDetail;
+    public List<Map<String, Map<String, Object>>> getCaseMetricsHistoryDetail() {
+        return caseMetricsHistoryDetail;
     }
 
     private void getParameters() {
