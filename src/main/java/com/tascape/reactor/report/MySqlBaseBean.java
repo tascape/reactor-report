@@ -228,7 +228,7 @@ public class MySqlBaseBean implements Serializable {
     public List<Map<String, Object>> getCasesResult(String srid) throws NamingException, SQLException {
         String sql = "SELECT * FROM " + CaseResult.TABLE_NAME + " TR "
             + "INNER JOIN " + TaskCase.TABLE_NAME + " TC "
-            + "ON TR.CASE_CASE_ID = TC.CASE_CASE_ID "
+            + "ON TR.TASK_CASE_ID = TC.TASK_CASE_ID "
             + "WHERE " + CaseResult.SUITE_RESULT + " = ? "
             + "ORDER BY " + CaseResult.START_TIME + " DESC;";
         try (Connection conn = this.getConnection()) {
@@ -243,7 +243,7 @@ public class MySqlBaseBean implements Serializable {
     public List<Map<String, Object>> getCasesResult(List<String> srids) throws NamingException, SQLException {
         String sql = "SELECT * FROM " + CaseResult.TABLE_NAME + " TR "
             + "INNER JOIN " + TaskCase.TABLE_NAME + " TC "
-            + "ON TR.CASE_CASE_ID = TC.CASE_CASE_ID "
+            + "ON TR.TASK_CASE_ID = TC.TASK_CASE_ID "
             + "WHERE " + CaseResult.SUITE_RESULT + " IN (" + StringUtils.join(srids, ",") + ") "
             + "ORDER BY " + TaskCase.SUITE_CLASS + "," + TaskCase.CASE_CLASS + ","
             + TaskCase.CASE_METHOD + "," + TaskCase.CASE_DATA_INFO + " DESC;";
