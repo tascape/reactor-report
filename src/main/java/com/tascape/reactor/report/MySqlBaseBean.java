@@ -124,10 +124,10 @@ public class MySqlBaseBean implements Serializable {
             LOG.trace("{}", stmt);
             ResultSet rs = stmt.executeQuery();
             list = this.dumpResultSetToList(rs);
-            if (date < System.currentTimeMillis()) {
-                LOG.debug("cache history data");
+//            if (date < System.currentTimeMillis()) {
+//                LOG.debug("cache history data");
 //                LOADED_LACASE_SUITES_RESULT.put(date + project, list);
-            }
+//            }
             return list;
         }
     }
