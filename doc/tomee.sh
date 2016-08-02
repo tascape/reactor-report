@@ -1,8 +1,8 @@
 #!/bin/bash
 
-wget "https://repository.apache.org/service/local/artifact/maven/redirect?r=snapshots&g=org.apache.openejb&a=apache-tomee&v=7.0.0-SNAPSHOT&c=plus&p=tar.gz" -O /home/vagrant/tomee.tar.gz
+wget "http://repo.maven.apache.org/maven2/org/apache/tomee/apache-tomee/7.0.1/apache-tomee-7.0.1-plus.tar.gz" -O /home/vagrant/tomee.tar.gz
 tar zxvf /home/vagrant/tomee.tar.gz -C /home/vagrant/
-ln -s /home/vagrant/apache-tomee-plus-7.0.0-SNAPSHOT /usr/share/tomee
+ln -s /home/vagrant/apache-tomee-plus-7.0.1 /usr/share/tomee
 pushd /usr/share/tomee/conf
   sed '/tomcat-users>/d' tomcat-users.xml > aa.txt
   echo '  <role rolename="tomee-admin" />' >> aa.txt
@@ -17,3 +17,4 @@ popd
 wget "https://raw.githubusercontent.com/tascape/reactor-report/master/doc/tomee" -O /etc/init.d/tomee
 chmod 755 /etc/init.d/tomee
 update-rc.d tomee defaults
+
