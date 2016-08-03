@@ -60,11 +60,11 @@ public class MySqlBaseBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, List<Map<String, Object>>> LOADED_LACASE_SUITES_RESULT = new ConcurrentHashMap<>();
+    private static final Map<String, List<Map<String, Object>>> LOADED_SUITES_RESULT = new ConcurrentHashMap<>();
 
-    private static final Map<String, List<Map<String, Object>>> LOADED_LACASE_JOBS_RESULT = new ConcurrentHashMap<>();
+    private static final Map<String, List<Map<String, Object>>> LOADED_JOBS_RESULT = new ConcurrentHashMap<>();
 
-    @Resource(name = "jdbc/thr")
+    @Resource(name = "jdbc/reactor")
     private DataSource ds;
 
     Set<String> loadProjects() throws SQLException, NamingException {
@@ -105,7 +105,7 @@ public class MySqlBaseBean implements Serializable {
     }
 
     List<Map<String, Object>> getLatestSuitesResult(long date, String project) throws NamingException, SQLException {
-        List<Map<String, Object>> list = LOADED_LACASE_SUITES_RESULT.get(date + project);
+        List<Map<String, Object>> list = LOADED_SUITES_RESULT.get(date + project);
         if (list != null) {
             LOG.debug("retrieved from cache {}", date);
             return list;
@@ -126,7 +126,7 @@ public class MySqlBaseBean implements Serializable {
             list = this.dumpResultSetToList(rs);
 //            if (date < System.currentTimeMillis()) {
 //                LOG.debug("cache history data");
-//                LOADED_LACASE_SUITES_RESULT.put(date + project, list);
+//                LOADED_SUITES_RESULT.put(date + project, list);
 //            }
             return list;
         }
@@ -141,7 +141,7 @@ public class MySqlBaseBean implements Serializable {
     }
 
     public List<Map<String, Object>> getLatestJobsResult(long date, String project) throws NamingException, SQLException {
-        List<Map<String, Object>> list = LOADED_LACASE_JOBS_RESULT.get(date + project);
+        List<Map<String, Object>> list = LOADED_JOBS_RESULT.get(date + project);
         if (list != null) {
             LOG.debug("retrieved from cache {}", date);
             return list;
@@ -162,7 +162,7 @@ public class MySqlBaseBean implements Serializable {
             list = this.dumpResultSetToList(rs);
             if (date < System.currentTimeMillis()) {
                 LOG.debug("cache history data");
-//                LOADED_LACASE_JOBS_RESULT.put(date + project, list);
+//                LOADED_JOBS_RESULT.put(date + project, list);
             }
             return list;
         }
@@ -369,7 +369,7 @@ public class MySqlBaseBean implements Serializable {
             LOG.debug("sps imported");
         }
 
-        JSONArray trs = sr.getJSONArray("CASE_results");
+        JSONArray trs = sr.getJSONArray("case_results");
         int len = trs.length();
 
         try (Connection conn = this.getConnection()) {
@@ -428,7 +428,7 @@ public class MySqlBaseBean implements Serializable {
                 rs.last();
                 rs.updateRow();
             }
-            LOG.debug("trs imported");
+            LOG.debug("crs imported");
         }
 
         try (Connection conn = this.getConnection()) {
@@ -459,7 +459,7 @@ public class MySqlBaseBean implements Serializable {
                     rs.updateRow();
                 }
             }
-            LOG.debug("trms imported");
+            LOG.debug("crms imported");
         }
     }
 
