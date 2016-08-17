@@ -1,8 +1,8 @@
 #!/bin/bash
 
-wget "http://repo.maven.apache.org/maven2/org/apache/tomee/apache-tomee/7.0.1/apache-tomee-7.0.1-plus.tar.gz" -O /home/vagrant/tomee.tar.gz
-tar zxvf /home/vagrant/tomee.tar.gz -C /home/vagrant/
-ln -s /home/vagrant/apache-tomee-plus-7.0.1 /usr/share/tomee
+wget "http://repo.maven.apache.org/maven2/org/apache/tomee/apache-tomee/7.0.1/apache-tomee-7.0.1-plus.tar.gz" -O tomee.tar.gz
+tar zxvf tomee.tar.gz && mv apache-tomee-plus-7.0.1 tomee && mv tomee /usr/share/
+
 pushd /usr/share/tomee/conf
   sed '/tomcat-users>/d' tomcat-users.xml > aa.txt
   echo '  <role rolename="tomee-admin" />' >> aa.txt
