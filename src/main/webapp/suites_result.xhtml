@@ -101,7 +101,7 @@
                         <h:outputLink value="suite_result.xhtml?srid=#{row.get('SUITE_RESULT_ID')}" target="_blank" title="#{result}">
                             <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{result =='PASS'}" />
                             <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{result =='FAIL'}" />
-                            <h:graphicImage library="img" name="skip.png" alt="#{result}" rendered="#{!(result == 'FAIL' || result == 'PASS')}" />
+                            <h:graphicImage library="img" name="running.png" alt="#{result}" rendered="#{!(result == 'FAIL' || result == 'PASS')}" />
                         </h:outputLink>
                     </p:column>
 
