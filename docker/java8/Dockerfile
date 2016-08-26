@@ -27,5 +27,7 @@ WORKDIR /data
 # Define commonly used JAVA_HOME variable
 ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 
+ENTRYPOINT ["java"]
+
 # Define default command.
-CMD ["java", "-version"]
+CMD ["-version"]
