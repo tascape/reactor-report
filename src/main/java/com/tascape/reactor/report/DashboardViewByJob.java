@@ -39,6 +39,7 @@ public class DashboardViewByJob extends DashboardView {
     private MySqlBaseBean db;
 
     @PostConstruct
+    @Override
     public void init() {
         super.init();
         try {

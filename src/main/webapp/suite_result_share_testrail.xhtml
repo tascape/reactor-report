@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <h:outputStylesheet library="css" name="thr.css" />
+        <h:outputStylesheet library="css" name="primefaces-ex.css" />
+        <h:outputScript library="js" name="thr.js" />
+        <link rel="icon" type="image/png" href="#{request.contextPath}/resources/img/favicon.png" />
+        <title>Suite Result Share</title>
+    </h:head>
+    <h:body style="font-size: larger">
+
+        <div id="masthead">
+            <h:outputLink value="dashboard.xhtml">
+                <h:graphicImage library="img" name="home.png" alt="Home" />
+            </h:outputLink>
+            <h:outputText>Share Suite Execution Result to TestRail</h:outputText>
+        </div>
+
+        <div id="main">
+            <h:form style="margin-top: 50px">
+                <p:growl id="growl" life="2000" />
+
+                <h:panelGrid columns="2" cellpadding="10">
+                    <h:outputText>Suite Execution Result Id</h:outputText>
+                    <h:inputText value="#{suiteResultExportTestRailView.srid}" size="50" readonly="false" />
+                    <h:outputText>Server Instance (http://testrail.mycompany.com/) *</h:outputText>
+                    <h:inputText value="#{suiteResultExportTestRailView.host}" id="host" required="true" size="50" />
+                    <h:outputText>User Name (email) *</h:outputText>
+                    <h:inputText value="#{suiteResultExportTestRailView.user}" id="user" required="true" size="30" />
+                    <h:outputText>Password *</h:outputText>
+                    <h:inputSecret value="#{suiteResultExportTestRailView.pass}" id="pass" required="true" size="30" />
+                    <h:outputText>Project Id *</h:outputText>
+                    <h:inputText value="#{suiteResultExportTestRailView.projectId}" id="projectId" required="true" size="20" />
+                    <h:outputText>Suite Id *</h:outputText>
+                    <h:inputText value="#{suiteResultExportTestRailView.suiteId}" id="suiteId" required="true" size="20" />
+                    <h:outputText>Section Id(s) (2365,2366)</h:outputText>
+                    <h:inputText value="#{suiteResultExportTestRailView.sectionIds}" id="sectionIds" size="20" />
+                    <p:commandButton value="Share" update="growl" style="float: right" actionListener="#{suiteResultExportTestRailView.share}" ajax="true" />
+                </h:panelGrid>
+            </h:form>
+        </div>
+    </h:body>
+</html>

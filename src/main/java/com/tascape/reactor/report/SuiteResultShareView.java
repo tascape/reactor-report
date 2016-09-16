@@ -15,8 +15,8 @@
  */
 package com.tascape.reactor.report;
 
+import com.google.common.collect.Lists;
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -24,7 +24,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.naming.NamingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,44 +38,16 @@ public class SuiteResultShareView implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public static final List<String> DESTINATIONS = Lists.newArrayList("TestRail");
+
     @Inject
     private MySqlBaseBean db;
 
     private String srid;
 
-    private Map<String, Object> suiteResult;
-
-    private List<Map<String, Object>> casesResult;
-
-    private List<Map<String, Object>> suiteProperties;
-
     @PostConstruct
     public void init() {
         this.getParameters();
-
-        try {
-            this.suiteResult = this.db.getSuiteResult(this.srid);
-            this.casesResult = this.db.getCasesResult(this.srid);
-            this.suiteProperties = this.db.getSuiteProperties(this.srid);
-        } catch (NamingException | SQLException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-    
-    public void shareToTestRail() {
-        LOG.debug("coming soon...");
-    }
-
-    public Map<String, Object> getSuiteResult() {
-        return suiteResult;
-    }
-
-    public List<Map<String, Object>> getCasesResult() {
-        return casesResult;
-    }
-
-    public List<Map<String, Object>> getSuiteProperties() {
-        return suiteProperties;
     }
 
     public String getSrid() {
