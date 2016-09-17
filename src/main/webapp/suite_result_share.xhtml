@@ -15,9 +15,10 @@
         <h3>To External Sites</h3>
 
         <h:form style="margin-bottom: 20px">
-            <p:button outcome="suite_result_share_testrail" value="TestRail" icon="ui-icon-star">
+            <p:button id="testrail" outcome="suite_result_share_testrail" value="TestRail" icon="ui-icon-star">
                 <f:param name="srid" value="#{suiteResultShareView.srid}" />
             </p:button>
+            <p:tooltip id="toolTipGrow" for="testrail" value="API v2" showEffect="clip" hideEffect="explode" />
         </h:form>
         <h:form style="margin-bottom: 20px">
         </h:form>

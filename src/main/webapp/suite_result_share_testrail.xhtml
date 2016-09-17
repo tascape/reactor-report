@@ -21,24 +21,28 @@
 
         <div id="main">
             <h:form style="margin-top: 50px">
-                <p:growl id="growl" life="2000" />
+                <p:growl id="growl" life="10000" showDetail="true" />
 
                 <h:panelGrid columns="2" cellpadding="10">
-                    <h:outputText>Suite Execution Result Id</h:outputText>
-                    <h:inputText value="#{suiteResultExportTestRailView.srid}" size="50" readonly="false" />
-                    <h:outputText>Server Instance (http://testrail.mycompany.com/) *</h:outputText>
-                    <h:inputText value="#{suiteResultExportTestRailView.host}" id="host" required="true" size="50" />
-                    <h:outputText>User Name (email) *</h:outputText>
+                    <h:outputText>*Suite Execution Result Id</h:outputText>
+                    <h:inputText value="#{suiteResultExportTestRailView.srid}" id="srid" size="50" readonly="false" />
+                    <h:outputText>*Server Instance: (<u>https://testrail.nb.com/</u>)index.php?/projects/overview/3</h:outputText>
+                    <h:inputText value="#{suiteResultExportTestRailView.url}" id="url" required="true" size="50" />
+                    <h:outputText>*User Name: (user@company.com) *</h:outputText>
                     <h:inputText value="#{suiteResultExportTestRailView.user}" id="user" required="true" size="30" />
-                    <h:outputText>Password *</h:outputText>
+                    <h:outputText>*Password</h:outputText>
                     <h:inputSecret value="#{suiteResultExportTestRailView.pass}" id="pass" required="true" size="30" />
-                    <h:outputText>Project Id *</h:outputText>
+                    <h:outputText>*Project Id: https://testrail.nb.com/index.php?/projects/overview/(<u>3</u>)</h:outputText>
                     <h:inputText value="#{suiteResultExportTestRailView.projectId}" id="projectId" required="true" size="20" />
-                    <h:outputText>Suite Id *</h:outputText>
+                    <h:outputText>*Suite Id: https://testrail.nb.com/index.php?/suites/view/(<u>38</u>)&amp;...</h:outputText>
                     <h:inputText value="#{suiteResultExportTestRailView.suiteId}" id="suiteId" required="true" size="20" />
-                    <h:outputText>Section Id(s) (2365,2366)</h:outputText>
+                    <h:outputText>Section Id(s): https://testrail.nb.com/index.php?/suites/view/38&amp;...&amp;group_id=(<u>2365</u>) or (2365,2366)</h:outputText>
                     <h:inputText value="#{suiteResultExportTestRailView.sectionIds}" id="sectionIds" size="20" />
-                    <p:commandButton value="Share" update="growl" style="float: right" actionListener="#{suiteResultExportTestRailView.share}" ajax="true" />
+                    <h:panelGroup>
+                        <h:outputText value="Mark as Complete: " />
+                        <p:selectBooleanButton id="complete" value="#{suiteResultExportTestRailView.complete}" onLabel="Yes" offLabel="No" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:100px" />
+                    </h:panelGroup>
+                    <p:commandButton value="Share" update="growl srid" style="float: right" actionListener="#{suiteResultExportTestRailView.share}" ajax="false" />
                 </h:panelGrid>
             </h:form>
         </div>
