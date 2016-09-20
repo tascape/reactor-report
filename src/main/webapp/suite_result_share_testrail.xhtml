@@ -2,7 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <h:head>
         <h:outputStylesheet library="css" name="thr.css" />
         <h:outputStylesheet library="css" name="primefaces-ex.css" />
@@ -21,11 +22,12 @@
 
         <div id="main">
             <h:form style="margin-top: 50px">
-                <p:growl id="growl" life="10000" showDetail="true" />
+                <p:growl id="growl" life="6000" showDetail="true" />
+                <ui:param name="srid" value="#{suiteResultExportTestRailView.srid}" />
 
                 <h:panelGrid columns="2" cellpadding="10">
                     <h:outputText>*Suite Execution Result Id</h:outputText>
-                    <h:inputText value="#{suiteResultExportTestRailView.srid}" id="srid" size="50" readonly="false" />
+                    <h:inputText value="#{srid}" id="srid" required="true" size="50" readonly="false" />
                     <h:outputText>*Server Instance: (<u>https://testrail.nb.com/</u>)index.php?/projects/overview/3</h:outputText>
                     <h:inputText value="#{suiteResultExportTestRailView.url}" id="url" required="true" size="50" />
                     <h:outputText>*User Name: (user@company.com) *</h:outputText>
@@ -43,8 +45,13 @@
                         <p:selectBooleanButton id="complete" value="#{suiteResultExportTestRailView.complete}" onLabel="Yes" offLabel="No" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:100px" />
                     </h:panelGroup>
                     <p:commandButton value="Share" update="growl srid" style="float: right" actionListener="#{suiteResultExportTestRailView.share}" ajax="false" />
+                    <p />
+                    <h:outputLink value="#{suiteResultExportTestRailView.runLink}" target="_blank" rendered="#{not empty suiteResultExportTestRailView.runLink}" >
+                        #{suiteResultExportTestRailView.runLink}
+                    </h:outputLink>
                 </h:panelGrid>
             </h:form>
+            <p />
         </div>
     </h:body>
 </html>

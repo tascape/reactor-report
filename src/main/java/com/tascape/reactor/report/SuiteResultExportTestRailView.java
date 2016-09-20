@@ -29,6 +29,7 @@ import com.tascape.reactor.Reactor;
 import com.tascape.reactor.db.CaseResult;
 import com.tascape.reactor.db.SuiteResult;
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -40,6 +41,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.naming.NamingException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
@@ -72,6 +74,8 @@ public class SuiteResultExportTestRailView implements Serializable {
 
     private boolean complete = true;
 
+    private String runLink = "";
+
     @Inject
     private MySqlBaseBean db;
 
@@ -81,6 +85,17 @@ public class SuiteResultExportTestRailView implements Serializable {
     }
 
     public void share(ActionEvent actionEvent) {
+        try {
+            this.share0();
+        } catch (Exception ex) {
+            LOG.error("error", ex);
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "error during sharing", ex.getMessage());
+            addMessage(msg);
+        }
+        addMessage(new FacesMessage(FacesMessage.SEVERITY_INFO, "shared", ""));
+    }
+
+    private void share0() throws NamingException, SQLException {
         LOG.debug("srid {}", srid);
         LOG.debug("url {}", url);
         LOG.debug("user {}", user);
@@ -110,53 +125,45 @@ public class SuiteResultExportTestRailView implements Serializable {
             LOG.debug("testrail section {} - {}", sectionId, section.getName());
         });
 
+        Map<String, Object> sr = this.db.getSuiteResult(srid);
+        List<Map<String, Object>> trs = this.db.getCasesResult(srid);
+        srid = "";
+
+        List<CaseField> cfs = testRail.caseFields().list().execute();
+        List<Integer> cids = testRail.cases().list(pid, sid, cfs).execute().stream()
+            .filter(c -> sids.isEmpty() || sids.contains(c.getSectionId()))
+            .map(c -> {
+                int id = c.getId();
+                LOG.debug("{} - {}", c.getSectionId(), id);
+                return id;
+            })
+            .collect(Collectors.toList());
+
+        Run run = testRail.runs().add(pid, new Run()
+            .setSuiteId(sid)
+            .setIncludeAll(false)
+            .setCaseIds(cids)
+            .setName(StringUtils.join(names, " - ") + ": "
+                + DateFormatUtils.ISO_DATETIME_FORMAT.format(sr.get(SuiteResult.START_TIME))))
+            .execute();
+        this.runLink = run.getUrl();
+
         try {
-            Map<String, Object> sr = this.db.getSuiteResult(srid);
-            List<Map<String, Object>> trs = this.db.getCasesResult(srid);
-            srid = "";
-
-            List<CaseField> cfs = testRail.caseFields().list().execute();
-            List<Integer> cids = testRail.cases().list(pid, sid, cfs).execute().stream()
-                .filter(c -> sids.isEmpty() || sids.contains(c.getSectionId()))
-                .map(c -> {
-                    int id = c.getId();
-                    LOG.debug("{} - {}", c.getSectionId(), id);
-                    return id;
-                })
-                .collect(Collectors.toList());
-
-            Run run = testRail.runs().add(pid, new Run()
-                .setSuiteId(sid)
-                .setIncludeAll(false)
-                .setCaseIds(cids)
-                .setName(StringUtils.join(names, " - ") + ": "
-                    + DateFormatUtils.ISO_DATETIME_FORMAT.format(sr.get(SuiteResult.START_TIME))))
-                .execute();
-
-            try {
-                List<ResultField> customResultFields = testRail.resultFields().list().execute();
-                trs.parallelStream().forEach(cr -> {
-                    int crid = Integer.parseInt((String) cr.get(CaseResult.EXTERNAL_ID));
-                    int status = ExecutionResult.isFailure(((String) cr.get(CaseResult.EXECUTION_RESULT))) ? 5 : 1;
-                    testRail.results().addForCase(run.getId(), crid,
-                        new Result().setStatusId(status).addCustomField("custom_execmode", 0),
-                        customResultFields)
-                        .execute();
-                    LOG.debug("{}", crid);
-                });
-            } finally {
-                if (complete) {
-                    testRail.runs().close(run.getId()).execute();
-                }
+            List<ResultField> customResultFields = testRail.resultFields().list().execute();
+            trs.parallelStream().forEach(cr -> {
+                int crid = Integer.parseInt((String) cr.get(CaseResult.EXTERNAL_ID));
+                int status = ExecutionResult.isFailure(((String) cr.get(CaseResult.EXECUTION_RESULT))) ? 5 : 1;
+                testRail.results().addForCase(run.getId(), crid,
+                    new Result().setStatusId(status).addCustomField("custom_execmode", 0),
+                    customResultFields)
+                    .execute();
+                LOG.debug("{}", crid);
+            });
+        } finally {
+            if (complete) {
+                testRail.runs().close(run.getId()).execute();
             }
-
-        } catch (Exception ex) {
-            LOG.error("error", ex);
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "error during sharing", ex.getMessage());
-            addMessage(msg);
-            throw new RuntimeException(ex);
         }
-        addMessage(new FacesMessage(FacesMessage.SEVERITY_INFO, "shared", ""));
     }
 
     public String getSrid() {
@@ -221,6 +228,14 @@ public class SuiteResultExportTestRailView implements Serializable {
 
     public void setComplete(boolean complete) {
         this.complete = complete;
+    }
+
+    public String getRunLink() {
+        return runLink;
+    }
+
+    public void setRunLink(String runLink) {
+        this.runLink = runLink;
     }
 
     private void getParameters() {
