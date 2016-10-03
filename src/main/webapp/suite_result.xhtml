@@ -10,6 +10,7 @@
         <meta http-equiv="refresh" content="61" />
         <h:outputStylesheet library="css" name="thr.css" />
         <h:outputStylesheet library="css" name="primefaces-ex.css" />
+        <link href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" />
         <h:outputScript library="js" name="thr.js" />
         <link rel="icon" type="image/png" href="#{request.contextPath}/resources/img/favicon.png" />
         <title>Suite Result</title>
@@ -43,13 +44,13 @@
                     <f:convertDateTime type="date" pattern="EEE yyyy-MM-dd HH:mm:ss" timeZone="US/Pacific" />
                 </h:outputText>
                 <h:outputLink value="#" id="share">
-                    <h:graphicImage library="img" name="share.png" alt="share" width="20" onclick="PF('share_suite_result').show();"/>
+                    <i class="fa fa-share fa-3" aria-hidden="true" style="font-size: larger" onclick="PF('share_suite_result').show();" />
                 </h:outputLink>
             </h:panelGrid>
 
             <p:tooltip id="toolTipGrow" for="share" value="share this suite execution result" showEffect="clip"
                        hideEffect="explode" />
-            <p:dialog header="Share Suite Execution Result" widgetVar="share_suite_result" fitViewport="true">
+            <p:dialog header="Share Suite Execution Result" widgetVar="share_suite_result" fitViewport="true" closeOnEscape="true" position="222, 88">
                 <ui:include src="suite_result_share.xhtml?srid=#{srid}" />
             </p:dialog>
 

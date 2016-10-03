@@ -1,5 +1,6 @@
 /*
- * Copyright 2015 - 2016 Nebula Bay.
+ * Copyright (c) 2015 - present Nebula Bay.
+ * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +44,12 @@ public class DashboardViewBySuite extends DashboardView {
     public void init() {
         super.init();
         try {
-            this.setResults(this.db.getLatestSuitesResult(this.getProject()));
+            String project = this.getProject();
+            if (project.equals(ALL_PROJECTS)) {
+                project = "";
+            }
+            int weeks = this.getWeeks();
+            this.setResults(this.db.getLatestSuitesResult(project, weeks));
         } catch (NamingException | SQLException ex) {
             throw new RuntimeException(ex);
         }

@@ -1,5 +1,6 @@
 /*
- * Copyright 2015 - 2016 Nebula Bay.
+ * Copyright (c) 2015 - present Nebula Bay.
+ * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +16,7 @@
  */
 package com.tascape.reactor.report;
 
+import com.google.common.collect.Lists;
 import com.tascape.reactor.db.SuiteResult;
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -50,6 +52,8 @@ import org.slf4j.LoggerFactory;
 public class DashboardView implements Serializable {
     private static final Logger LOG = LoggerFactory.getLogger(DashboardView.class);
 
+    public static final String ALL_PROJECTS = "ALL_PROJECTS";
+
     private static final long serialVersionUID = 1L;
 
     @Inject
@@ -57,7 +61,11 @@ public class DashboardView implements Serializable {
 
     private final List<String> projects = new ArrayList<>();
 
-    private String project = "";
+    private final List<Integer> weekList = Lists.newArrayList(1, 2, 4, 8, 26, 52, 104);
+
+    private String project = ALL_PROJECTS;
+
+    private int weeks = 2;
 
     private final List<Map<String, Object>> results = new ArrayList<>();
 
@@ -69,7 +77,13 @@ public class DashboardView implements Serializable {
 
     private int fail;
 
-    private MenuModel model;
+    private MenuModel menuProjects;
+
+    private MenuModel menuWeeks;
+
+    private MenuModel menuModel;
+
+    private String weekString = "";
 
     @PostConstruct
     public void init() {
@@ -81,12 +95,20 @@ public class DashboardView implements Serializable {
             LOG.warn(ex.getMessage());
         }
 
-        model = new DefaultMenuModel();
+        menuProjects = new DefaultMenuModel();
         for (String p : projects) {
-            DefaultMenuItem item = new DefaultMenuItem(StringUtils.isBlank(p) ? "all projects" : p);
-            item.setUrl("dashboard.xhtml?project=" + p);
+            DefaultMenuItem item = new DefaultMenuItem(p);
+            item.setUrl("dashboard.xhtml?project=" + p + "&weeks=" + weeks);
             item.setIcon("ui-icon-arrowreturnthick-1-n");
-            model.addElement(item);
+            menuProjects.addElement(item);
+        }
+
+        menuWeeks = new DefaultMenuModel();
+        for (int w : weekList) {
+            DefaultMenuItem item = new DefaultMenuItem(this.getWeekString(w));
+            item.setUrl("dashboard.xhtml?project=" + project + "&weeks=" + w);
+            item.setIcon("ui-icon-arrowreturnthick-1-n");
+            getMenuWeeks().addElement(item);
         }
     }
 
@@ -133,8 +155,34 @@ public class DashboardView implements Serializable {
         return projects;
     }
 
-    public MenuModel getModel() {
-        return model;
+    public MenuModel getMenuProjects() {
+        return menuProjects;
+    }
+
+    public MenuModel getMenuWeeks() {
+        return menuWeeks;
+    }
+
+    public int getWeeks() {
+        return weeks;
+    }
+
+    public void setWeeks(int weeks) {
+        this.weeks = weeks;
+    }
+
+    /**
+     * @return the getWeekString
+     */
+    public String getWeekString() {
+        return weekString;
+    }
+
+    /**
+     * @return the menuModel
+     */
+    public MenuModel getMenuModel() {
+        return menuModel;
     }
 
     protected HorizontalBarChartModel initBarModel() {
@@ -181,11 +229,29 @@ public class DashboardView implements Serializable {
         return barModel;
     }
 
+    private String getWeekString(int weeks) {
+        return "last " + (weeks > 1 ? weeks + " weeks" : "week");
+    }
+
     private void getParameters() {
         Map<String, String> map = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         String v = map.get("project");
-        if (v != null) {
+        if (StringUtils.isBlank(v)) {
+            this.project = ALL_PROJECTS;
+        } else {
             this.project = v;
         }
+        v = map.get("weeks");
+        if (v != null) {
+            try {
+                this.weeks = Integer.parseInt(v);
+            } catch (Exception ex) {
+                this.weeks = 2;
+            }
+            if (this.weeks < 1 || this.weeks > 52) {
+                this.weeks = 2;
+            }
+        }
+        this.weekString = this.getWeekString(weeks);
     }
 }

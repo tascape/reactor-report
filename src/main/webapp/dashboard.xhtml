@@ -22,7 +22,8 @@
             </h:outputLink>
             <h:outputText value="Report Dashboard" />
             <p:spacer width="20" />
-            <p:menuButton value="#{project}" model="#{dashboardView.model}" iconPos="right" style="font-size: x-small;" />
+            <p:menuButton value="#{project}" model="#{dashboardView.menuProjects}" iconPos="right" style="font-size: x-small;" />
+            <p:menuButton value="#{dashboardView.weekString}" model="#{dashboardView.menuWeeks}" iconPos="right" style="font-size: x-small;" />
         </h:form>
         <div id="main">
             <p:tabView dynamic="false" cache="true" orientation="bottom" style="border-width: 0">
@@ -194,7 +195,7 @@
             </p:tabView>
         </div>
         <p:stack icon="/resources/images/stack.png" expanded="true">
-            <p:menuitem value="Current" icon="/resources/images/current.png" url="dashboard.xhtml?project=#{project}" />
+            <p:menuitem value="Current" icon="/resources/images/current.png" url="dashboard.xhtml?project=#{project} " />
             <p:menuitem value="Weekly" icon="/resources/images/history.png" url="history.xhtml?interval=7&amp;entries=26&amp;project=#{project}" />
             <p:menuitem value="Daily" icon="/resources/images/history.png" url="history.xhtml?interval=1&amp;entries=30&amp;project=#{project}" />
         </p:stack>

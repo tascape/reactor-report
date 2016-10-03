@@ -1,5 +1,6 @@
 /*
- * Copyright 2015 - 2016 Nebula Bay.
+ * Copyright (c) 2015 - present Nebula Bay.
+ * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,12 +80,12 @@ public class MySqlBaseBean implements Serializable {
             while (rs.next()) {
                 String name = rs.getString(1);
                 if (name != null) {
-                    projects.add(name);
+                    projects.add(name.trim());
                     while (true) {
                         int i = name.lastIndexOf("-");
                         if (i != -1) {
                             name = name.substring(0, i);
-                            projects.add(name);
+                            projects.add(name.trim());
                         } else {
                             break;
                         }
@@ -92,28 +93,32 @@ public class MySqlBaseBean implements Serializable {
                 }
             }
         }
-        projects.add("");
+        projects.add(DashboardView.ALL_PROJECTS);
+        projects.remove("");
         return projects;
     }
 
     public List<Map<String, Object>> getLatestSuitesResult() throws NamingException, SQLException {
-        return this.getLatestSuitesResult(System.currentTimeMillis(), "");
+        return this.getLatestSuitesResult("", 2);
     }
 
-    public List<Map<String, Object>> getLatestSuitesResult(String project) throws NamingException, SQLException {
-        return this.getLatestSuitesResult(System.currentTimeMillis(), project);
+    public List<Map<String, Object>> getLatestSuitesResult(String project, int weeks) throws NamingException,
+        SQLException {
+        long end = System.currentTimeMillis();
+        return this.getLatestSuitesResult(project, end - 604800000L * weeks, end);
     }
 
-    List<Map<String, Object>> getLatestSuitesResult(long date, String project) throws NamingException, SQLException {
-        List<Map<String, Object>> list = LOADED_SUITES_RESULT.get(date + project);
+    List<Map<String, Object>> getLatestSuitesResult(String project, long start, long end) throws NamingException,
+        SQLException {
+        List<Map<String, Object>> list = LOADED_SUITES_RESULT.get(end + project);
         if (list != null) {
-            LOG.debug("retrieved from cache {}", date);
+            LOG.debug("retrieved from cache {}", end);
             return list;
         }
         String sql = new StringBuilder("SELECT * FROM (SELECT * FROM ").append(SuiteResult.TABLE_NAME)
             .append(" WHERE (NOT INVISIBLE_ENTRY) AND (")
-            .append(SuiteResult.START_TIME + " < ").append(date)
-            .append(") AND (" + SuiteResult.START_TIME + " > ").append(date - 604800000) // a week
+            .append(SuiteResult.START_TIME + " < ").append(end)
+            .append(") AND (" + SuiteResult.START_TIME + " > ").append(start)
             .append(StringUtils.isBlank(project) ? ")" : ") AND (" + SuiteResult.PROJECT_NAME + " LIKE '" + project
                 + "%')")
             .append(" ORDER BY " + SuiteResult.START_TIME + " DESC) AS T")
@@ -124,32 +129,35 @@ public class MySqlBaseBean implements Serializable {
             LOG.trace("{}", stmt);
             ResultSet rs = stmt.executeQuery();
             list = this.dumpResultSetToList(rs);
-//            if (date < System.currentTimeMillis()) {
+//            if (end < System.currentTimeMillis()) {
 //                LOG.debug("cache history data");
-//                LOADED_SUITES_RESULT.put(date + project, list);
+//                LOADED_SUITES_RESULT.put(end + project, list);
 //            }
             return list;
         }
     }
 
     public List<Map<String, Object>> getLatestJobsResult() throws NamingException, SQLException {
-        return this.getLatestJobsResult(System.currentTimeMillis(), "");
+        return this.getLatestJobsResult("", System.currentTimeMillis(), 2);
     }
 
-    public List<Map<String, Object>> getLatestJobsResult(String project) throws NamingException, SQLException {
-        return this.getLatestJobsResult(System.currentTimeMillis(), project);
+    public List<Map<String, Object>> getLatestJobsResult(String project, int weeks) throws NamingException, SQLException {
+        long end = System.currentTimeMillis();
+
+        return this.getLatestJobsResult(project, end - end - 604800000L * weeks, end);
     }
 
-    public List<Map<String, Object>> getLatestJobsResult(long date, String project) throws NamingException, SQLException {
-        List<Map<String, Object>> list = LOADED_JOBS_RESULT.get(date + project);
+    public List<Map<String, Object>> getLatestJobsResult(String project, long start, long end) throws NamingException,
+        SQLException {
+        List<Map<String, Object>> list = LOADED_JOBS_RESULT.get(end + project);
         if (list != null) {
-            LOG.debug("retrieved from cache {}", date);
+            LOG.debug("retrieved from cache {}", end);
             return list;
         }
         String sql = new StringBuilder("SELECT * FROM (SELECT * FROM ").append(SuiteResult.TABLE_NAME)
             .append(" WHERE (NOT INVISIBLE_ENTRY) AND (")
-            .append(SuiteResult.START_TIME + " < ").append(date)
-            .append(") AND (" + SuiteResult.START_TIME + " > ").append(date - 604800000) // a week
+            .append(SuiteResult.START_TIME + " < ").append(end)
+            .append(") AND (" + SuiteResult.START_TIME + " > ").append(start)
             .append(StringUtils.isBlank(project) ? ")" : ") AND (" + SuiteResult.PROJECT_NAME + " LIKE '" + project
                 + "%')")
             .append(" ORDER BY " + SuiteResult.START_TIME + " DESC) AS T")
@@ -160,9 +168,9 @@ public class MySqlBaseBean implements Serializable {
             LOG.trace("{}", stmt);
             ResultSet rs = stmt.executeQuery();
             list = this.dumpResultSetToList(rs);
-            if (date < System.currentTimeMillis()) {
+            if (end < System.currentTimeMillis()) {
                 LOG.debug("cache history data");
-//                LOADED_JOBS_RESULT.put(date + project, list);
+//                LOADED_JOBS_RESULT.put(end + project, list);
             }
             return list;
         }

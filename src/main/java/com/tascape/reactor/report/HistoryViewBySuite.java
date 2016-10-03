@@ -1,5 +1,6 @@
 /*
- * Copyright 2015 - 2016 Nebula Bay.
+ * Copyright (c) 2015 - present Nebula Bay.
+ * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +53,7 @@ import org.primefaces.model.chart.LineChartModel;
 import org.primefaces.model.chart.LineChartSeries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static com.tascape.reactor.report.DashboardView.ALL_PROJECTS;
 
 /**
  *
@@ -206,7 +208,7 @@ public class HistoryViewBySuite extends AbstractReportView implements Serializab
         public Map.Entry<LocalDate, List<Map<String, Object>>> call() throws Exception {
             ZoneId zi = ZoneId.ofOffset("", ZoneOffset.ofHoursMinutes(HistoryViewBySuite.this.clientTimezone, 0));
             long epoch = date.atStartOfDay(zi).plusDays(1).toEpochSecond() * 1000;
-            return new AbstractMap.SimpleEntry<>(date, db.getLatestSuitesResult(epoch, project));
+            return new AbstractMap.SimpleEntry<>(date, db.getLatestSuitesResult(project, epoch - 604800000L, epoch));
         }
     }
 
@@ -224,9 +226,10 @@ public class HistoryViewBySuite extends AbstractReportView implements Serializab
             }
         }
         v = map.get("project");
-        if (v != null) {
+        if (v.equals(ALL_PROJECTS)) {
+            this.project = "";
+        } else {
             this.project = v;
-            LOG.debug("project={}", this.project);
         }
         LOG.debug("client timezone {}", this.clientTimezone);
     }

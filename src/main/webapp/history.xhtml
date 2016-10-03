@@ -11,7 +11,7 @@
         <h:outputStylesheet library="css" name="primefaces-ex.css" />
         <h:outputScript library="js" name="thr.js" />
         <link rel="icon" type="image/png" href="#{request.contextPath}/resources/img/favicon.png" />
-        <title>Reactor Result History</title>
+        <title>Report History</title>
     </h:head>
 
     <h:body>
@@ -20,7 +20,7 @@
             <h:outputLink value="suites_result.xhtml">
                 <h:graphicImage library="img" name="home.png" alt="Home" />
             </h:outputLink>
-            <h:outputText value="Reactor Result History" />
+            <h:outputText value="Report History" />
         </div>
 
         <div id="main">
@@ -62,9 +62,9 @@
             </p:dataTable>
         </div>
         <p:stack icon="/resources/images/stack.png" expanded="true">
-            <p:menuitem value="Current" icon="/resources/images/current.png" url="dashboard.xhtml" />
-            <p:menuitem value="Weekly" icon="/resources/images/history.png" url="history.xhtml?interval=7&amp;entries=26" />
-            <p:menuitem value="Daily" icon="/resources/images/history.png" url="history.xhtml?interval=1&amp;entries=30" />
+            <p:menuitem value="Current" icon="/resources/images/current.png" url="dashboard.xhtml?project=#{historyViewBySuite.project}" />
+            <p:menuitem value="Weekly" icon="/resources/images/history.png" url="history.xhtml?interval=7&amp;entries=26&amp;project=#{historyViewBySuite.project}" />
+            <p:menuitem value="Daily" icon="/resources/images/history.png" url="history.xhtml?interval=1&amp;entries=30&amp;project=#{historyViewBySuite.project}" />
         </p:stack>
     </h:body>
 </html>
