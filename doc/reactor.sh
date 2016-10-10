@@ -1,6 +1,7 @@
 #!/bin/bash
 
 mkdir -p $HOME/.reactor
+mkdir -p $HOME/.m2 
  
 if (type vagrant) && (type virtualbox) then
 
