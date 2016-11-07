@@ -143,7 +143,7 @@ public class MySqlBaseBean implements Serializable {
 
     public List<Map<String, Object>> getLatestJobsResult(String project, int weeks) throws NamingException, SQLException {
         long end = System.currentTimeMillis();
-        return this.getLatestJobsResult(project, end - end - 604800000L * weeks, end);
+        return this.getLatestJobsResult(project, end - 604800000L * weeks, end);
     }
 
     public List<Map<String, Object>> getLatestJobsResult(String project, long start, long end) throws NamingException,
