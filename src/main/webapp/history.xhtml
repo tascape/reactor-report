@@ -55,7 +55,15 @@
                     <p:row>
                         <p:column colspan="2" style="text-align: right" footerText="Total Number of Cases" />
                         <ui:repeat value="#{historyViewBySuite.dates}" var="date">
-                            <p:column style="text-align: left" footerText="#{historyViewBySuite.totals.get(date)}" />
+                            <ui:param name="fails" value="#{historyViewBySuite.fails.get(date)}" />
+                            <p:column style="text-align: left">
+                                <f:facet name="footer">
+                                    <h:outputText value="#{historyViewBySuite.totals.get(date)}" style="" />
+                                    <span style="float: right;" />
+                                    <h:outputText value="#{historyViewBySuite.fails.get(date)}" style="float: right; color: red;" rendered="#{fails > 0}"/>
+                                </f:facet>
+                            </p:column>
+
                         </ui:repeat>
                     </p:row>
                 </p:columnGroup>

@@ -172,7 +172,7 @@ public class HistoryViewBySuite extends AbstractReportView implements Serializab
             if (total > 0) {
                 dates.add(date);
                 totals.put(date, total);
-                fails.put(date, fail);
+                fails.put(date, fail == 0 ? null : fail);
             }
         });
     }
@@ -180,20 +180,33 @@ public class HistoryViewBySuite extends AbstractReportView implements Serializab
     private LineChartModel createChartModel() {
         LineChartModel model = new LineChartModel();
         model.setLegendPosition("n");
+        model.setLegendCols(2);
         model.setLegendPlacement(LegendPlacement.OUTSIDEGRID);
+        model.setSeriesColors("00ff00, ff0000");
         model.setAnimate(true);
         model.setShowPointLabels(true);
+        model.setBreakOnNull(true);
 
-        LineChartSeries ts = new LineChartSeries();
-        ts.setLabel("Total Number of Cases");
-        model.addSeries(ts);
+        LineChartSeries sTotal = new LineChartSeries();
+        sTotal.setLabel("TOTAL");
+        model.addSeries(sTotal);
         this.getDates().forEach(date -> {
-            ts.set(date.toString(), totals.get(date));
+            sTotal.set(date.toString(), totals.get(date));
+        });
+
+        LineChartSeries sFail = new LineChartSeries();
+        sFail.setLabel("FAIL");
+        model.addSeries(sFail);
+        this.getDates().forEach(date -> {
+            sFail.set(date.toString(), fails.get(date));
         });
 
         Axis xAxis = new CategoryAxis();
         xAxis.setTickAngle(-45);
         model.getAxes().put(AxisType.X, xAxis);
+
+        Axis yAxis = model.getAxis(AxisType.Y);
+        yAxis.setMin(0);
         return model;
     }
 
