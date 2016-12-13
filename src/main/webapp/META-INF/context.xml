@@ -1,4 +1,3 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context antiJARLocking="true" path="/rr">
-    <Resource auth="Container" driverClassName="com.mysql.jdbc.Driver" maxActive="20" maxIdle="1" name="jdbc/reactor" password="p@ssword" testWhileIdle="true" type="javax.sql.DataSource" url="jdbc:mysql://127.0.0.1/reactor" username="reactor" validationQuery="SELECT 1;"/>
 </Context>

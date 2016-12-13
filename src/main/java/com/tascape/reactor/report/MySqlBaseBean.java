@@ -16,11 +16,17 @@
  */
 package com.tascape.reactor.report;
 
+import com.jolbox.bonecp.BoneCP;
+import com.jolbox.bonecp.BoneCPConfig;
 import com.tascape.reactor.db.SuiteProperty;
 import com.tascape.reactor.db.SuiteResult;
 import com.tascape.reactor.db.TaskCase;
 import com.tascape.reactor.db.CaseResult;
 import com.tascape.reactor.db.CaseResultMetric;
+import com.tascape.reactor.db.DbHandler;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -38,12 +44,12 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 import javax.naming.NamingException;
-import javax.sql.DataSource;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -65,8 +71,40 @@ public class MySqlBaseBean implements Serializable {
 
     private static final Map<String, List<Map<String, Object>>> LOADED_JOBS_RESULT = new ConcurrentHashMap<>();
 
-    @Resource(name = "jdbc/reactor")
-    private DataSource ds;
+    private static final String DB_DRIVER = "com.mysql.jdbc.Driver";
+
+    private static final String DB_CONFIG_FILE = "/usr/local/reactor/reactor-db.properties";
+
+    static {
+        try {
+            Class.forName(DB_DRIVER).newInstance();
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+            throw new RuntimeException("Cannot load database driver: " + DB_DRIVER, ex);
+        }
+    }
+
+    private final BoneCP connPool;
+
+    public MySqlBaseBean() throws SQLException, IOException {
+        Properties p = new Properties();
+        LOG.info("load reactor db access info from {}", DB_CONFIG_FILE);
+        try (InputStream in = FileUtils.openInputStream(new File(DB_CONFIG_FILE))) {
+            p.load(in);
+        }
+        LOG.debug("{}", p);
+        BoneCPConfig connPoolConfig = new BoneCPConfig();
+        String url = "jdbc:mysql://" + p.getProperty(DbHandler.SYSPROP_DATABASE_HOST, "127.0.0.1") + "/"
+            + p.getProperty(DbHandler.SYSPROP_DATABASE_SCHEMA, "reactor");
+        connPoolConfig.setJdbcUrl(url);
+        LOG.info("connect to {}", url);
+        connPoolConfig.setUsername(p.getProperty(DbHandler.SYSPROP_DATABASE_USER, "reactor"));
+        connPoolConfig.setPassword(p.getProperty(DbHandler.SYSPROP_DATABASE_PASS, "p@ssword"));
+        connPoolConfig.setMaxConnectionAgeInSeconds(600);
+        connPoolConfig.setDefaultAutoCommit(true);
+        connPoolConfig.setIdleConnectionTestPeriodInSeconds(30);
+        connPoolConfig.setConnectionTestStatement("SELECT 1");
+        this.connPool = new BoneCP(connPoolConfig);
+    }
 
     Set<String> loadProjects() throws SQLException, NamingException {
         Set<String> projects = new HashSet<>();
@@ -515,7 +553,7 @@ public class MySqlBaseBean implements Serializable {
     }
 
     private Connection getConnection() throws NamingException, SQLException {
-        Connection conn = this.ds.getConnection();
+        Connection conn = this.connPool.getConnection();
         if (conn == null) {
             throw new SQLException("Can't get database connection");
         }

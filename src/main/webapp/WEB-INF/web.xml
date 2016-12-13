@@ -6,7 +6,7 @@
 
     <context-param>
         <param-name>javax.faces.PROJECT_STAGE</param-name>
-        <param-value>Development</param-value>
+        <param-value>Release</param-value>
     </context-param>
     <context-param>
         <param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
@@ -20,15 +20,6 @@
         <param-name>primefaces.FONT_AWESOME</param-name>
         <param-value>true</param-value>
     </context-param>
-    
-    <resource-ref>
-        <description>Resource reference to a factory for java.sql.Connection instances</description>
-        <res-ref-name>jdbc/reactor</res-ref-name>
-        <res-type>javax.sql.DataSource</res-type>
-        <mapped-name>reactor</mapped-name>
-        <res-auth>Container</res-auth>
-        <res-sharing-scope>Shareable</res-sharing-scope>
-    </resource-ref>
 
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
