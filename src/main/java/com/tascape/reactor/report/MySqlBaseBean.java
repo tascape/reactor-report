@@ -88,8 +88,11 @@ public class MySqlBaseBean implements Serializable {
     public MySqlBaseBean() throws SQLException, IOException {
         Properties p = new Properties();
         LOG.info("load reactor db access info from {}", DB_CONFIG_FILE);
-        try (InputStream in = FileUtils.openInputStream(new File(DB_CONFIG_FILE))) {
-            p.load(in);
+        File f = new File(DB_CONFIG_FILE);
+        if (f.exists()) {
+            try (InputStream in = FileUtils.openInputStream(f)) {
+                p.load(in);
+            }
         }
         LOG.debug("{}", p);
         BoneCPConfig connPoolConfig = new BoneCPConfig();

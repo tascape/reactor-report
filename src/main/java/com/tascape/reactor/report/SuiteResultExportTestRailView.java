@@ -152,7 +152,7 @@ public class SuiteResultExportTestRailView implements Serializable {
             List<ResultField> customResultFields = testRail.resultFields().list().execute();
             trs.parallelStream().forEach(cr -> {
                 int crid = Integer.parseInt((String) cr.get(CaseResult.EXTERNAL_ID));
-                int status = ExecutionResult.isFailure(((String) cr.get(CaseResult.EXECUTION_RESULT))) ? 5 : 1;
+                int status = ExecutionResult.isPass(((String) cr.get(CaseResult.EXECUTION_RESULT))) ? 1 : 5;
                 testRail.results().addForCase(run.getId(), crid,
                     new Result().setStatusId(status).addCustomField("custom_execmode", 0),
                     customResultFields)
