@@ -14,6 +14,7 @@ pushd /usr/share/tomee/conf
   ../bin/startup.sh
 popd
 
+mkdir -p /usr/local/reactor
 touch /usr/local/reactor/reactor-db.properties
 
 wget "https://raw.githubusercontent.com/tascape/reactor-report/master/doc/tomee" -O /etc/init.d/tomee
