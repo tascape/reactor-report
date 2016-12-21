@@ -11,14 +11,16 @@ if (type vagrant) && (type virtualbox) then
 
     export PROP=$HOME/.reactor/reactor.properties
     echo "create reactor system properties file" $PROP
-    echo "# reactor system properties" > $PROP
-    echo "# use -Dkey=value to override or add in commandline " >> $PROP
-    echo "reactor.db.type=mysql" >> $PROP
-    echo "reactor.db.host=localhost:23306" >> $PROP
-    echo "reactor.log.path=$HOME/.reactor/logs" >> $PROP
-    echo "reactor.case.station=localhost" >> $PROP
-    echo "reactor.JOB_NAME=local-run" >> $PROP
-    cat $PROP
+cat <<EOF > $PROP
+# reactor system properties
+# use -Dkey=value to override or add in commandline
+reactor.db.type=mysql
+reactor.db.host=localhost:23306
+reactor.log.path=$HOME/.reactor/logs
+reactor.case.station=localhost
+reactor.JOB_NAME=local-run
+EOF
+cat $PROP
 
     echo "check report at http://localhost:28088/rr/suites_result.xhtml"
     open "http://localhost:28088/rr/suites_result.xhtml" || echo "OK"
