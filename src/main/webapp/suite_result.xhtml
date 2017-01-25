@@ -81,11 +81,13 @@
                     <ui:param name="p" value="#{result =='PASS' or result.endsWith('/0')}" />
                     <ui:param name="f" value="#{result =='FAIL' or (result.contains('/') and not result.endsWith('/0'))}" />
                     <ui:param name="r" value="#{result =='RUNNING'}" />
+                    <ui:param name="t" value="#{result =='TBI'}" />
                     <h:outputLink value="/logs/#{srid}/#{row.get('LOG_DIR')}/log.html" target="_blank" title="#{result}">
                         <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{p}" />
                         <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{f}" />
                         <h:graphicImage library="img" name="running.png" alt="#{result}" rendered="#{r}" />
-                        <h:graphicImage library="img" name="queued.png" alt="#{result}" rendered="#{not p and not f and not r}" />
+                        <h:graphicImage library="img" name="tbi.png" alt="#{result}" rendered="#{t}" />
+                        <h:graphicImage library="img" name="queued.png" alt="#{result}" rendered="#{not p and not f and not r and not t}" />
                     </h:outputLink>
                 </p:column>
 
