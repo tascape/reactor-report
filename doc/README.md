@@ -20,5 +20,10 @@ cd ~/.reactor && vagrant up
 cd ~/.reactor && vagrant destroy
 ```
 
+* shared folder mounting error
+```
+vagrant plugin install vagrant-vbguest
+```
 
-(tested on OS X Yosemite 10.10.5, with Vagrant 1.7.4 and VirtualBox 5.0.2)  
+
+(tested on macOS Sierra 10.12.3, with Vagrant 1.9.1 and VirtualBox 5.0.4)  
