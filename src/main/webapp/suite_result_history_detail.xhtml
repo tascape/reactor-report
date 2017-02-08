@@ -59,11 +59,17 @@
                                       style="font: smaller monospace; color: blue">Build ##{bn}</h:outputLink>
                     </f:facet>
 
+                    <ui:param name="p" value="#{result == 'PASS' or result.endsWith('/0')}" />
+                    <ui:param name="f" value="#{result == 'FAIL' or (result.contains('/') and not result.endsWith('/0'))}" />
+                    <ui:param name="r" value="#{result == 'RUNNING'}" />
+                    <ui:param name="t" value="#{result == 'TBI'}" />
+                    <ui:param name="n" value="#{result == null}" />
                     <h:outputLink value="/logs/#{srid}/#{row.get(srid).get('LOG_DIR')}/log.html" target="_blank" title="#{result}">
-                        <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{result =='PASS'}" />
-                        <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{result =='FAIL'}" />
-                        <h:graphicImage library="img" name="running.png" alt="#{result}" rendered="#{result == 'RUNNING'}" />
-                        <h:graphicImage library="img" name="queued.png" alt="#{result}" rendered="#{!(result == 'FAIL' || result == 'PASS' || result == 'RUNNING' || result == null)}" />
+                        <h:graphicImage library="img" name="pass.png" alt="#{result}" rendered="#{p}" />
+                        <h:graphicImage library="img" name="fail.png" alt="#{result}" rendered="#{f}" />
+                        <h:graphicImage library="img" name="running.png" alt="#{result}" rendered="#{r}" />
+                        <h:graphicImage library="img" name="tbi.png" alt="#{result}" rendered="#{t}" />
+                        <h:graphicImage library="img" name="queued.png" alt="#{result}" rendered="#{not p and not f and not r and not t and not n}" />
                     </h:outputLink>
                 </p:columns>
             </p:dataTable>
