@@ -13,11 +13,6 @@ Vagrant.configure(2) do |config|
     v.gui = false
   end
 
-
-  config.vm.provision "docker" do |d|
-    d.run "ubuntu"
-  end 
-
   
   #config.ssh.username = "ubuntu"
 
