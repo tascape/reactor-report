@@ -10,7 +10,7 @@ pushd /usr/share/tomee/conf
   echo '</tomcat-users>' >> aa.txt
   mv tomcat-users.xml tomcat-users.xml.bk
   mv aa.txt tomcat-users.xml
-  wget "https://oss.sonatype.org/content/repositories/releases/com/tascape/reactor-report/1.2.7/reactor-report-1.2.7.war" -O ../webapps/rr.war
+  wget "https://oss.sonatype.org/content/repositories/releases/com/tascape/reactor-report/1.2.8/reactor-report-1.2.8.war" -O ../webapps/rr.war
   ../bin/startup.sh
 popd
 
