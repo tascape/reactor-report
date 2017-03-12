@@ -112,8 +112,8 @@ public class SuiteResultExportTestRailView implements Serializable {
         int pid = Integer.parseInt(projectId);
         int sid = Integer.parseInt(suiteId);
         List<Integer> sids = Stream.of(sectionIds.split(","))
-            .map(id -> Integer.parseInt(id.trim()))
-            .collect(Collectors.toList());
+                .map(id -> Integer.parseInt(id.trim()))
+                .collect(Collectors.toList());
         Project project = testRail.projects().get(pid).execute();
         LOG.debug("testrail project {}", project.getName());
         Suite suite = testRail.suites().get(sid).execute();
@@ -131,21 +131,22 @@ public class SuiteResultExportTestRailView implements Serializable {
 
         List<CaseField> cfs = testRail.caseFields().list().execute();
         List<Integer> cids = testRail.cases().list(pid, sid, cfs).execute().stream()
-            .filter(c -> sids.isEmpty() || sids.contains(c.getSectionId()))
-            .map(c -> {
-                int id = c.getId();
-                LOG.debug("{} - {}", c.getSectionId(), id);
-                return id;
-            })
-            .collect(Collectors.toList());
+                .filter(c -> sids.isEmpty() || sids.contains(c.getSectionId()))
+                .map(c -> {
+                    int id = c.getId();
+                    LOG.debug("{} - {}", c.getSectionId(), id);
+                    return id;
+                })
+                .collect(Collectors.toList());
 
         Run run = testRail.runs().add(pid, new Run()
-            .setSuiteId(sid)
-            .setIncludeAll(false)
-            .setCaseIds(cids)
-            .setName(StringUtils.join(names, " - ") + ": "
-                + DateFormatUtils.ISO_DATETIME_FORMAT.format(sr.get(SuiteResult.START_TIME))))
-            .execute();
+                .setSuiteId(sid)
+                .setIncludeAll(false)
+                .setCaseIds(cids)
+                .setName(StringUtils.join(names, " - ") + ": "
+                        + DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT
+                                .format(sr.get(SuiteResult.START_TIME))))
+                .execute();
         this.runLink = run.getUrl();
 
         try {
@@ -154,9 +155,10 @@ public class SuiteResultExportTestRailView implements Serializable {
                 int crid = Integer.parseInt((String) cr.get(CaseResult.EXTERNAL_ID));
                 int status = ExecutionResult.isPass(((String) cr.get(CaseResult.EXECUTION_RESULT))) ? 1 : 5;
                 testRail.results().addForCase(run.getId(), crid,
-                    new Result().setStatusId(status).addCustomField("custom_execmode", 0),
-                    customResultFields)
-                    .execute();
+                        new Result().setStatusId(status).addCustomField("custom_execmode", 0)
+                                .setComment("comments - na"),
+                        customResultFields)
+                        .execute();
                 LOG.debug("{}", crid);
             });
         } finally {
