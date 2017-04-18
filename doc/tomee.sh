@@ -1,7 +1,7 @@
 #!/bin/bash
 
-wget "http://repo.maven.apache.org/maven2/org/apache/tomee/apache-tomee/7.0.2/apache-tomee-7.0.2-plus.tar.gz" -O tomee.tar.gz
-tar zxvf tomee.tar.gz && mv apache-tomee-plus-7.0.2 tomee && mv tomee /usr/share/
+wget "http://repo.maven.apache.org/maven2/org/apache/tomee/apache-tomee/7.0.3/apache-tomee-7.0.3-plus.tar.gz" -O tomee.tar.gz
+tar zxvf tomee.tar.gz && mv apache-tomee-plus-7.0.3 tomee && mv tomee /usr/share/
 
 pushd /usr/share/tomee/conf
   sed '/tomcat-users>/d' tomcat-users.xml > aa.txt
@@ -10,7 +10,7 @@ pushd /usr/share/tomee/conf
   echo '</tomcat-users>' >> aa.txt
   mv tomcat-users.xml tomcat-users.xml.bk
   mv aa.txt tomcat-users.xml
-  wget "https://oss.sonatype.org/content/repositories/releases/com/tascape/reactor-report/1.2.8/reactor-report-1.2.8.war" -O ../webapps/rr.war
+  wget "https://oss.sonatype.org/content/repositories/releases/com/tascape/reactor-report/1.2.9/reactor-report-1.2.9.war" -O ../webapps/rr.war
   ../bin/startup.sh
 popd
 

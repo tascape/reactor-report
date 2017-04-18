@@ -29,6 +29,8 @@ import com.tascape.reactor.Reactor;
 import com.tascape.reactor.db.CaseResult;
 import com.tascape.reactor.db.SuiteResult;
 import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +62,8 @@ public class SuiteResultExportTestRailView implements Serializable {
 
     private String srid = "";
 
+    private String logBaseUrl = "";
+
     private String url = "";
 
     private String user = "";
@@ -81,13 +85,17 @@ public class SuiteResultExportTestRailView implements Serializable {
 
     @PostConstruct
     public void init() {
-        this.getParameters();
+        try {
+            this.getParameters();
+        } catch (URISyntaxException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     public void share(ActionEvent actionEvent) {
         try {
             this.share0();
-        } catch (Exception ex) {
+        } catch (SQLException | NamingException ex) {
             LOG.error("error", ex);
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "error during sharing", ex.getMessage());
             addMessage(msg);
@@ -97,6 +105,7 @@ public class SuiteResultExportTestRailView implements Serializable {
 
     private void share0() throws NamingException, SQLException {
         LOG.debug("srid {}", srid);
+        LOG.debug("logBaseUrl {}", logBaseUrl);
         LOG.debug("url {}", url);
         LOG.debug("user {}", user);
         LOG.debug("pass {}", pass);
@@ -152,14 +161,22 @@ public class SuiteResultExportTestRailView implements Serializable {
         try {
             List<ResultField> customResultFields = testRail.resultFields().list().execute();
             trs.parallelStream().forEach(cr -> {
-                int crid = Integer.parseInt((String) cr.get(CaseResult.EXTERNAL_ID));
-                int status = ExecutionResult.isPass(((String) cr.get(CaseResult.EXECUTION_RESULT))) ? 1 : 5;
-                testRail.results().addForCase(run.getId(), crid,
-                        new Result().setStatusId(status).addCustomField("custom_execmode", 0)
-                                .setComment("comments - na"),
-                        customResultFields)
-                        .execute();
-                LOG.debug("{}", crid);
+                String exid = cr.get(CaseResult.EXTERNAL_ID) + "";
+                LOG.debug("case result external id {}", exid);
+                try {
+                    int crid = Integer.parseInt(exid);
+                    int status = ExecutionResult.isPass(((String) cr.get(CaseResult.EXECUTION_RESULT))) ? 1 : 5;
+                    testRail.results().addForCase(
+                            run.getId(),
+                            crid,
+                            new Result().setStatusId(status)
+                                    .addCustomField("custom_execmode", 0)
+                                    .setComment(this.logBaseUrl + cr.get(CaseResult.LOG_DIR) + "/log.html"),
+                            customResultFields
+                    ).execute();
+                } catch (Exception ex) {
+                    LOG.error("cannot add a new test case result", ex);
+                }
             });
         } finally {
             if (complete) {
@@ -174,6 +191,14 @@ public class SuiteResultExportTestRailView implements Serializable {
 
     public void setSrid(String srid) {
         this.srid = srid;
+    }
+
+    public String getLogBaseUrl() {
+        return logBaseUrl;
+    }
+
+    public void setLogBaseUrl(String logBaseUrl) {
+        this.logBaseUrl = logBaseUrl;
     }
 
     public String getUrl() {
@@ -240,13 +265,17 @@ public class SuiteResultExportTestRailView implements Serializable {
         this.runLink = runLink;
     }
 
-    private void getParameters() {
+    private void getParameters() throws URISyntaxException {
         Map<String, String> map = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         String v = map.get("srid");
         if (v != null) {
             this.srid = v;
             LOG.debug("srid={}", this.srid);
         }
+        String ref = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap().get("referer");
+        URI u = new URI(ref);
+        this.logBaseUrl = u.getScheme() + "://" + u.getHost() + ":" + u.getPort() + "/logs/" + srid + "/";
+        LOG.debug("logBaseUrl={}", logBaseUrl);
     }
 
     public void addMessage(FacesMessage message) {
