@@ -7,7 +7,6 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <h:head>
-        <meta http-equiv="refresh" content="61" />
         <h:outputStylesheet name="css/thr.css" />
         <h:outputStylesheet name="css/primefaces-ex.css" />
         <h:outputScript name="js/thr.js" />
@@ -39,6 +38,9 @@
                 <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank">Build ##{bn}</h:outputLink>
                 <h:outputText value="#{result}" class="result-pass" rendered="#{result == 'PASS'}" style="font-size: large;"/>
                 <h:outputText value="#{result}" class="result-fail" rendered="#{result != 'PASS'}" style="font-size: large;"/>
+                <h:outputLink value="/logs/#{srid}/" id="logs" target="_blank">
+                    <h:graphicImage library="img" name="link.png" alt="all logs" />
+                </h:outputLink>
                 <h:outputText value="#{start}" style="font-family: monospace">
                     <f:convertDateTime type="date" pattern="EEE yyyy-MM-dd HH:mm:ss" timeZone="US/Pacific" />
                 </h:outputText>
