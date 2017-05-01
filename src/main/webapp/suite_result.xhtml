@@ -33,7 +33,7 @@
         </div>
 
         <div id="main">
-            <h:panelGrid columns="5" >
+            <h:panelGrid columns="6" >
                 <h:outputLink value="suites_result.xhtml?job=#{jn}" rendered="#{bn gt 0}"  style="font-size: large;" >#{jn}</h:outputLink>
                 <h:outputLink rendered="#{bn gt 0}" value="#{url}" target="_blank">Build ##{bn}</h:outputLink>
                 <h:outputText value="#{result}" class="result-pass" rendered="#{result == 'PASS'}" style="font-size: large;"/>
