@@ -99,7 +99,7 @@ public class DashboardView implements Serializable {
         for (String p : projects) {
             DefaultMenuItem item = new DefaultMenuItem(p);
             item.setUrl("dashboard.xhtml?project=" + p + "&weeks=" + weeks);
-            item.setIcon("ui-icon-arrowreturnthick-1-n");
+            item.setStyle("white-space: nowrap;");
             menuProjects.addElement(item);
         }
 
@@ -107,7 +107,7 @@ public class DashboardView implements Serializable {
         for (int w : weekList) {
             DefaultMenuItem item = new DefaultMenuItem(this.getWeekString(w));
             item.setUrl("dashboard.xhtml?project=" + project + "&weeks=" + w);
-            item.setIcon("ui-icon-arrowreturnthick-1-n");
+            item.setStyle("white-space: nowrap;");
             getMenuWeeks().addElement(item);
         }
     }
