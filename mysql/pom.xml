@@ -31,7 +31,7 @@
                 </executions>
                 <configuration>
                     <finalName>Dockerfile.mysql</finalName>
-                    <repository>reactor-mysql</repository>
+                    <repository>reactor-report-mysql</repository>
                     <tag>1.0</tag>
                     <buildArgs>
                         <SQL_FILE>mysql/reactor.sql</SQL_FILE>

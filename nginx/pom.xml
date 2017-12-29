@@ -31,7 +31,7 @@
                 </executions>
                 <configuration>
                     <finalName>Dockerfile.nginx</finalName>
-                    <repository>reactor-nginx</repository>
+                    <repository>reactor-report-nginx</repository>
                     <tag>1.0</tag>
                     <buildArgs>
                         <CONF_FILE>nginx/reactor.conf</CONF_FILE>
