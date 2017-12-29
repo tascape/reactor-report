@@ -1,0 +1,42 @@
+version: "3.1"
+
+networks:
+   reactor:
+     ipam:
+       config:
+         - subnet: 192.168.10.0/24
+
+services:
+  nginx:
+    image: reactor-nginx:1.0
+    networks:
+      - reactor
+    volumes:
+      - reactor-nginx-volume:/var/lib/html
+    ports:
+      - "8088:28088"
+
+  tomee:
+    image: reactor-report-tomee:1.2.11
+    networks:
+      - reactor
+    ports:
+      - "8080:28080"
+
+  mysql:
+    image: reactor-report-mysql:1.0
+    networks:
+      - reactor
+    ports:
+      - "3306:23306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=p@ssword
+      - MYSQL_DATABASE=reactor
+      - MYSQL_USER=reactor
+      - MYSQL_PASSWORD=p@ssword
+    volumes:
+      - reactor-mysql-volume:/var/lib/mysql
+
+volumes:
+    reactor-mysql-volume:
+    reactor-nginx-volume:
