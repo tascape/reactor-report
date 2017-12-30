@@ -12,23 +12,23 @@ services:
     networks:
       - reactor
     volumes:
-      - reactor-nginx-volume:/var/lib/html
+      - reactor-nginx-volume:/usr/share/nginx/html
     ports:
-      - "8088:28088"
+      - "20080:80"
 
   tomee:
     image: reactor-report-tomee:1.2.11
     networks:
       - reactor
     ports:
-      - "8080:28080"
+      - "28080:8080"
 
   mysql:
     image: reactor-report-mysql:1.0
     networks:
       - reactor
     ports:
-      - "3306:23306"
+      - "23306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=p@ssword
       - MYSQL_DATABASE=reactor

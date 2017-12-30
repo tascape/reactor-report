@@ -43,7 +43,7 @@ RUN sed '/tomcat-users>/d' /usr/local/tomee/conf/tomcat-users.xml > aa.txt && \
     mv aa.txt /usr/local/tomee/conf/tomcat-users.xml
 
 ARG WAR_FILE
-ADD ./target/${WAR_FILE} /usr/local/tomee/webapps/rr.war
+COPY ./target/${WAR_FILE} /usr/local/tomee/webapps/rr.war
 
 EXPOSE 8080
 CMD ["catalina.sh", "run"]
