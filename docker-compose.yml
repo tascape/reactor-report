@@ -7,36 +7,36 @@ networks:
          - subnet: 192.168.10.0/24
 
 services:
-  nginx:
-    image: reactor-nginx:1.0
-    networks:
-      - reactor
-    volumes:
-      - reactor-nginx-volume:/usr/share/nginx/html
-    ports:
-      - "20080:80"
-
-  tomee:
-    image: reactor-report-tomee:1.2.11
-    networks:
-      - reactor
-    ports:
-      - "28080:8080"
-
-  mysql:
+  report_mysql:
     image: reactor-report-mysql:1.0
     networks:
       - reactor
     ports:
-      - "23306:3306"
+      - "33306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=p@ssword
       - MYSQL_DATABASE=reactor
       - MYSQL_USER=reactor
       - MYSQL_PASSWORD=p@ssword
     volumes:
-      - reactor-mysql-volume:/var/lib/mysql
+      - mysql_volume:/var/lib/mysql
+
+  report_nginx:
+    image: reactor-report-nginx:1.0
+    networks:
+      - reactor
+    ports:
+      - "30080:80"
+    volumes:
+      - nginx_volume:/usr/share/nginx/html
+
+  report_tomee:
+    image: reactor-report-tomee:1.2.11
+    networks:
+      - reactor
+    ports:
+      - "38080:8080"
 
 volumes:
-    reactor-mysql-volume:
-    reactor-nginx-volume:
+    mysql_volume:
+    nginx_volume:

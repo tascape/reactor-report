@@ -138,8 +138,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <finalName>Dockerfile.tomee</finalName>
-                    <repository>reactor-tomee</repository>
+                    <repository>reactor-report-tomee</repository>
                     <tag>${project.version}</tag>
                     <buildArgs>
                         <WAR_FILE>${project.build.finalName}.war</WAR_FILE>

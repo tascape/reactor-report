@@ -107,6 +107,7 @@ public class MySqlBaseBean implements Serializable {
         connPoolConfig.setIdleConnectionTestPeriodInSeconds(30);
         connPoolConfig.setConnectionTestStatement("SELECT 1");
         this.connPool = new BoneCP(connPoolConfig);
+        LOG.info("{}", connPool);
     }
 
     Set<String> loadProjects() throws SQLException, NamingException {
