@@ -9,6 +9,7 @@ networks:
 services:
   report_mysql:
     image: reactor-report-mysql:1.0
+    command: --sql_mode=""
     networks:
       - reactor
     ports:
