@@ -1,4 +1,4 @@
-version: "3.1"
+version: "3.3"
 
 networks:
    reactor:
@@ -20,7 +20,7 @@ services:
       - MYSQL_USER=reactor
       - MYSQL_PASSWORD=p@ssword
     volumes:
-      - mysql_volume:/var/lib/mysql
+      - $HOME/.reactor/db/:/var/lib/mysql
 
   report_nginx:
     image: reactor-report-nginx:1.0
@@ -29,7 +29,7 @@ services:
     ports:
       - "30080:80"
     volumes:
-      - nginx_volume:/usr/share/nginx/html
+      - $HOME/.reactor/logs/:/usr/share/nginx/html/logs/
 
   report_tomee:
     image: reactor-report-tomee:1.2.11
@@ -37,7 +37,3 @@ services:
       - reactor
     ports:
       - "38080:8080"
-
-volumes:
-    mysql_volume:
-    nginx_volume:
