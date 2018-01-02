@@ -30,9 +30,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <finalName>Dockerfile.nginx</finalName>
-                    <repository>reactor-report-nginx</repository>
-                    <tag>1.0</tag>
+                    <repository>tascape/reactor-report-nginx</repository>
+                    <tag>${project.version}</tag>
                 </configuration>
             </plugin>
         </plugins>

@@ -8,7 +8,7 @@ networks:
 
 services:
   report_mysql:
-    image: reactor-report-mysql:1.0
+    image: tascape/reactor-report-mysql:${RR_VERSION}
     command: --sql_mode=""
     networks:
       - reactor
@@ -23,7 +23,7 @@ services:
       - $HOME/.reactor/db/:/var/lib/mysql
 
   report_nginx:
-    image: reactor-report-nginx:1.0
+    image: tascape/reactor-report-nginx:${RR_VERSION}
     networks:
       - reactor
     ports:
@@ -32,7 +32,7 @@ services:
       - $HOME/.reactor/logs/:/usr/share/nginx/html/logs/
 
   report_tomee:
-    image: reactor-report-tomee:1.2.11
+    image: tascape/reactor-report-tomee:${RR_VERSION}
     networks:
       - reactor
     ports:

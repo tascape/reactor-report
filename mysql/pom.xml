@@ -30,8 +30,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <repository>reactor-report-mysql</repository>
-                    <tag>1.0</tag>
+                    <repository>tascape/reactor-report-mysql</repository>
+                    <tag>${project.version}</tag>
                 </configuration>
             </plugin>
         </plugins>

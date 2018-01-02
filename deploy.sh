@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/bash -e
 
-docker stack deploy  -c docker-compose.yml reactor
+export RR_VERSION=1.2.11
 
+docker stack deploy -c docker-compose.yml rr
