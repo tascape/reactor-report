@@ -22,18 +22,24 @@ services:
     volumes:
       - $HOME/.reactor/db/:/var/lib/mysql
 
-  report_nginx:
-    image: tascape/reactor-report-nginx:${RR_VERSION}
+  report_tomee:
+    image: tascape/reactor-report-tomee:${RR_VERSION}
+    command: sh -c 'wait-for report_mysql:3306 -t 120 -- catalina.sh run'
     networks:
       - reactor
+    depends_on:
+      - report_mysql
+    ports:
+      - "38080:8080"
+
+  report_nginx:
+    image: tascape/reactor-report-nginx:${RR_VERSION}
+    command: sh -c 'wait-for report_tomee:8080 -t 120 -- nginx -g daemon off;'
+    networks:
+      - reactor
+    depends_on:
+      - report_tomee
     ports:
       - "30080:80"
     volumes:
       - $HOME/.reactor/logs/:/usr/share/nginx/html/logs/
-
-  report_tomee:
-    image: tascape/reactor-report-tomee:${RR_VERSION}
-    networks:
-      - reactor
-    ports:
-      - "38080:8080"
