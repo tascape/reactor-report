@@ -1,6 +1,5 @@
-FROM nginx:alpine
+FROM nginx:1.13.8
 
-RUN apk add --no-cache --virtual .build-deps netcat-openbsd \
-    && apk del .build-deps
-COPY wait-for /usr/bin/wait-for
+RUN apt-get update && \
+    apt-get install --no-install-recommends --no-install-suggests -y curl
 COPY reactor.conf /etc/nginx/conf.d/default.conf

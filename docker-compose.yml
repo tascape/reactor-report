@@ -24,7 +24,14 @@ services:
 
   report_tomee:
     image: tascape/reactor-report-tomee:${RR_VERSION}
-    command: sh -c 'wait-for report_mysql:3306 -t 120 -- catalina.sh run'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8080/rr/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    deploy:
+      restart_policy:
+        delay: 10s
     networks:
       - reactor
     depends_on:
@@ -34,7 +41,14 @@ services:
 
   report_nginx:
     image: tascape/reactor-report-nginx:${RR_VERSION}
-    command: sh -c 'wait-for report_tomee:8080 -t 120 -- nginx -g daemon off;'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1/rr/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    deploy:
+      restart_policy:
+        delay: 10s
     networks:
       - reactor
     depends_on:

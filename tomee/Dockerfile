@@ -47,7 +47,6 @@ RUN apt-get update; apt-get -y install netcat
 ARG WAR_FILE
 COPY target/${WAR_FILE} /usr/local/tomee/webapps/rr.war
 COPY target/classes/reactor-db.properties /usr/local/reactor/reactor-db.properties
-COPY wait-for /usr/local/tomee/bin/wait-for
 
 EXPOSE 8080
 CMD ["catalina.sh", "run"]
