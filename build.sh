@@ -11,7 +11,7 @@
 #
 RR_VERSION=$(git describe --long --tags | tr - .)
 echo "reactor-report version is ${RR_VERSION}"
-echo "${RR_VERSION}" > rr_version
+echo "export RR_VERSION=${RR_VERSION}" > rr_version
 
 mvn versions:set -DnewVersion=${RR_VERSION}
 mvn clean package
