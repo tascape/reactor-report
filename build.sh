@@ -15,10 +15,4 @@ echo "export RR_VERSION=${RR_VERSION}" > rr_version
 
 mvn versions:set -DnewVersion=${RR_VERSION}
 mvn clean package
-
 docker images
-echo "push images to tascape"
-docker login
-for IMG in nginx tomee mysql; do
-  docker push tascape/reactor-report-$IMG:${RR_VERSION}
-done
