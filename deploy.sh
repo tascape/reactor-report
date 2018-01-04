@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
-export RR_VERSION=1.2.12
+echo "please provide env var RR_VERSION"
+export ${RR_VERSION=:1.3}
 
 mkdir -p ~/.reactor/db
 mkdir -p ~/.reactor/logs
