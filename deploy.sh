@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
-echo "please provide env var RR_VERSION"
-export ${RR_VERSION=:1.3}
+RR_VERSION=${RR_VERSION?please provide env var RR_VERSION}
+echo "reactor-report version is ${RR_VERSION}
 
 mkdir -p ~/.reactor/db
 mkdir -p ~/.reactor/logs
