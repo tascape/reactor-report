@@ -12,6 +12,7 @@ clone repo, run
 
 ## 2. deploy without source code
 ```
+mkdir -p ~/.reactor/logs ~/.reactor/db ~/.reactor/webui && \
 $(curl https://raw.githubusercontent.com/tascape/reactor-report/master/rr_version) && \
 (curl https://raw.githubusercontent.com/tascape/reactor-report/master/deploy.sh | bash)
 ```
