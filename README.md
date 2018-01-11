@@ -11,6 +11,8 @@ clone repo, run
 
 
 ## 2. deploy without source code
+run ```docker swarm init```, if your docker host in not in swarm mode
+
 ```
 mkdir -p ~/.reactor/logs ~/.reactor/db ~/.reactor/webui && \
 $(curl https://raw.githubusercontent.com/tascape/reactor-report/master/rr_version) && \
