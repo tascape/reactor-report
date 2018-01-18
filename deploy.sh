@@ -31,5 +31,8 @@ docker version || (echo "where is docker?"; exit 1)
 docker stack deploy -c docker-compose.yml reactor
 waitForServices
 
+cat "reactor.db.type=mysql" >> ~/.reactor/reactor.properties
+cat "reactor.db.host=localhost:33306" >> ~/.reactor/reactor.properties
+
 echo "open http://127.0.0.1:30080/rr/"
 open http://127.0.0.1:30080/rr/
