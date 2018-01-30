@@ -5,6 +5,7 @@ echo "reactor-report version is ${RR_VERSION}"
 
 mkdir -p ~/.reactor/db
 mkdir -p ~/.reactor/logs
+mkdir -p ~/.reactor/webui
 
 if [[ ! -f docker-compose.yml ]]; then
   wget https://raw.githubusercontent.com/tascape/reactor-report/master/docker-compose.yml -O docker-compose.yml
