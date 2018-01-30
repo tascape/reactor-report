@@ -14,7 +14,6 @@ clone repo, run
 run ```docker swarm init```, if your docker host in not in swarm mode
 
 ```
-mkdir -p ~/.reactor/logs ~/.reactor/db ~/.reactor/webui && \
 $(curl https://raw.githubusercontent.com/tascape/reactor-report/master/rr_version) && \
 (curl https://raw.githubusercontent.com/tascape/reactor-report/master/deploy.sh | bash)
 ```
