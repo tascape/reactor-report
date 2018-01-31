@@ -7,8 +7,8 @@ mkdir -p ~/.reactor/db
 mkdir -p ~/.reactor/logs
 mkdir -p ~/.reactor/webui
 
-if [[ ! -f docker-compose.yml ]]; then
-  wget https://raw.githubusercontent.com/tascape/reactor-report/master/docker-compose.yml -O docker-compose.yml
+if [[ ! -f rr-docker-compose.yml ]]; then
+  wget https://raw.githubusercontent.com/tascape/reactor-report/master/rr-docker-compose.yml -O rr-docker-compose.yml
 fi
 
 waitForServices() {
@@ -29,7 +29,7 @@ waitForServices() {
 
 docker version || (echo "where is docker?"; exit 1)
 
-docker stack deploy -c docker-compose.yml reactor
+docker stack deploy -c rr-docker-compose.yml reactor
 waitForServices
 
 cat "reactor.db.type=mysql" >> ~/.reactor/reactor.properties
