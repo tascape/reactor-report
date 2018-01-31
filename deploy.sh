@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
-#RR_VERSION=${RR_VERSION?please provide env var RR_VERSION}
-$(curl https://raw.githubusercontent.com/tascape/reactor-report/master/rr_version)
+RR_VERSION=${RR_VERSION?please provide env var RR_VERSION}
 echo "reactor-report version is ${RR_VERSION}"
 
 mkdir -p ~/.reactor/db
