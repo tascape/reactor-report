@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.tascape</groupId>
         <artifactId>reactor-report</artifactId>
-        <version>1.3.4.g346dc32</version>
+        <version>1.3.21.ge94c31f</version>
     </parent>
 
     <groupId>com.tascape</groupId>
