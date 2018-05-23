@@ -6,7 +6,7 @@ Reactor report web app (deployed in single-node docker swarm)
 ## 1. deploy with source code
 clone repo, run 
 ```
-./build.sh && source rr_version && ./deploy.sh
+./build.sh && ./deploy.sh
 ``` 
 
 
@@ -14,8 +14,7 @@ clone repo, run
 run ```docker swarm init```, if your docker host in not in swarm mode
 
 ```
-$(curl https://raw.githubusercontent.com/tascape/reactor-report/master/rr_version) && \
-(curl https://raw.githubusercontent.com/tascape/reactor-report/master/deploy.sh | bash)
+curl https://raw.githubusercontent.com/tascape/reactor-report/master/deploy.sh | bash
 ```
 
 

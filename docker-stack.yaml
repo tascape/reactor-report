@@ -8,7 +8,7 @@ networks:
 
 services:
   report_mysql:
-    image: tascape/reactor-report-mysql:${RR_VERSION}
+    image: tascape/reactor-report-mysql:${RR_VERSION:-latest}
     command: --sql_mode=""
     networks:
       - reactor
@@ -23,7 +23,7 @@ services:
       - $HOME/.reactor/db/:/var/lib/mysql
 
   report_tomee:
-    image: tascape/reactor-report-tomee:${RR_VERSION}
+    image: tascape/reactor-report-tomee:${RR_VERSION:-latest}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://127.0.0.1:8080/rr/"]
       interval: 30s
@@ -40,7 +40,7 @@ services:
       - "38080:8080"
 
   report_nginx:
-    image: tascape/reactor-report-nginx:${RR_VERSION}
+    image: tascape/reactor-report-nginx:${RR_VERSION:-latest}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://127.0.0.1/rr/"]
       interval: 30s
