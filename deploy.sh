@@ -27,11 +27,12 @@ waitForServices() {
 
 docker version || (echo "where is docker?"; exit 1)
 
+[[ $(docker stack rm reactor) ]] && sleep 10
 docker stack deploy -c docker-stack.yaml reactor
 waitForServices
 
 echo "reactor.db.type=mysql" >> ~/.reactor/reactor.properties
 echo "reactor.db.host=localhost:33306" >> ~/.reactor/reactor.properties
 
-echo "open http://127.0.0.1:30080/rr/"
+echo "open report at http://127.0.0.1:30080/rr/"
 open http://127.0.0.1:30080/rr/
