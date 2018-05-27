@@ -9,6 +9,13 @@ if [[ ! -f docker-stack.yaml ]]; then
   wget https://raw.githubusercontent.com/tascape/reactor-report/master/docker-stack.yaml -O docker-stack.yaml
 fi
 
+removeStack() {
+  [[ $(docker stack rm reactor) ]] && sleep 10
+  while [[ $(docker network ls | grep reactor_reactor) ]]; do
+    sleep 5
+  done
+}
+
 waitForServices() {
   docker service ls | grep reactor_report
 
@@ -27,7 +34,7 @@ waitForServices() {
 
 docker version || (echo "where is docker?"; exit 1)
 
-[[ $(docker stack rm reactor) ]] && sleep 10
+removeStack
 docker stack deploy -c docker-stack.yaml reactor
 waitForServices
 
