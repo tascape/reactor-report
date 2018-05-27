@@ -1,11 +1,11 @@
 #!/bin/bash -e
 
-mkdir -p ~/.reactor/db
-mkdir -p ~/.reactor/logs
-mkdir -p ~/.reactor/webui
+mkdir -p $HOME/.reactor/db
+mkdir -p $HOME/.reactor/logs
+mkdir -p $HOME/.reactor/webui
 
 if [[ ! -f docker-stack.yaml ]]; then
-  cd ~/.reactor/
+  cd $HOME/.reactor/
   wget https://raw.githubusercontent.com/tascape/reactor-report/master/docker-stack.yaml -O docker-stack.yaml
 fi
 
@@ -31,9 +31,9 @@ docker version || (echo "where is docker?"; exit 1)
 docker stack deploy -c docker-stack.yaml reactor
 waitForServices
 
-echo "reactor.db.type=mysql" >> ~/.reactor/reactor.properties
-echo "reactor.db.host=localhost:33306" >> ~/.reactor/reactor.properties
-echo "reactor.log.path=~/.reactor/logs" >> ~/.reactor/reactor.properties
+echo "reactor.db.type=mysql" >> $HOME/.reactor/reactor.properties
+echo "reactor.db.host=localhost:33306" >> $HOME/.reactor/reactor.properties
+echo "reactor.log.path=~/.reactor/logs" >> $HOME/.reactor/reactor.properties
 
 echo "open report at http://127.0.0.1:30080/rr/"
 open http://127.0.0.1:30080/rr/
