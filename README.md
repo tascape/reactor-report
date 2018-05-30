@@ -1,6 +1,6 @@
 # reactor-report
-Reactor report web app (deployed in single-node docker swarm)
-
+Reactor report web app (deployed in single-node docker swarm)  
+Install the latest [Docker CE](https://store.docker.com/editions/community/docker-ce-desktop-mac), and run ```docker swarm init``` to enable swarm mode.
 
 
 ## 1. deploy with source code
