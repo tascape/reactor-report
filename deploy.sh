@@ -40,7 +40,7 @@ waitForServices
 
 echo "reactor.db.type=mysql" >> $HOME/.reactor/reactor.properties
 echo "reactor.db.host=localhost:33306" >> $HOME/.reactor/reactor.properties
-echo "reactor.log.path=$HOME/.reactor/logs" >> $HOME/.reactor/reactor.properties
+echo "#reactor.log.path=$HOME/.reactor/logs" >> $HOME/.reactor/reactor.properties
 
 echo "open report at http://127.0.0.1:30080/rr/"
 open http://127.0.0.1:30080/rr/
